@@ -6,8 +6,8 @@ It has the following functionality that can be switched on or off in the scene c
 <li><b>Zoom Lock</b> - Locks the zoom/fixes the scale, to prevent the user from accidentally messing up the autoscale. Can also be used without 'Autoscale'. This ignores the 'zoom' at 'Initial View Position' in the scene configuration screen</li>
 <li><b>Pan Lock</b> - Locks the panning of the scene. If you use physical minis you don't want to accidentally pan</li>
 </ul>
-<b>Note 1:</b> When using both 'Autoscale' and 'Pan Lock', when loading a scene and after closing the scene configuration screen, the scene will automatically set the view position to the 'Initial View Position' as set in the scene configuration screen<br>
-<b>Note 2:</b> When a token is moved to the edge of the screen, the scene is automatically panned. I have not yet found a way to disable this<br>
+<b>Note 1:</b> When using both 'Autoscale' and 'Pan Lock', when loading a scene and after closing the scene configuration screen, the scene will automatically set the view position to the 'Initial View Position' as set in the scene configuration screen.<br>
+<b>Note 2:</b> When a token is moved to the edge of the screen, the scene is automatically panned. I have not yet found a way to disable this.<br>
 
 ### Settings
 The above mentioned settings can be changed for each scene individually, in the scene configuration screen.<br>
