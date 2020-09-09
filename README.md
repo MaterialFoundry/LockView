@@ -20,9 +20,9 @@ There are some more settings in the module settings screen:<br>
 </ul>
 
 ### Future plans
-<ul>
-<lu>test</lu>
-</ul>
+<ol>
+<li>Add a button on the left of the screen that gives control voer the viewbox, such as moving and scaling it (thus panning and scaling the player's scene), and enabling/disabling the viewbox (instead of a checkbox in the settings)</li>
+</ol>
 
 ## Software Versions & Module Incompatibilities
 <b>Foundry VTT:</b> Tested on 0.6.6<br>
