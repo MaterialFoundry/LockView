@@ -13,9 +13,15 @@ It has the following functionality that can be switched on or off in the scene c
 The above mentioned settings can be changed for each scene individually, in the scene configuration screen.<br>
 There are some more settings in the module settings screen:<br>
 <ul>
-<li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV
-<li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV
-<li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch.
+<li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV</li>
+<li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
+<li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
+<li><b>Display Viewbox</b> - Draws a square on the GM's screen that corresponds with the borders of the display of players that have the module enabled</li>
+</ul>
+
+### Future plans
+<ul>
+<lu>test</lu>
 </ul>
 
 ## Software Versions & Module Incompatibilities
