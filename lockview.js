@@ -142,7 +142,7 @@ function updateLockView(moveX,moveY,scale){
       sendPayload(game.data.users[i]._id);
 }
 
-Hooks.once('init', function(){
+//Hooks.once('init', function(){
   CONFIG.debug.hooks = true;
   _onMouseWheel_Default = Canvas.prototype._onMouseWheel;
   _onDragCanvasPan_Default = Canvas.prototype._onDragCanvasPan;
