@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "author": "CDeenen",
     "scripts": ["lockview.js"],
+    "socket": true,
     "compatibleCoreVersion": "0.6.6",
     "url": "https://github.com/CDeenen/LockView",
     "manifest": "https://github.com/CDeenen/LockView/releases/download/v1.0.0/module.json",

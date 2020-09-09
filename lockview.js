@@ -3,7 +3,34 @@ let _onDragCanvasPan_Default; //stores token-to-edge canvas move
 let pan_Default; //stores right-drag canvas move
 let _onDragLeftMove_Default
 let animatePan_Default;
+let viewWidth;
+let viewHeight;
 
+Hooks.on('ready', ()=>{
+  game.socket.on(`module.LockView`, (payload) =>{
+    console.log(payload);
+    if (game.userId == payload.receiverId && payload.msgType == "lockView_viewport" && game.settings.get("LockView","viewbox")){
+      if (payload.sceneId != canvas.scene.data._id) {
+        tooltip.hide();
+        return;
+      }
+      console.log("test");
+      tooltip.updateTooltip(
+        {
+          x: payload.viewPosition.x,
+          y: payload.viewPosition.y,
+          w: payload.viewWidth/payload.viewPosition.scale,
+          h: payload.viewHeight/payload.viewPosition.scale,
+          c: parseInt(payload.senderColor.replace(/^#/, ''), 16)
+        }
+      );
+    }
+    if (payload.msgType == "lockView_getData" && game.settings.get("LockView","Enable")){
+      console.log("requestTest");
+      sendPayload(payload.senderId);
+    }
+  });
+});
 
 Hooks.on("renderSceneConfig", (app, html, data) => {
    //fix cyclical issues
@@ -84,16 +111,14 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
   }
   app.object.setFlag('LockView', 'initX',initX);
   app.object.setFlag('LockView', 'initY',initY);
-  let scale = getScale(app.object.data.grid);
-  app.object.setFlag('LockView', 'scale',scale);
+  let scale = getScale();
   if (game.settings.get("LockView","Enable") == false) return;
   if (autoScale) updateLockView(initX,initY,scale);
   setBlocks(lockPan,lockZoom);
+  window.location.reload();
 });
 
-
-
-function getScale(gridDim){
+function getScale(){
   let screenSize = game.settings.get("LockView","ScreenWidth"); //horizontal mm
   let gridSize = game.settings.get("LockView","Gridsize"); //mm
   //Get the horizontal resolution
@@ -103,7 +128,8 @@ function getScale(gridDim){
   //Get the number of pixels/gridsquare to get the desired grid size
   let grid = res/horSq;
   //Get the scale factor
-  return grid/gridDim;
+  let scale = grid/canvas.scene.data.grid;
+  return scale;
 }
 
 function updateLockView(moveX,moveY,scale){
@@ -111,9 +137,13 @@ function updateLockView(moveX,moveY,scale){
   else if (moveX > -1 && moveY < 0) canvas.animatePan({x: moveX, scale: scale});
   else if (moveX < 0 && moveY > -1) canvas.animatePan({y: moveY, scale: scale});
   else if (moveX > -1 && moveY > -1) canvas.animatePan({x: moveX, y: moveY, scale: scale});
+  for (let i=0; i<game.data.users.length; i++)
+    if (game.data.users[i].role > 2) 
+      sendPayload(game.data.users[i]._id);
 }
 
 Hooks.once('init', function(){
+  CONFIG.debug.hooks = true;
   _onMouseWheel_Default = Canvas.prototype._onMouseWheel;
   _onDragCanvasPan_Default = Canvas.prototype._onDragCanvasPan;
   _onDragLeftMove_Default = Canvas.prototype._onDragLeftMove;
@@ -148,9 +178,26 @@ Hooks.once('init', function(){
     type: Number,
     onChange: x => window.location.reload()
   });
+  game.settings.register('LockView','viewbox', {
+    name: "Display Viewbox",
+    hint: "Draws the borders of what players who have the module enabled can see.",
+    scope: "global",
+    config: true,
+    default: false,
+    type: Boolean,
+    onChange: x => window.location.reload()
+});
 });
 
 Hooks.on('canvasReady',(canvas)=>{
+  if (game.user.isGM){
+    let payload = {
+        "msgType": "lockView_getData",
+        "senderId": game.userId
+    };
+    game.socket.emit(`module.LockView`, payload);
+  }
+
   if (game.settings.get("LockView","Enable") == false) return;
   let initX = -1;
   let initY = -1;
@@ -197,12 +244,41 @@ Hooks.on('canvasReady',(canvas)=>{
       canvas.scene.setFlag('LockView', 'initY', initY);
     }
   } 
-  let scale = canvas.scene.getFlag('LockView', 'scale');
-  
+  let scale = getScale();
+  console.log("Scale: "+scale+" initX: "+initX+" initY: " + initY);
   //else Canvas.prototype._onMouseWheel = null;
   if (autoScale) updateLockView(initX,initY,scale);
   setBlocks(lockPan,lockZoom);
+  
 });
+
+Hooks.on('canvasPan',()=>{
+  if (game.settings.get("LockView","Enable") == false) return;
+  for (let i=0; i<game.data.users.length; i++)
+    if (game.data.users[i].role > 2) 
+      sendPayload(game.data.users[i]._id);
+});
+
+//This hook is the last hook that is called when initializing scene. It's used to make sure that the payload that's sent is the most recent
+Hooks.on('renderSettings',()=>{
+  for (let i=0; i<game.data.users.length; i++)
+    if (game.data.users[i].role > 2) 
+      sendPayload(game.data.users[i]._id);
+});
+function sendPayload(target){
+  let payload = {
+      "msgType": "lockView_viewport",
+      "senderId": game.userId, 
+      "senderColor": game.user.color,
+      "receiverId": target, 
+      "sceneId": canvas.scene.data._id,
+      "viewPosition": canvas.scene._viewPosition,
+      "viewWidth": window.innerWidth,
+      "viewHeight": window.innerHeight
+  };
+  game.socket.emit(`module.LockView`, payload);
+  console.log(payload);
+}
 
 function setBlocks(lockPan,lockZoom){
   if (game.settings.get("LockView","Enable") == false) return;
@@ -280,4 +356,89 @@ function _onDragLeftMove_Override(event) {
   const isSelect = ["select", "target"].includes(game.activeTool);
   if ( isSelect && canvas.controls.select.active ) return this._onDragSelect(event);
   if ( layer instanceof PlaceablesLayer ) layer._onDragLeftMove(event);
+}
+
+
+
+
+let tooltip;
+
+Hooks.once("canvasInit", (canvas) => {
+  console.log("Canvas Init");
+  tooltip = new Tooltip();
+  canvas.stage.addChild(tooltip);
+});
+
+Hooks.on("canvasInit", (canvas) => {
+  tooltip.init();
+});
+
+Hooks.on("canvasReady", (_) => {
+  tooltip.init();
+});
+
+Hooks.on("hoverToken", (token, hovered) => {
+  
+});
+
+class Tooltip extends CanvasLayer {
+  constructor() {
+    super();
+    this.init();
+  }
+
+  init() {
+    this.container = new PIXI.Container();
+    this.maxWidth = 300;
+    this.padding = 6;
+    this.margin = 15;
+    this.linesMargin = 4;
+    this.width = 0;
+    this.height = 0;
+    this.addChild(this.container);
+  }
+
+  async draw() {
+    super.draw();
+  }
+
+  updateTooltip(data) {
+    this.container.removeChildren();
+    let height = data.h;
+    let width = data.w;
+     
+    var rect = new PIXI.Graphics();
+    // force canvas rendering for rectangle
+    rect.cacheAsBitmap = true;
+    console.log(data.c);
+    rect.lineStyle(2, data.c, 1);
+    //rect.beginFill(0xffffff, 0.8);
+    rect.drawRoundedRect(
+      0,
+      0,
+      data.w,
+      data.h,
+      3
+    );
+    
+
+    //rect.endFill();
+    this.container.addChild(rect);
+
+   
+    let x = data.x,
+      y = data.y;
+
+    x -= Math.floor(width / 2);
+    y -= Math.floor(height / 2);
+
+    this.container.setTransform(x, y);
+    this.container.visible = true;
+  }
+  
+  
+
+  hide() {
+    this.container.visible = false;
+  }
 }
