@@ -1,0 +1,12 @@
+{
+    "name": "LockView",
+    "title": "Lock View",
+    "description": "Locks the view for the purpose of using Foundry on a digital playmat, such as a horizontally mounted TV. Scales the scene so the gridsize is always displayed corresponding to a real-world size, and can block zooming and panning.",
+    "version": "1.0.0",
+    "author": "CDeenen",
+    "scripts": ["lockview.js"],
+    "compatibleCoreVersion": "0.6.6",
+    "url": "https://github.com/CDeenen/LockView",
+    "manifest": "https://github.com/CDeenen/LockView/releases/download/v1.0.0/module.json",
+    "download": "https://github.com/CDeenen/LockView/releases/download/v1.0.0/StepCounter.zip"
+  }
