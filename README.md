@@ -22,6 +22,8 @@ There are some more settings in the module settings screen:<br>
 ### Future plans
 <ol>
 <li>Add a button on the left of the screen that gives control voer the viewbox, such as moving and scaling it (thus panning and scaling the player's scene), and enabling/disabling the viewbox (instead of a checkbox in the settings)</li>
+<li>Find a way to disable panning when a token is moved to the edge of the screen</li>
+<li>Check compatibility with modules that move tokens around, for example, using teleport</li>
 </ol>
 
 ## Software Versions & Module Incompatibilities
