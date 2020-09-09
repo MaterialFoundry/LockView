@@ -86,6 +86,7 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
   app.object.setFlag('LockView', 'initY',initY);
   let scale = getScale(app.object.data.grid);
   app.object.setFlag('LockView', 'scale',scale);
+  if (game.settings.get("LockView","Enable") == false) return;
   if (autoScale) updateLockView(initX,initY,scale);
   setBlocks(lockPan,lockZoom);
 });
@@ -204,6 +205,7 @@ Hooks.on('canvasReady',(canvas)=>{
 });
 
 function setBlocks(lockPan,lockZoom){
+  if (game.settings.get("LockView","Enable") == false) return;
   if (lockZoom) Canvas.prototype._onMouseWheel = _Override;
   else Canvas.prototype._onMouseWheel = _onMouseWheel_Default;
   if (lockPan) {
