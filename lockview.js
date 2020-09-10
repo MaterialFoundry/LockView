@@ -8,13 +8,11 @@ let viewHeight;
 
 Hooks.on('ready', ()=>{
   game.socket.on(`module.LockView`, (payload) =>{
-    console.log(payload);
     if (game.userId == payload.receiverId && payload.msgType == "lockView_viewport" && game.settings.get("LockView","viewbox")){
       if (payload.sceneId != canvas.scene.data._id) {
         tooltip.hide();
         return;
       }
-      console.log("test");
       tooltip.updateTooltip(
         {
           x: payload.viewPosition.x,
@@ -26,7 +24,6 @@ Hooks.on('ready', ()=>{
       );
     }
     if (payload.msgType == "lockView_getData" && game.settings.get("LockView","Enable")){
-      console.log("requestTest");
       sendPayload(payload.senderId);
     }
   });
@@ -142,8 +139,8 @@ function updateLockView(moveX,moveY,scale){
       sendPayload(game.data.users[i]._id);
 }
 
-//Hooks.once('init', function(){
-  CONFIG.debug.hooks = true;
+Hooks.once('init', function(){
+  //CONFIG.debug.hooks = true;
   _onMouseWheel_Default = Canvas.prototype._onMouseWheel;
   _onDragCanvasPan_Default = Canvas.prototype._onDragCanvasPan;
   _onDragLeftMove_Default = Canvas.prototype._onDragLeftMove;
@@ -181,12 +178,12 @@ function updateLockView(moveX,moveY,scale){
   game.settings.register('LockView','viewbox', {
     name: "Display Viewbox",
     hint: "Draws the borders of what players who have the module enabled can see.",
-    scope: "global",
+    scope: "world",
     config: true,
     default: false,
     type: Boolean,
     onChange: x => window.location.reload()
-});
+  });
 });
 
 Hooks.on('canvasReady',(canvas)=>{
@@ -245,7 +242,6 @@ Hooks.on('canvasReady',(canvas)=>{
     }
   } 
   let scale = getScale();
-  console.log("Scale: "+scale+" initX: "+initX+" initY: " + initY);
   //else Canvas.prototype._onMouseWheel = null;
   if (autoScale) updateLockView(initX,initY,scale);
   setBlocks(lockPan,lockZoom);
@@ -261,6 +257,7 @@ Hooks.on('canvasPan',()=>{
 
 //This hook is the last hook that is called when initializing scene. It's used to make sure that the payload that's sent is the most recent
 Hooks.on('renderSettings',()=>{
+  if (game.settings.get("LockView","Enable") == false) return;
   for (let i=0; i<game.data.users.length; i++)
     if (game.data.users[i].role > 2) 
       sendPayload(game.data.users[i]._id);
@@ -277,7 +274,6 @@ function sendPayload(target){
       "viewHeight": window.innerHeight
   };
   game.socket.emit(`module.LockView`, payload);
-  console.log(payload);
 }
 
 function setBlocks(lockPan,lockZoom){
@@ -364,7 +360,6 @@ function _onDragLeftMove_Override(event) {
 let tooltip;
 
 Hooks.once("canvasInit", (canvas) => {
-  console.log("Canvas Init");
   tooltip = new Tooltip();
   canvas.stage.addChild(tooltip);
 });
@@ -410,7 +405,6 @@ class Tooltip extends CanvasLayer {
     var rect = new PIXI.Graphics();
     // force canvas rendering for rectangle
     rect.cacheAsBitmap = true;
-    console.log(data.c);
     rect.lineStyle(2, data.c, 1);
     //rect.beginFill(0xffffff, 0.8);
     rect.drawRoundedRect(

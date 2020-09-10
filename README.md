@@ -6,7 +6,7 @@ It has the following functionality that can be switched on or off in the scene c
 <li><b>Zoom Lock</b> - Locks the zoom/fixes the scale, to prevent the user from accidentally messing up the autoscale. Can also be used without 'Autoscale'. This ignores the 'zoom' at 'Initial View Position' in the scene configuration screen</li>
 <li><b>Pan Lock</b> - Locks the panning of the scene. If you use physical minis you don't want to accidentally pan</li>
 </ul>
-<b>Note 1:</b> When using both 'Autoscale' and 'Pan Lock', when loading a scene and after closing the scene configuration screen, the scene will automatically set the view position to the 'Initial View Position' as set in the scene configuration screen.<br>
+<b>Note 1:</b> The scene will need to be reloaded after changing these settings.<br>
 <b>Note 2:</b> When a token is moved to the edge of the screen, the scene is automatically panned. I have not yet found a way to disable this.<br>
 
 ### Settings
@@ -16,12 +16,12 @@ There are some more settings in the module settings screen:<br>
 <li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV</li>
 <li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
 <li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
-<li><b>Display Viewbox</b> - Draws a square on the GM's screen that corresponds with the borders of the display of players that have the module enabled</li>
+<li><b>Display Viewbox</b> - Draws a square on the GM's screen that corresponds with the borders of the display of players that have the module enabled. The color of the square will be the same as the 'Player Color'</li>
 </ul>
 
 ### Future plans
 <ol>
-<li>Add a button on the left of the screen that gives control voer the viewbox, such as moving and scaling it (thus panning and scaling the player's scene), and enabling/disabling the viewbox (instead of a checkbox in the settings)</li>
+<li>Add a button on the left of the screen that gives control over the viewbox, such as moving and scaling it (thus panning and scaling the player's scene), and enabling/disabling the viewbox (instead of a checkbox in the settings)</li>
 <li>Find a way to disable panning when a token is moved to the edge of the screen</li>
 <li>Check compatibility with modules that move tokens around, for example, using teleport</li>
 </ol>
