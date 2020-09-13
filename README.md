@@ -63,7 +63,3 @@ If you have any suggestions or bugs to report, feel free to contact me on Discor
 <b>Main author:</b> Cristian Deenen (Cris#6864 on Discord)<br>
 <b>Other:</b> The tooltip class was modified from the vtta-party module by Sebastian Will from <a href="https://www.vttassets.com">VTTA Assets</a><br>
 settings-extender was written by <a href="https://gitlab.com/foundry-azzurite/settings-extender">Azzurite</a> 
-
-## Changelog
-<b>v1.0.0</b> - 09-09-2020 - Initial release<br>
-<b>v1.0.1</b> - 12-09-2020 - Fix: Refresh no longer needed after changing scene configuration. Added: Lock override keybinding, reset button, lock override buttons, viewbox button, force enable tickbox<br>
