@@ -38,9 +38,7 @@ On the left of the screen, there are new control buttons for the GM:
 <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled clients can see. The color of the square corresponds with the 'Player Color'</li>
 </ul>
 
-
-![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/controlButtons.png)
-
+![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons.png)
 
 ### Viewbox
 
