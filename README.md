@@ -1,5 +1,10 @@
 # Lock View
 Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that was made to make play using a digital playmat, such as a horizontally mounted TV, easier.<br>
+The module has 4 main functions:
+-Autoscaling the grid so the on-screen grid corresponds with a real-world measurement
+-Disabling zooming
+-Disabling panning
+-Adding a viewbox so the GM can see what's shown on the TV
 
 ### Scene Settings
 In the scene settings screen, in 'Ambience and Atmosphere', you can find the following settings:
@@ -9,6 +14,8 @@ In the scene settings screen, in 'Ambience and Atmosphere', you can find the fol
 <li><b>Pan Lock</b> - Locks the panning of the scene. If you use physical minis you don't want to accidentally pan</li>
 </ul>
 <b>Note:</b> When a token is moved to the edge of the screen and in some other cases, the scene is automatically panned. I have not yet found a way to disable this.<br>
+
+![sceneSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/SceneSettings.png)
 
 ### Module Settings
 There are some more settings in the module settings screen:<br>
@@ -20,6 +27,8 @@ There are some more settings in the module settings screen:<br>
 <li><b>Lock Override</b> - Enter a keybinding that allows you to override the zoom and pan lock while the keys are pressed</li>
 </ul>
 
+![moduleSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ModuleSettings.png)
+
 ### Control Buttons
 On the left of the screen, there are new control buttons for the GM:
 <ul>
@@ -29,6 +38,11 @@ On the left of the screen, there are new control buttons for the GM:
 <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled clients can see. The color of the square corresponds with the 'Player Color'</li>
 </ul>
 
+![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/controlButtons.png)
+
+### Viewbox
+
+![viewBox](https://github.com/CDeenen/LockView/blob/master/img/examples/ViewBox.png)
 
 ### Future plans
 <ol>
