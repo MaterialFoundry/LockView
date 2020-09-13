@@ -1,10 +1,10 @@
 # Lock View
 Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that was made to make play using a digital playmat, such as a horizontally mounted TV, easier.<br>
-The module has 4 main functions:
--Autoscaling the grid so the on-screen grid corresponds with a real-world measurement
--Disabling zooming
--Disabling panning
--Adding a viewbox so the GM can see what's shown on the TV
+The module has 4 main functions:<br>
+-Autoscaling the grid so the on-screen grid corresponds with a real-world measurement<br>
+-Disabling zooming<br>
+-Disabling panning<br>
+-Adding a viewbox so the GM can see what's shown on the TV<br>
 
 ### Scene Settings
 In the scene settings screen, in 'Ambience and Atmosphere', you can find the following settings:
