@@ -15,7 +15,7 @@ In the scene settings screen, in 'Ambience and Atmosphere', you can find the fol
 </ul>
 <b>Note:</b> When a token is moved to the edge of the screen and in some other cases, the scene is automatically panned. I have not yet found a way to disable this.<br>
 
-![sceneSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/SceneSettings.png)
+![sceneSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons.png)
 
 ### Module Settings
 There are some more settings in the module settings screen:<br>
