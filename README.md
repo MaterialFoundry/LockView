@@ -45,7 +45,9 @@ On the left of the screen, there are new control buttons for the GM:<br>
 </ul>
 <b>Note:</b> The behaviour of the control buttons has changed compared to v1.0.1<br>
 
-![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons.png)
+
+![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons2.png)
+
 
 ### Viewbox
 
