@@ -6,24 +6,34 @@ let animatePan_Default;
 let _onClickRight_Default;
 let viewWidth;
 let viewHeight;
-let lockPan = false;
-let lockZoom = false;
 let autoScale = false;
 let viewboxStorage; 
 let viewbox; //stores current viewbox
-let tooltip;
+let tooltip = [];
 
 Hooks.on('ready', ()=>{
   game.socket.on(`module.LockView`, (payload) =>{
+    //console.log(payload);
     //draw a box if the TV's client sends their view
     if (game.userId == payload.receiverId && payload.msgType == "lockView_viewport"){
       viewboxStorage = payload;
       if(game.settings.get("LockView","viewbox")){
+        let senderNumber;
+        let senderNumbers = Array.from(game.users);
+        for (let i=0; i<senderNumbers.length; i++)
+          if (senderNumbers[i].data._id == payload.senderId)
+            senderNumber = i;
         if (payload.sceneId != canvas.scene.data._id) {
-          tooltip.hide();
+          if(tooltip[senderNumber] != undefined)
+            tooltip[senderNumber].hide();
           return;
         }
-        tooltip.updateTooltip(
+        if(tooltip[senderNumber] == undefined){
+          tooltip[senderNumber] = new Tooltip();
+          canvas.stage.addChild(tooltip[senderNumber]);
+          tooltip[senderNumber].init();
+        }
+        tooltip[senderNumber].updateTooltip(
           {
             x: payload.viewPosition.x,
             y: payload.viewPosition.y,
@@ -40,43 +50,72 @@ Hooks.on('ready', ()=>{
     else if (payload.msgType == "lockView_update") {
       if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
       let scale = getScale();
-      if (payload.autoScale == true) updateView(payload.initX,payload.initY,scale);
-      lockPan = payload.lockPan;
-      lockZoom = payload.lockZoom;
-      setBlocks();
+      if (payload.autoScale == true) updateView(-1,-1,scale);
+      let lockPan = payload.lockPan;
+      let lockZoom = payload.lockZoom;
+      setBlocks(lockPan,lockZoom);
     }
     else if (payload.msgType == "lockView_resetView"){
       if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
       let initX = canvas.scene.getFlag('LockView', 'initX');
       let initY = canvas.scene.getFlag('LockView', 'initY');
-      autoScale = canvas.scene.getFlag('LockView', 'autoScale');
-      let scale = getScale();
-      
+      let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
+      let scale;
+      if (payload.scaleSett == 0) scale = canvas.scene._viewPosition.scale;
+      else {
+        if (autoScale && payload.scaleSett == 3) scale = getScale();
+        else if (autoScale == false && payload.scaleSett == 3) scale = canvas.scene._viewPosition.scale;
+        else if (payload.scaleSett == 1) scale = payload.scale;
+        else scale = canvas.scene.data.initial.scale;
+      }
       let lockPanStorage = canvas.scene.getFlag('LockView', 'lockPan');
       let lockZoomStorage = canvas.scene.getFlag('LockView', 'lockZoom');
-      lockPan = false;
-      lockZoom = false;
-      setBlocks();
+      let lockPan = false;
+      let lockZoom = false;
+      setBlocks(lockPan,lockZoom);
       updateView(initX,initY,scale);
       lockPan = lockPanStorage;
       lockZoom = lockZoomStorage;
-      setBlocks(); 
+      setBlocks(lockPan,lockZoom); 
       
     }
     else if (payload.msgType == "lockView_newViewport"){
-      let scaleChange;
-      if (payload.scaleChange == 0) canvas.scene._viewPosition.scale;
-      else scaleChange = canvas.scene._viewPosition.scale*payload.scaleChange;
-
+      let scale;
+      if (payload.scaleSett == 0) scale = canvas.scene._viewPosition.scale;
+      else {
+        if (autoScale && payload.scaleSett == 3) scale = getScale();
+        else if (autoScale == false && payload.scaleSett == 3) scale = canvas.scene._viewPosition.scale;
+        else if (payload.scaleSett == 1) scale = payload.scale;
+        else if (payload.type == "shift") scale = scale = canvas.scene._viewPosition.scale;
+        else scale = canvas.scene.data.initial.scale;
+      }
       let lockPanStorage = canvas.scene.getFlag('LockView', 'lockPan');
       let lockZoomStorage = canvas.scene.getFlag('LockView', 'lockZoom');
-      lockPan = false;
-      lockZoom = false;
-      setBlocks();
-      updateView(payload.shiftX+canvas.scene._viewPosition.x,payload.shiftY+canvas.scene._viewPosition.y,scaleChange);
+      let lockPan = false;
+      let lockZoom = false;
+      let shiftX = canvas.scene._viewPosition.x;
+      let shiftY = canvas.scene._viewPosition.y;
+      if (payload.type == "grid"){
+        shiftX += payload.shiftX*canvas.scene.data.grid;
+        shiftY += payload.shiftY*canvas.scene.data.grid;
+      }
+      else if (payload.type == "coords"){
+        shiftX = payload.shiftX;
+        shiftY = payload.shiftY;
+      }
+      else {
+        shiftX = payload.shiftX+canvas.scene._viewPosition.x;
+        shiftY = payload.shiftY+canvas.scene._viewPosition.y;
+      }
+      if (payload.type == "shift" && payload.scaleChange != 0){
+        scale = canvas.scene._viewPosition.scale*payload.scaleChange;
+      }
+      setBlocks(lockPan,lockZoom);
+      
+      updateView(shiftX,shiftY,scale);
       lockPan = lockPanStorage;
       lockZoom = lockZoomStorage;
-      setBlocks();
+      setBlocks(lockPan,lockZoom);
     }
   });
 });
@@ -154,18 +193,20 @@ Hooks.once('init', function(){
 });
 
 Hooks.once("canvasInit", (canvas) => {
-  tooltip = new Tooltip();
-  canvas.stage.addChild(tooltip);
+  
   canvas.LockView = canvas.stage.addChildAt(new LockViewLayer(canvas), 8);
   
 });
 
 Hooks.on("canvasInit", (canvas) => {
-  if (game.user._isGM) tooltip.init();
+  if (game.user._isGM) 
+    for (let i=0; i< tooltip.length; i++)
+      if (tooltip[i] != undefined)
+      tooltip[i].init();
 });
 
 Hooks.on('canvasReady',(canvas)=>{
-  tooltip.init();
+  
 
   if (game.user.isGM){
     let payload = {
@@ -201,7 +242,7 @@ Hooks.on('canvasReady',(canvas)=>{
   }
   lockPan = canvas.scene.getFlag('LockView', 'lockPan');
   lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
-  
+  autoscale = canvas.scene.getFlag('LockView', 'autoscale');
   updateSettings();
   checkKeys();
 });
@@ -226,34 +267,125 @@ Hooks.on("getSceneControlButtons", (controls) => {
       tools: [
         {
           name: "resetView",
-          title: "Reset View",
+          title: "Set View",
           icon: "fas fa-compress-arrows-alt",
           visible: "true",
           button: true,
           onClick: () => {
-           // if (viewboxStorage == undefined || viewboxStorage.sceneId == undefined || viewboxStorage.sceneId != canvas.scene.data._id) {
-           //   ui.notifications.warn("No connected and enabled clients on this scene");
-           // }
-           // else
-              new Dialog({
-                title: "Reset View",
-                content: "<p>Reset the view of the connected clients to the initial position?</p>",
-                buttons:{
-                  Yes: {
-                    label: `Yes`,
-                    callback: () => {
-                      let payload = {
+            if (viewboxStorage == undefined || viewboxStorage.sceneId == undefined || viewboxStorage.sceneId != canvas.scene.data._id) {
+              ui.notifications.warn("No connected and enabled clients on this scene");
+              return;
+            }
+            let options = `
+              <option value=0>Reset to initial view</option>
+              <option value=1>Move grid spaces</option>
+              <option value=2>Move to coordinates</option>
+            `;
+            let optionsScale = `
+              <option value=0>Ignore scale</option>
+              <option value=1>Set scale</option>
+              <option value=2>Reset scale</option>
+              <option value=3>Autoscale</option>
+            `;
+            let dialogTemplate = 
+            `
+            <div class="form-group">
+              <div style="display:flex"> 
+                <div  style="flex:1"></div>
+                <span style="flex:1">
+                  <select style="width:200px" id="selectOption">${options}</select>
+                </span>
+                <div  style="flex:1"></div>
+              </div>
+              <p style="margin-bottom:10px;">
+              <div style="display:flex"> 
+                <div  style="flex:1"></div>
+                <span style="flex:1;">
+                  <select style="width:200px" id="scaleOption">${optionsScale}</select>
+                </span>
+                <div  style="flex:1"></div>
+              </div>
+              <p style="margin-bottom:15px;">
+            </div>
+            <div class="form-group" style="display:flex; flex-direction:row; justify-content:space-around" id="numberBoxes">
+                <span style="flex-basis=20%">
+                  X: 
+                  <input id="val1" type="number" style="width:75px" value=0 />
+                </span>
+                <span style="flex-basis=20%">
+                  Y: 
+                  <input id="val2" type="number" style="width:75px" value=0 />
+                </span>
+                <span style="flex-basis=20%">
+                  Scale: 
+                  <input id="sc" type="number" style="width:75px" value=1 />
+                </span>
+            </div>
+            <p style="margin-bottom:10px;">
+            <div>
+              <div  style="flex:1"></div>
+              
+              <p style="margin-bottom:10px;">
+            </div>   
+            `;
+            let d = new Dialog({
+              title: "Set View",
+              content: dialogTemplate,
+              buttons:{
+                Yes: {
+                  label: `Ok`,
+                  callback: (html) => {
+                    let x;
+                    let y;
+                    let selection;
+                    let option = html.find("#selectOption")[0].value;
+                    let scaleSett = html.find("#scaleOption")[0].value;
+                    let payload;
+
+                    x = html.find("#val1")[0].value;
+                    y = html.find("#val2")[0].value;
+                    scale = html.find("#sc")[0].value;
+
+                    if (option == 0){
+                      payload = {
                         "msgType": "lockView_resetView",
-                        "senderId": game.userId, 
+                        "senderId": game.userId,
+                        "scaleSett": scaleSett, 
+                        "scale": scale
                       };
-                      game.socket.emit(`module.LockView`, payload);
                     }
-                  },
-                  Cancel: {
-                    label: `Cancel`
+                    else if (option == 1){
+                      payload = {
+                        "msgType": "lockView_newViewport",
+                        "senderId": game.userId, 
+                        "shiftX": x,
+                        "shiftY": y,
+                        "scaleSett": scaleSett, 
+                        "scale": scale,
+                        "type": "grid"
+                      };
+                    }
+                    else if (option == 2){
+                      payload = {
+                        "msgType": "lockView_newViewport",
+                        "senderId": game.userId, 
+                        "shiftX": x,
+                        "shiftY": y,
+                        "scaleSett": scaleSett, 
+                        "scale": scale,
+                        "type": "coords"
+                      };
+                    }
+                    
+                    game.socket.emit(`module.LockView`, payload);
+                    
                   }
+                },
+                Cancel: {
+                  label: `Cancel`
                 }
-              }).render(true);
+              }
+            }).render(true);
           }
         },
         {
@@ -264,7 +396,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
           onClick: () => {
             let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock");
             let currentState = currentTool.active;
-            sendLockView_update(-1,-1,currentState,-1,-1);
+            sendLockView_update(currentState,-1,-1);
             canvas.scene.setFlag('LockView', 'lockPan', currentState);
             currentTool.active = currentState;   
             },
@@ -279,7 +411,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
           onClick: () => {
             let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock");
             let currentState = currentTool.active;
-            sendLockView_update(-1,-1,-1,currentState,-1)
+            sendLockView_update(-1,currentState,-1)
             canvas.scene.setFlag('LockView', 'lockZoom', currentState);
             currentTool.active = currentState;
             },
@@ -296,21 +428,24 @@ Hooks.on("getSceneControlButtons", (controls) => {
             let currentState = currentTool.active;
             if (currentState) {
               if (viewboxStorage == undefined || viewboxStorage.sceneId == undefined || viewboxStorage.sceneId != canvas.scene.data._id) {
-                tooltip.hide();
+                for (let i=0; i< tooltip.length; i++)
+                  if (tooltip[i] != undefined)
+                    tooltip[i].hide();
                 ui.notifications.warn("No connected and enabled clients on this scene");
               }
-              else
-                tooltip.updateTooltip(
-                  {
-                    x: viewboxStorage.viewPosition.x,
-                    y: viewboxStorage.viewPosition.y,
-                    w: viewboxStorage.viewWidth/viewboxStorage.viewPosition.scale,
-                    h: viewboxStorage.viewHeight/viewboxStorage.viewPosition.scale,
-                    c: parseInt(viewboxStorage.senderColor.replace(/^#/, ''), 16)
-                  }
-                );
+              else {
+                game.settings.set("LockView","viewbox",true);
+                let payload = {
+                  "msgType": "lockView_getData",
+                  "senderId": game.userId
+                };
+                game.socket.emit(`module.LockView`, payload);
+              }
             }
-            else tooltip.hide();
+            else 
+            for (let i=0; i< tooltip.length; i++)
+              if (tooltip[i] != undefined)
+                tooltip[i].hide();
             game.settings.set('LockView', 'viewbox', currentState);
             currentTool.active = currentState;    
             },
@@ -324,7 +459,9 @@ Hooks.on("getSceneControlButtons", (controls) => {
           visible: "true",
           onClick: () => {
             if (viewboxStorage == undefined || viewboxStorage.sceneId == undefined || viewboxStorage.sceneId != canvas.scene.data._id) {
-              tooltip.hide();
+              for (let i=0; i< tooltip.length; i++)
+                if (tooltip[i] != undefined)
+                  tooltip[i].hide();
               ui.notifications.warn("No connected and enabled clients on this scene");
               canvas.scene.setFlag('LockView', 'editViewbox', false);
               controls.find(controls => controls.name == "LockView").activeTool = undefined;
@@ -442,7 +579,7 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
     let initY = canvas.scene.data.initial.y;
     canvas.scene.setFlag('LockView','initX',initX);
     canvas.scene.setFlag('LockView','initY',initY);
-    sendLockView_update(-1,-1,lockPan,lockZoom,autoScale);
+    sendLockView_update(lockPan,lockZoom,autoScale);
     updateSettings();
 
     //set & render ui controls
@@ -456,17 +593,15 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
 Hooks.on('renderSettings',()=>{
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
     sendViewBox(game.data.users.find(users => users.role == 4)._id);
-  lockPan = canvas.scene.getFlag('LockView', 'lockPan');
-  lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
-  setBlocks(); 
+  let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+  let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+  setBlocks(lockPan,lockZoom); 
 });
 
-function sendLockView_update(initX,initY,lockPan,lockZoom,autoScale){
+function sendLockView_update(lockPan,lockZoom,autoScale){
   let payload = {
     "msgType": "lockView_update",
     "senderId": game.userId, 
-    "initX": initY,
-    "initY": initX,
     "lockPan": lockPan,
     "lockZoom": lockZoom,
     "autoScale": autoScale
@@ -478,12 +613,12 @@ function updateSettings(){
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
   let initX = canvas.scene.getFlag('LockView', 'initX');
   let initY = canvas.scene.getFlag('LockView', 'initY');
-  lockPan = canvas.scene.getFlag('LockView', 'lockPan');
-  lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
-  autoScale = canvas.scene.getFlag('LockView', 'autoScale');
+  let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+  let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+  let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   let scale = getScale();
   if (autoScale) updateView(initX,initY,scale);
-  setBlocks();
+  setBlocks(lockPan,lockZoom);
 }
 
 function getScale(){
@@ -514,6 +649,7 @@ function sendViewBox(target){
   let payload = {
       "msgType": "lockView_viewport",
       "senderId": game.userId, 
+      "senderName": game.user.name,
       "senderColor": game.user.color,
       "receiverId": target, 
       "sceneId": canvas.scene.data._id,
@@ -525,22 +661,21 @@ function sendViewBox(target){
 }
 
 //Block zooming and/or panning
-function setBlocks(){
+function setBlocks(lockPan,lockZoom){
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
-  if (lockZoom) Canvas.prototype._onMouseWheel = _Override;
-  else Canvas.prototype._onMouseWheel = _onMouseWheel_Default;
+
+  if (lockZoom == true) Canvas.prototype._onMouseWheel = _Override;
+  else if (lockZoom == false) Canvas.prototype._onMouseWheel = _onMouseWheel_Default;
   
-  if (lockPan) {
+  if (lockPan == true) {
     Canvas.prototype._onDragCanvasPan = _Override;  //draggin token to edge of screen
     Canvas.prototype.pan = pan_Override;  //right-mouse click & zoom
     Canvas.prototype.animatePan = _Override;
-    //Canvas.prototype._onDragLeftMove = _onDragLeftMove_Override;
   }
-  else {
+  else if (lockPan == false) {
     Canvas.prototype._onDragCanvasPan = _onDragCanvasPan_Default;
     Canvas.prototype.pan = pan_Default;
     Canvas.prototype._animatePan = animatePan_Default;
-    Canvas.prototype._onDragLeftMove = _onDragLeftMove_Default;
   }
 }
 
@@ -560,7 +695,8 @@ function _Override_VB_Pan({x=null, y=null, scale=null}={}) {
     "senderId": game.userId, 
     "shiftX": diffX,
     "shiftY": diffY,
-    "scaleChange": scaleChange
+    "scaleChange": scaleChange,
+    "type": "shift"
   };
   game.socket.emit(`module.LockView`, payload);
  
@@ -630,6 +766,7 @@ function checkKeys() {
   let fired = false;
   let lockPanStorage;
   let lockZoomStorage;
+  
   window.addEventListener("keydown", async (e) => {
     if (fired){}
     else if (window.Azzu.SettingsTypes.KeyBinding.eventIsForBinding(
@@ -637,20 +774,22 @@ function checkKeys() {
       window.Azzu.SettingsTypes.KeyBinding.parse(game.settings.get('LockView','lockOverride')))
   ) {
       fired = true;
+      let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+      let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
       lockPanStorage = lockPan;
       lockPan = false;
       lockZoomStorage = lockZoom;
       lockZoom = false;
-      setBlocks();
+      setBlocks(lockPan,lockZoom);
     }
   });
 
   window.addEventListener("keyup", (e) => {
     fired = false;
-    lockPan = canvas.scene.getFlag('LockView', 'lockPan');
-    lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+    let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+    let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
 
-    setBlocks();
+    setBlocks(lockPan,lockZoom);
   });
 }
 

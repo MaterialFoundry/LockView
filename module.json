@@ -1,8 +1,8 @@
 {
     "name": "LockView",
     "title": "Lock View",
-    "description": "Locks the view for the purpose of using Foundry on a digital playmat, such as a horizontally mounted TV. Scales the scene so the gridsize is always displayed corresponding to a real-world size, and can block zooming and panning.",
-    "version": "1.0.2",
+    "description": "Locks the view of players by enabling the GM to block zooming and panning. The module also gives control over the player view, allowing the GM to zoom and pan. Developed for the purpose of play on a digital playmat, such as a horizontally mounted TV, and for that purpose the module can scale the scene so the gridsize is always displayed corresponding to a real-world size.",
+    "version": "1.0.3",
     "author": "CDeenen",
     "scripts": [
       "./src/lockview.js",
@@ -11,6 +11,6 @@
     "socket": true,
     "compatibleCoreVersion": "0.6.6",
     "url": "https://github.com/CDeenen/LockView",
-    "manifest": "https://github.com/CDeenen/LockView/releases/download/v1.0.2/module.json",
-    "download": "https://github.com/CDeenen/LockView/releases/download/v1.0.2/LockView.zip"
+    "manifest": "https://github.com/CDeenen/LockView/releases/download/v1.0.3/module.json",
+    "download": "https://github.com/CDeenen/LockView/releases/download/v1.0.3/LockView.zip"
   }

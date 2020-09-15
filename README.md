@@ -1,5 +1,7 @@
 # Lock View
 Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that was made to make play using a digital playmat, such as a horizontally mounted TV, easier.<br>
+The module can also be useful for digital play, for example if you have a static screen and you don't want your players to move.<br>
+<br>
 The module has 4 main functions:<br>
 -Autoscaling: Scales the grid so the on-screen grid corresponds with a real-world measurement<br>
 -Zoom lock: Locks the zooming of the scene to prevent the user from (accidentally) messing up the autoscale<br>
@@ -17,7 +19,8 @@ In the scene settings screen, in 'Ambience and Atmosphere', you can find the fol
 <li><b>Zoom Lock</b> - Initial 'Zoom Lock' setting</li>
 <li><b>Autoscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch) set in the settings</li>
 </ul>
-The 'Pan Lock' and 'Zoom Lock' settings determine the initial settings. These are applied when a scene is loaded for the first time, or after closing the scene configuration screen.<br>
+The 'Pan Lock' and 'Zoom Lock' settings determine the initial settings. These are applied when a scene is loaded for the first time, or after closing the scene configuration screen. <br>
+After that, you can enable or disable the Pan and Zoom lock by pressing the control buttons (see below).<br>
 When closing the scene configuration screen and 'Autoscale' is enabled, the connected client's view will be reset to the initial position and calculated scale.<br>
 
 ![sceneSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/SceneSettings.png)
@@ -37,7 +40,7 @@ There are some more settings in the module settings screen:<br>
 ### Control Buttons
 On the left of the screen, there are new control buttons for the GM:<br>
 <ul>
-<li><b>Reset View</b> - Resets the view of enabled clients back to the initial view, as set in the scene configuration screen</li>
+<li><b>Set View</b> - Creates a dialog box with options to set the view, see below</li>
 <li><b>Pan Lock</b> - Shows the current state of the 'Pan Lock'. If on, panning is disabled</li>
 <li><b>Zoom Lock</b> - Shows the current state of the 'Zoom Lock'. If on, zooming is disabled</li>
 <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled clients can see. The color of the square corresponds with the 'Player Color'</li>
@@ -45,21 +48,32 @@ On the left of the screen, there are new control buttons for the GM:<br>
 </ul>
 <b>Note:</b> The behaviour of the control buttons has changed compared to v1.0.1<br>
 
-
 ![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons2.png)
 
+#### Set View Dialog
+After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of connected clients.<br>
+There's 2 dropdown menu's, and 3 number boxes<br>
+<br>
+<b>Top dropdown menu (X & Y movement)</b><br>
+<ul>
+<li><b>Reset to initial view</b> - Resets the view to the initial view position, as set in the scene configuration screen</li>
+<li><b>Move grid spaces</b> - Moves the view in grid-units, relative to the current view. So setting X to 1 will move the view 1 gridspace to the right</li>
+<li><b>Move to coordinates</b> - Moves the view to the absolute coordinates as set in the number boxes</li>
+</ul>
+<br>
+<b>Bottom dropdown menu (Zooming)</b><br>
+<ul>
+<li><b>Ignore scale</b> - No zooming will occur</li>
+<li><b>Set scale</b> - Zooms to the scale size set in the 'Scale' box</li>
+<li><b>Reset scale</b> - Resets the zoom to the initial zoom factor, as set in the scene configuration screen</li>
+<li><b>Autoscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch) set in the settings </li>
+</ul>
+
+![setViewDialog](https://github.com/CDeenen/LockView/blob/master/img/examples/SetViewDialog.png)
 
 ### Viewbox
 
 ![viewBox](https://github.com/CDeenen/LockView/blob/master/img/examples/ViewBox.png)
-
-### Future plans
-<ol>
-<li>Add a button on the left of the screen that gives control over the viewbox, such as moving and scaling it (thus panning and scaling the player's scene)</li>
-<li>Find a way to disable panning when a token is moved to the edge of the screen</li>
-<li>Check compatibility with modules that move tokens around, for example, using teleport</li>
-<li>Remove TV settings from GMs settings page</ls>
-</ol>
 
 ## Software Versions & Module Incompatibilities
 <b>Foundry VTT:</b> Tested on 0.6.6<br>
