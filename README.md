@@ -1,6 +1,5 @@
 # Lock View
-Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that was made to make play using a digital playmat, such as a horizontally mounted TV, easier.<br>
-The module can also be useful for digital play, for example if you have a static screen and you don't want your players to move.<br>
+Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that was made to make play using a digital playmat, such as a horizontally mounted TV, easier. The module can also be useful for digital play, for example if you have a static screen and you don't want your players to move.<br>
 <br>
 The module has 4 main functions:<br>
 -Autoscaling: Scales the grid so the on-screen grid corresponds with a real-world measurement<br>
@@ -17,11 +16,11 @@ In the scene settings screen, in 'Ambience and Atmosphere', you can find the fol
 <ul>
 <li><b>Pan Lock</b> - Initial 'Pan Lock' setting</li>
 <li><b>Zoom Lock</b> - Initial 'Zoom Lock' setting</li>
-<li><b>Autoscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch) set in the settings</li>
+<li><b>Autoscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch), as set in the settings</li>
 </ul>
-The 'Pan Lock' and 'Zoom Lock' settings determine the initial settings. These are applied when a scene is loaded for the first time, or after closing the scene configuration screen. <br>
-After that, you can enable or disable the Pan and Zoom lock by pressing the control buttons (see below).<br>
+The 'Pan Lock' and 'Zoom Lock' settings determine the initial settings. These are applied when a scene is loaded for the first time, or after closing the scene configuration screen. After that, you can enable or disable the Pan and Zoom lock by pressing the control buttons (see below).<br>
 When closing the scene configuration screen and 'Autoscale' is enabled, the connected client's view will be reset to the initial position and calculated scale.<br>
+<br>
 
 ![sceneSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/SceneSettings.png)
 
@@ -47,12 +46,12 @@ On the left of the screen, there are new control buttons for the GM:<br>
 <li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the client's view. Right-click dragging drags the viewbox and pans the client's sceen, the scrollwheel increases or decreases the size of the viewbox and zooms the client's screen in or out</li>
 </ul>
 <b>Note:</b> The behaviour of the control buttons has changed compared to v1.0.1<br>
+<br>
 
 ![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons2.png)
 
 #### Set View Dialog
-After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of connected clients.<br>
-There's 2 dropdown menu's, and 3 number boxes<br>
+After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of connected clients. There's 2 dropdown menu's, and 3 number boxes<br>
 <br>
 <b>Top dropdown menu (X & Y movement)</b><br>
 <ul>
@@ -60,13 +59,13 @@ There's 2 dropdown menu's, and 3 number boxes<br>
 <li><b>Move grid spaces</b> - Moves the view in grid-units, relative to the current view. So setting X to 1 will move the view 1 gridspace to the right</li>
 <li><b>Move to coordinates</b> - Moves the view to the absolute coordinates as set in the number boxes</li>
 </ul>
-<br>
+
 <b>Bottom dropdown menu (Zooming)</b><br>
 <ul>
 <li><b>Ignore scale</b> - No zooming will occur</li>
 <li><b>Set scale</b> - Zooms to the scale size set in the 'Scale' box</li>
 <li><b>Reset scale</b> - Resets the zoom to the initial zoom factor, as set in the scene configuration screen</li>
-<li><b>Autoscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch) set in the settings </li>
+<li><b>Autoscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch), as set in the settings </li>
 </ul>
 
 ![setViewDialog](https://github.com/CDeenen/LockView/blob/master/img/examples/SetViewDialog.png)
