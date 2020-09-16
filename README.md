@@ -10,6 +10,8 @@ The module has 4 main functions:<br>
 'Autoscaling', 'Zoom Lock' and 'Pan Lock' can be set for each scene independently.<br>
 'Zoom Lock' and 'Pan Lock' can be enabled and disabled at any time using control buttons.<br>
 These functions can be applied to selected connected clients (must be set in the client's module settings screen), or for all non-GM connected clients (is set in the GM's module settings screen).<br>
+<br>
+<b>Note: When 'Zoom Lock' or 'Pan Lock' is enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work.</b>
 
 ### Scene Settings
 In the scene settings screen, in 'Ambience and Atmosphere', you can find the following settings:
@@ -76,7 +78,7 @@ After clicking the 'Set View' control button, a dialog box appears that gives mu
 
 ## Software Versions & Module Incompatibilities
 <b>Foundry VTT:</b> Tested on 0.6.6<br>
-<b>Module Incompatibilities:</b> None known<br>
+<b>Module Incompatibilities:</b> Modules that try to pan or zoom, such as LookAtThat<br>
 
 ## Feedback
 If you have any suggestions or bugs to report, feel free to contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.
