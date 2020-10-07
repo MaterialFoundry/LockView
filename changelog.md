@@ -1,4 +1,14 @@
 # Changelog
+### v1.0.4 - 06-10-2020
+Additions:
+<ul>
+<li>Localization support</li>
+</ul>
+Other:
+<ul>
+<li>Confirmed core 0.7.3 support</li>
+</ul>
+
 ### v1.0.3 - 15-09-2020
 Fixes:
 <ul>
