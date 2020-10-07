@@ -6,10 +6,12 @@ let animatePan_Default;
 let _onClickRight_Default;
 let viewWidth;
 let viewHeight;
-let autoScale = false;
+let autoScale = 0;
 let viewboxStorage; 
 let viewbox; //stores current viewbox
 let tooltip = [];
+let windowWidthOld= -1;
+let windowHeightOld = -1;
 
 Hooks.on('ready', ()=>{
   game.socket.on(`module.LockView`, (payload) =>{
@@ -51,14 +53,10 @@ Hooks.on('ready', ()=>{
       if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
       let initX = -1;
       let initY = -1;
-      let scale;
-      if (payload.autoScale == true) scale = getScale();
-      else if (payload.forceInit == true) {
-        scale = canvas.scene.data.initial.scale;
-        initX = canvas.scene.getFlag('LockView', 'initX');
-        initY = canvas.scene.getFlag('LockView', 'initY');
-      }
-      if (payload.autoScale || payload.forceInit) updateView(initX,initY,scale);
+      if (payload.autoScale == 1 || payload.autoScale == 2) scaleToFit(payload.autoScale);
+      else if (payload.autoScale == 3 && payload.forceInit) updateView(initX,initY,getScale());
+      else if (payload.autoScale == 3) updateView(-1,-1,getScale());
+      else if (payload.forceInit == true) updateView(initX,initY,canvas.scene.data.initial.scale);
       let lockPan = payload.lockPan;
       let lockZoom = payload.lockZoom;
       setBlocks(lockPan,lockZoom);
@@ -69,19 +67,22 @@ Hooks.on('ready', ()=>{
       let initY = canvas.scene.getFlag('LockView', 'initY');
       let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
       let scale;
+      
       if (payload.scaleSett == 0) scale = canvas.scene._viewPosition.scale;
-      else {
-        if (autoScale && payload.scaleSett == 3) scale = getScale();
-        else if (autoScale == false && payload.scaleSett == 3) scale = canvas.scene._viewPosition.scale;
-        else if (payload.scaleSett == 1) scale = payload.scale;
-        else scale = canvas.scene.data.initial.scale;
-      }
+      else if (payload.scaleSett == 1) scale = payload.scale;
+      else if (payload.scaleSett == 3){
+        if (autoScale == 3) scale = getScale();
+        else scale = canvas.scene._viewPosition.scale;
+      } 
+      else scale = canvas.scene.data.initial.scale;
+      
       let lockPanStorage = canvas.scene.getFlag('LockView', 'lockPan');
       let lockZoomStorage = canvas.scene.getFlag('LockView', 'lockZoom');
       let lockPan = false;
       let lockZoom = false;
       setBlocks(lockPan,lockZoom);
-      updateView(initX,initY,scale);
+      if (payload.autoScale == 1 || payload.autoScale == 2) scaleToFit(payload.autoScale);
+      else updateView(initX,initY,scale);
       lockPan = lockPanStorage;
       lockZoom = lockZoomStorage;
       setBlocks(lockPan,lockZoom); 
@@ -154,7 +155,7 @@ Hooks.once('init', function(){
     config: true,
     default: 1,
     type: Number,
-    onChange: x => window.location.reload()
+    onChange: x => updateSettings()
   });
   game.settings.register("LockView", "Gridsize", {
     name: "Gridsize",
@@ -163,7 +164,7 @@ Hooks.once('init', function(){
     config: true,
     default: 25,
     type: Number,
-    onChange: x => window.location.reload()
+    onChange: x => updateSettings()
   });
   game.settings.register('LockView','ForceEnable', {
     name: "Force Enable",
@@ -230,7 +231,7 @@ Hooks.on('canvasReady',(canvas)=>{
     else canvas.scene.setFlag('LockView', 'lockZoom', false);
 
     if (canvas.scene.data.flags["LockView"].autoScale){}
-    else canvas.scene.setFlag('LockView', 'autoScale', false);
+    else canvas.scene.setFlag('LockView', 'autoScale', 0);
   }
   else if ((game.settings.get("LockView","Enable") || game.settings.get("LockView","ForceEnable")) && canvas.scene.getFlag('LockView', 'lockPan')){
     if (canvas.scene.data.flags["LockView"].initX){}
@@ -255,10 +256,12 @@ Hooks.on('canvasReady',(canvas)=>{
   checkKeys();
 });
 
-Hooks.on('canvasPan',(a,viewposition)=>{
+Hooks.on('canvasPan',(canvas,viewposition)=>{
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
+  scaleToFit();
   sendViewBox(game.data.users.find(users => users.role == 4)._id);
   viewbox = canvas.scene._viewPosition;
+  
 });
 
 Hooks.on('updateToken',(scene,token,change)=>{
@@ -286,14 +289,16 @@ Hooks.on("getSceneControlButtons", (controls) => {
             }
             let options = `
               <option value=0>Reset to initial view</option>
-              <option value=1>Move grid spaces</option>
-              <option value=2>Move to coordinates</option>
+              <option value=1>Horizontal Fit</option>
+              <option value=2>Vertical Fit</option>
+              <option value=3>Move grid spaces</option>
+              <option value=4>Move to coordinates</option>
             `;
             let optionsScale = `
               <option value=0>Ignore scale</option>
               <option value=1>Set scale</option>
               <option value=2>Reset scale</option>
-              <option value=3>Autoscale</option>
+              <option value=3>Physical gridscale</option>
             `;
             let dialogTemplate = 
             `
@@ -354,15 +359,16 @@ Hooks.on("getSceneControlButtons", (controls) => {
                     y = html.find("#val2")[0].value;
                     scale = html.find("#sc")[0].value;
 
-                    if (option == 0){
+                    if (option < 3){
                       payload = {
                         "msgType": "lockView_resetView",
                         "senderId": game.userId,
                         "scaleSett": scaleSett, 
+                        "autoScale": option,
                         "scale": scale
                       };
                     }
-                    else if (option == 1){
+                    else if (option == 3){
                       payload = {
                         "msgType": "lockView_newViewport",
                         "senderId": game.userId, 
@@ -373,7 +379,7 @@ Hooks.on("getSceneControlButtons", (controls) => {
                         "type": "grid"
                       };
                     }
-                    else if (option == 2){
+                    else if (option == 4){
                       payload = {
                         "msgType": "lockView_newViewport",
                         "senderId": game.userId, 
@@ -526,7 +532,7 @@ Hooks.on("renderSceneControls", (controls) => {
 Hooks.on("renderSceneConfig", (app, html, data) => {
   let lockPan_Default = false;
   let lockZoom_Default = false;
-  let autoScale = false;
+  let autoScale = 0;
   let forceInit = false;
   if(app.object.data.flags["LockView"]){
     if (app.object.data.flags["LockView"].lockPan_Default){
@@ -541,12 +547,26 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
 
     if (app.object.data.flags["LockView"].autoScale){
       autoScale = app.object.getFlag('LockView', 'autoScale');
-    } else app.object.setFlag('LockView', 'autoScale', false);
+    } else app.object.setFlag('LockView', 'autoScale', 0);
 
     if (app.object.data.flags["LockView"].forceInit){
       forceInit = app.object.getFlag('LockView', 'forceInit');
     } else app.object.setFlag('LockView', 'forceInit', false);
   } 
+  let autoScaleOptions = [
+    "Off",
+    "Horizontal Fit",
+    "Vertical Fit",
+    "Physical Gridsize"
+  ];
+
+  let autoScaleSelected = [
+    "",
+    "",
+    "",
+    ""
+  ];
+  autoScaleSelected[autoScale] = "selected"
 
   const fxHtml = `
   <div class="form-group">
@@ -561,13 +581,18 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
   </div>
   <div class="form-group">
       <label>Autoscale</label>
-      <input id="LockView_autoScale" type="checkbox" name="LV_autoScale" data-dtype="Boolean" ${autoScale ? 'checked' : ''}>
-      <p class="notes">Automatically calculates a scaling factor so the grid is always the same physical size on the screen</p>
+        <select name="LV_autoScale" id="action" value=${autoScale}>
+          <option value="0" ${autoScaleSelected[0]}>${autoScaleOptions[0]}</option>
+          <option value="1" ${autoScaleSelected[1]}>${autoScaleOptions[1]}</option>
+          <option value="2" ${autoScaleSelected[2]}>${autoScaleOptions[2]}</option>
+          <option value="3" ${autoScaleSelected[3]}>${autoScaleOptions[3]}</option>
+        </select>
+      <p class="notes">Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen</p>
   </div>
   <div class="form-group">
       <label>Force Initial View</label>
       <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${forceInit ? 'checked' : ''}>
-      <p class="notes">Forces the view to the 'Initial View Position' after loading the scene. Scale is overwritten if 'Autoscale' is enabled</p>
+      <p class="notes">Forces the view to the 'Initial View Position' after loading the scene. Note:'Autoscale' has higher priority</p>
   </div>
   `
   const fxFind = html.find("input[name ='initial.x']");
@@ -576,10 +601,11 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
 });
 
 Hooks.on("closeSceneConfig", (app, html, data) => {
-  lockPan = html.find("input[name ='LV_lockPan']").is(":checked");
-  lockZoom = html.find("input[name ='LV_lockZoom']").is(":checked");
-  autoScale = html.find("input[name ='LV_autoScale']").is(":checked");
-  forceInit = html.find("input[name ='LV_forceInit']").is(":checked");
+  let lockPan = html.find("input[name ='LV_lockPan']").is(":checked");
+  let lockZoom = html.find("input[name ='LV_lockZoom']").is(":checked");
+  let autoScale = html.find("select[name='LV_autoScale']")[0].value;
+  let forceInit = html.find("input[name ='LV_forceInit']").is(":checked");
+  
   app.object.setFlag('LockView', 'lockPan',lockPan);
   app.object.setFlag('LockView', 'lockZoom',lockZoom);
   app.object.setFlag('LockView', 'lockPan_Default',lockPan);
@@ -588,7 +614,6 @@ Hooks.on("closeSceneConfig", (app, html, data) => {
   app.object.setFlag('LockView', 'forceInit', forceInit);
   
   if (app.entity.data._id == canvas.scene.data._id){
-    
     let initX = canvas.scene.data.initial.x;
     let initY = canvas.scene.data.initial.y;
     canvas.scene.setFlag('LockView','initX',initX);
@@ -624,6 +649,36 @@ function sendLockView_update(lockPan,lockZoom,autoScale,forceInit){
   game.socket.emit(`module.LockView`, payload);
 }
 
+function scaleToFit(force = 0){
+  let horizontal;
+  let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
+  if ((autoScale == 1 && force == 0) || force == 1) horizontal = true;
+  else if ((autoScale == 2 && force == 0) || force == 2) horizontal = false;
+  else return;
+  
+  let x = canvas.dimensions.paddingX + canvas.dimensions.sceneWidth/2;
+  let y = canvas.dimensions.paddingY + canvas.dimensions.sceneHeight/2;
+  let scale = -1;
+  if (horizontal){
+    let windowWidth = window.innerWidth;
+    let sceneWidth = canvas.dimensions.sceneWidth;
+    if (windowWidth != windowWidthOld || force > 0){
+      windowWidthOld = windowWidth;
+      scale = windowWidth/sceneWidth;
+      updateView(x,y,scale);
+    }
+  }
+  else{
+    let windowHeight = window.innerHeight;
+    let sceneHeight = canvas.dimensions.sceneHeight;
+    if (windowHeight != windowHeightOld || force > 0){
+      windowHeightOld = windowHeight;
+      scale = windowHeight/sceneHeight;
+      updateView(x,y,scale);
+    }
+  }
+}
+
 function updateSettings(){
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
   let initX = canvas.scene.getFlag('LockView', 'initX');
@@ -632,9 +687,9 @@ function updateSettings(){
   let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   let forceInit = canvas.scene.getFlag('LockView', 'forceInit');
-  let scale = getScale();
-  if (autoScale && forceInit) updateView(initX,initY,scale);
-  else if (autoScale) updateView(-1,-1,scale);
+  if (autoScale == 1 || autoScale == 2) scaleToFit(autoScale);
+  else if (autoScale == 3 && forceInit) updateView(initX,initY,getScale());
+  else if (autoScale == 3) updateView(-1,-1,getScale());
   else if (forceInit) updateView(initX,initY,canvas.scene.data.initial.scale);
   setBlocks(lockPan,lockZoom);
 }
