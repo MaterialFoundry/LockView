@@ -1,8 +1,15 @@
 # Changelog
-### v1.0.4 - 06-10-2020
+### v1.0.4 - 08-10-2020
+Fixes:
+<ul>
+<li>PIXI memory leak</li>
+<li>Viewbox would sometimes not show</li>
+</ul>
 Additions:
 <ul>
 <li>Localization support</li>
+<li>Fit to screen option</li>
+<li>Force intial view option</li>
 </ul>
 Other:
 <ul>
