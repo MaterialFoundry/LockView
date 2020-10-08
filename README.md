@@ -2,11 +2,11 @@
 Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that gives the GM control over the zoom and pan capabilities of players, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting. The module was originally made to make play using a digital playmat, such as a horizontally mounted TV, easier. But the module can also be useful for digital play, for example if you have a static screen and you don't want your players to move.<br>
 <br>
 The module has 5 main functions:<br>
--Autoscaling: Scales the scene in various ways (horizontal fit, vertical fit, or scaled to a physical gridsize)<br>
--Zoom lock: Locks the zooming of the scene to prevent the user from (accidentally) messing up the autoscale<br>
--Pan lock: Locks the panning of the scene. If you use physical minis you don't want to accidentally pan<br>
--Force initial view: After loading a new scene, the view is forced to the initial view (as set in the scene configuration menu), regardless of the position of tokens<br>
--Viewbox: Allows the GM to see what's shown on the client's screens, and allows the GM to control the pan and zoom of those clients<br>
+-<b>Autoscaling:</b> Scales the scene in various ways (horizontal fit, vertical fit, or scaled to a physical gridsize)<br>
+-<b>Zoom lock:</b> Locks the zooming of the scene to prevent the user from (accidentally) messing up the autoscale<br>
+-<b>Pan lock:</b> Locks the panning of the scene. If you use physical minis you don't want to accidentally pan<br>
+-<b>Force initial view:</b> After loading a new scene, the view is forced to the initial view (as set in the scene configuration menu), regardless of the position of tokens<br>
+-<b>Viewbox:</b> Allows the GM to see what's shown on the client's screens, and allows the GM to control the pan and zoom of those clients<br>
 <br>
 'Autoscaling', 'Zoom Lock', 'Pan Lock' and 'Force Initial View' can be set for each scene independently.<br>
 'Zoom Lock' and 'Pan Lock' can be enabled and disabled at any time using control buttons.<br>
