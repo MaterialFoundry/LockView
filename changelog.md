@@ -1,8 +1,19 @@
 # Changelog
+### v1.0.5 - 27-10-2020
+Fixes:
+<ul>
+<li>PIXI memory leak</li>
+<li>Slight code clean-up</li>
+</ul>
+Other:
+<ul>
+<li>Confirmed core 0.7.5 support</li>
+</ul>
+
 ### v1.0.4 - 08-10-2020
 Fixes:
 <ul>
-<li>Reduced PIXI memory leak (not fixed yet)</li>
+<li>PIXI memory leak (not fully fixed)</li>
 <li>Viewbox would sometimes not show</li>
 </ul>
 Additions:
