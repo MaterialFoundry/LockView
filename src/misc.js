@@ -1,16 +1,44 @@
+export function registerLayer() {
+  const layers = mergeObject(Canvas.layers, {
+    lockview: LockViewLayer
+  });
+  Object.defineProperty(Canvas, 'layers', {
+    get: function () {
+      return layers
+    }
+  });
+}
+
 export class LockViewLayer extends PlaceablesLayer {
-    constructor() {
-      super();
-    }
-  
-    static get layerOptions() {
-      return mergeObject(super.layerOptions, {
-        canDragCreate: false,
-        objectClass: Note,
-        sheetClass: NoteConfig
-      });
-    }
+  constructor() {
+    super();
   }
+
+  static get layerOptions() {
+    return mergeObject(super.layerOptions, {
+      canDragCreate: false,
+      objectClass: Note,
+      sheetClass: NoteConfig
+    });
+  }
+
+  activate() {
+    CanvasLayer.prototype.activate.apply(this);
+    //canvas.activeLayer = this;
+    
+    return this
+  }
+
+  deactivate() {
+    CanvasLayer.prototype.deactivate.apply(this);
+    //super.deactivate();
+    return this
+  }
+
+  async draw() {
+    super.draw();
+  }
+}
   
 export class Viewbox extends CanvasLayer {
     constructor() {

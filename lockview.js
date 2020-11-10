@@ -1,6 +1,6 @@
 import {registerSettings} from "./src/settings.js";
 import {pushControlButtons} from "./src/controlButtons.js";
-import {LockViewLayer,Viewbox} from "./src/misc.js";
+import {registerLayer,Viewbox} from "./src/misc.js";
 import {renderSceneConfig,closeSceneConfig} from "./src/sceneConfig.js";
 import {_constrainView_Override,pan_OverrideHigherRes,_Override,pan_Override} from "./src/overrides.js";
 
@@ -150,10 +150,7 @@ Hooks.once('init', function(){
   animatePan_Default = Canvas.prototype._animatePan;
   
   registerSettings(); //in ./src/settings.js
-});
-
-Hooks.once("canvasInit", (canvas) => {
-  canvas.LockView = canvas.stage.addChildAt(new LockViewLayer(canvas), 8);
+  registerLayer();
 });
 
 Hooks.on("canvasInit", (canvas) => {
@@ -433,4 +430,3 @@ function checkKeys() {
     setBlocks(lockPan,lockZoom);
   });
 }
-

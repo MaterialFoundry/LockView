@@ -14,7 +14,7 @@ export function pushControlButtons(controls){
         name: "resetView",
         title: game.i18n.localize("LockView.ControlBtns.Label_SetView"),
         icon: "fas fa-compress-arrows-alt",
-        visible: "true",
+        visible: true,
         button: true,
         onClick: () => {
           if (MODULE.viewboxStorage == undefined || MODULE.viewboxStorage.sceneId == undefined || MODULE.viewboxStorage.sceneId != canvas.scene.data._id) {
@@ -135,7 +135,7 @@ export function pushControlButtons(controls){
         name: "PanLock",
         title: game.i18n.localize("LockView.ControlBtns.Label_PanLock"),
         icon: "fas fa-arrows-alt",
-        visible: "true",
+        visible: true,
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock");
           let currentState = currentTool.active;
@@ -150,7 +150,7 @@ export function pushControlButtons(controls){
         name: "ZoomLock",
         title: game.i18n.localize("LockView.ControlBtns.Label_ZoomLock"),
         icon: "fas fa-search-plus",
-        visible: "true",
+        visible: true,
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock");
           let currentState = currentTool.active;
@@ -165,7 +165,7 @@ export function pushControlButtons(controls){
         name: "Viewbox",
         title: game.i18n.localize("LockView.ControlBtns.Label_Viewbox"),
         icon: "far fa-square",
-        visible: "true",
+        visible: true,
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox");
           let currentState = currentTool.active;
@@ -199,7 +199,7 @@ export function pushControlButtons(controls){
         name: "EditViewbox",
         title: game.i18n.localize("LockView.ControlBtns.Label_EditViewbox"),
         icon: "fas fa-vector-square",
-        visible: "true",
+        visible: true,
         onClick: () => {
           if (MODULE.viewboxStorage == undefined || MODULE.viewboxStorage.sceneId == undefined || MODULE.viewboxStorage.sceneId != canvas.scene.data._id) {
             for (let i=0; i< MODULE.viewbox.length; i++)

@@ -1,4 +1,12 @@
 # Changelog
+### v1.1.0 - 10-11-2020
+Fixes:
+<ul>
+<li>0.7.6 support</li>
+<li>Manifest url fix</li>
+</ul>
+<b>Note:</b> Updating from any previous version requires a manual uninstall of the module
+
 ### v1.0.5 - 27-10-2020
 Fixes:
 <ul>
