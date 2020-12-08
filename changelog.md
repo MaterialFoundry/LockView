@@ -1,4 +1,15 @@
 # Changelog
+### v1.2.0 - 08-12-2020
+Fixes:
+<ul>
+<li>Fixed issue where module settings would not be saved</li>
+</ul>
+Additions:
+<ul>
+<li>Added automatic fit option that automatically selects horizontal or vertical fit so no non-image background will ever be seen</li>
+<li>Confirmed 0.7.8 support</li>
+</ul>
+
 ### v1.1.0 - 10-11-2020
 Fixes:
 <ul>

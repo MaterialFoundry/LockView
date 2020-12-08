@@ -18,7 +18,7 @@ export const registerSettings = function() {
     config: true,
     default: 1,
     type: Number,
-    onChange: x => updateSettings()
+    onChange: x => MODULE.updateSettings()
   });
   game.settings.register(MODULE.moduleName, "Gridsize", {
     name: "LockView.Sett.Gridsize",
@@ -27,7 +27,7 @@ export const registerSettings = function() {
     config: true,
     default: 25,
     type: Number,
-    onChange: x => updateSettings()
+    onChange: x => MODULE.updateSettings()
   });
   game.settings.register(MODULE.moduleName,'ForceEnable', {
     name: "Force Enable",

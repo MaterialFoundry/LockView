@@ -27,6 +27,7 @@ export function pushControlButtons(controls){
             <option value=2>${game.i18n.localize("LockView.SetView.Mode2")}</option>
             <option value=3>${game.i18n.localize("LockView.SetView.Mode3")}</option>
             <option value=4>${game.i18n.localize("LockView.SetView.Mode4")}</option>
+            <option value=5>${game.i18n.localize("LockView.SetView.Mode5")}</option>
           `;
           let optionsScale = `
             <option value=0>${game.i18n.localize("LockView.SetView.Scale0")}</option>
@@ -90,7 +91,7 @@ export function pushControlButtons(controls){
                   let y = html.find("#val2")[0].value;
                   let scale = html.find("#sc")[0].value;
 
-                  if (option < 3){
+                  if (option < 4){
                     payload = {
                       "msgType": "lockView_resetView",
                       "senderId": game.userId,
@@ -99,7 +100,7 @@ export function pushControlButtons(controls){
                       "scale": scale
                     };
                   }
-                  else if (option == 3){
+                  else if (option == 4){
                     payload = {
                       "msgType": "lockView_newViewport",
                       "senderId": game.userId, 
@@ -110,7 +111,7 @@ export function pushControlButtons(controls){
                       "type": "grid"
                     };
                   }
-                  else if (option == 4){
+                  else if (option == 5){
                     payload = {
                       "msgType": "lockView_newViewport",
                       "senderId": game.userId, 

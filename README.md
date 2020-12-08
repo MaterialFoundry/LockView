@@ -2,7 +2,7 @@
 Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that gives the GM control over the zoom and pan capabilities of players, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting. The module was originally made to make play using a digital playmat, such as a horizontally mounted TV, easier. But the module can also be useful for digital play, for example if you have a static screen and you don't want your players to move.<br>
 <br>
 The module has 5 main functions:<br>
--<b>Autoscaling:</b> Scales the scene in various ways (horizontal fit, vertical fit, or scaled to a physical gridsize)<br>
+-<b>Autoscaling:</b> Scales the scene in various ways (horizontal fit, vertical fit, automatic fit, or scaled to a physical gridsize)<br>
 -<b>Zoom lock:</b> Locks the zooming of the scene to prevent the user from (accidentally) messing up the autoscale<br>
 -<b>Pan lock:</b> Locks the panning of the scene. If you use physical minis you don't want to accidentally pan<br>
 -<b>Force initial view:</b> After loading a new scene, the view is forced to the initial view (as set in the scene configuration menu), regardless of the position of tokens<br>
@@ -54,10 +54,11 @@ Autoscale can be set to the following options:
 <li><b>Off</b> - Autoscale disabled</li>
 <li><b>Horizontal Fit</b> - Automatically scales the scene to fit the browser window. Horizontal fit, so it may cut off vertical parts of the scene</li>
 <li><b>Vertical Fit</b> - Automatically scales the scene to fit the browser window. Vertical fit, so it may cut off horizontal parts of the scene</li>
+<li><b>Automatic Fit</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
 <li><b>Physical Gridsize</b> - Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1")</li>
 </ul>
 <b>Note 1:</b> The 'Pan Lock' and 'Zoom Lock' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable the Pan and Zoom lock by pressing the control buttons (see below).<br>
-<b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the player can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
+<b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit', 'Automatic Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the player can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
 <b>Note 3:</b> When using 'Physical Gridsize', the on-screen gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client.<br>
 <br>
 
@@ -96,6 +97,7 @@ After clicking the 'Set View' control button, a dialog box appears that gives mu
 <li><b>Reset to initial view</b> - Resets the view to the initial view position, as set in the scene configuration screen</li>
 <li><b>Horizontal fit</b> - Scale and move the view so the scene fits horizontally</li>
 <li><b>Vertical fit</b> - Scale and move the view so the scene fits vertically</li>
+<li><b>Automatic Fit</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
 <li><b>Move grid spaces</b> - Moves the view in grid-units, relative to the current view. So setting X to 1 will move the view 1 gridspace to the right</li>
 <li><b>Move to coordinates</b> - Moves the view to the absolute coordinates as set in the number boxes</li>
 </ul>

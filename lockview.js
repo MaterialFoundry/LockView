@@ -64,9 +64,9 @@ Hooks.on('ready', ()=>{
       if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
       let initX = -1;
       let initY = -1;
-      if (payload.autoScale == 1 || payload.autoScale == 2) scaleToFit(payload.autoScale);
-      else if (payload.autoScale == 3 && payload.forceInit) updateView(initX,initY,getScale());
-      else if (payload.autoScale == 3) updateView(-1,-1,getScale());
+      if (payload.autoScale > 0 && payload.autoScale < 4) scaleToFit(payload.autoScale);
+      else if (payload.autoScale == 4 && payload.forceInit) updateView(initX,initY,getScale());
+      else if (payload.autoScale == 4) updateView(-1,-1,getScale());
       else if (payload.forceInit == true) updateView(initX,initY,canvas.scene.data.initial.scale);
       let lockPan = payload.lockPan;
       let lockZoom = payload.lockZoom;
@@ -82,7 +82,7 @@ Hooks.on('ready', ()=>{
       if (payload.scaleSett == 0) scale = canvas.scene._viewPosition.scale;
       else if (payload.scaleSett == 1) scale = payload.scale;
       else if (payload.scaleSett == 3){
-        if (autoScale == 3) scale = getScale();
+        if (autoScale == 4) scale = getScale();
         else scale = canvas.scene._viewPosition.scale;
       } 
       else scale = canvas.scene.data.initial.scale;
@@ -92,7 +92,7 @@ Hooks.on('ready', ()=>{
       let lockPan = false;
       let lockZoom = false;
       setBlocks(lockPan,lockZoom);
-      if (payload.autoScale == 1 || payload.autoScale == 2) scaleToFit(payload.autoScale);
+      if (payload.autoScale > 0 && payload.autoScale < 4) scaleToFit(payload.autoScale);
       else updateView(initX,initY,scale);
       lockPan = lockPanStorage;
       lockZoom = lockZoomStorage;
@@ -201,7 +201,7 @@ Hooks.on('canvasPan',(canvas)=>{
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
   scaleToFit();
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
-  if (fitScale > 0 && fitScale != canvas.scene._viewPosition.scale && (autoScale == 1 || autoScale == 2)){
+  if (fitScale > 0 && fitScale != canvas.scene._viewPosition.scale && (autoScale > 0 && autoScale < 4)){
     if (Math.abs(canvas.scene._viewPosition.scale - fitScale) < 0.015){
       Canvas.prototype.pan = pan_OverrideHigherRes;
       updateView(-1,-1,fitScale);
@@ -298,6 +298,10 @@ function scaleToFit(force = 0){
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   if ((autoScale == 1 && force == 0) || force == 1) horizontal = true;
   else if ((autoScale == 2 && force == 0) || force == 2) horizontal = false;
+  else if ((autoScale == 3 && force == 0) || force == 3) {
+    if ((window.innerWidth / canvas.dimensions.sceneWidth) > (window.innerHeight / canvas.dimensions.sceneHeight)) horizontal = true;
+    else horizontal = false;
+  }
   else return;
   Canvas.prototype.pan = pan_OverrideHigherRes;
 
@@ -338,9 +342,9 @@ export function updateSettings(){
   let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   let forceInit = canvas.scene.getFlag('LockView', 'forceInit');
-  if (autoScale == 1 || autoScale == 2) scaleToFit(autoScale);
-  else if (autoScale == 3 && forceInit) updateView(initX,initY,getScale());
-  else if (autoScale == 3) updateView(-1,-1,getScale());
+  if (autoScale > 0 && autoScale < 4) scaleToFit(autoScale);
+  else if (autoScale == 4 && forceInit) updateView(initX,initY,getScale());
+  else if (autoScale == 4) updateView(-1,-1,getScale());
   else if (forceInit) updateView(initX,initY,canvas.scene.data.initial.scale);
   setBlocks(lockPan,lockZoom);
 }

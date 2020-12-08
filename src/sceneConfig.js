@@ -28,6 +28,7 @@ export function renderSceneConfig(app,html){
         game.i18n.localize("LockView.Scene.Autoscale.Off"),
         game.i18n.localize("LockView.Scene.Autoscale.Hor"),
         game.i18n.localize("LockView.Scene.Autoscale.Vert"),
+        game.i18n.localize("LockView.Scene.Autoscale.Auto"),
         game.i18n.localize("LockView.Scene.Autoscale.Grid")
     ];
     
@@ -57,6 +58,7 @@ export function renderSceneConfig(app,html){
             <option value="1" ${autoScaleSelected[1]}>${autoScaleOptions[1]}</option>
             <option value="2" ${autoScaleSelected[2]}>${autoScaleOptions[2]}</option>
             <option value="3" ${autoScaleSelected[3]}>${autoScaleOptions[3]}</option>
+            <option value="4" ${autoScaleSelected[4]}>${autoScaleOptions[4]}</option>
             </select>
         <p class="notes">${game.i18n.localize("LockView.Scene.Autoscale_Hint")}</p>
     </div>
@@ -84,16 +86,19 @@ export function closeSceneConfig(app,html){let lockPan = html.find("input[name =
     app.object.setFlag('LockView', 'forceInit', forceInit);
 
     if (app.entity.data._id == canvas.scene.data._id){
-    let initX = canvas.scene.data.initial.x;
-    let initY = canvas.scene.data.initial.y;
-    canvas.scene.setFlag('LockView','initX',initX);
-    canvas.scene.setFlag('LockView','initY',initY);
-    MODULE.sendLockView_update(lockPan,lockZoom,autoScale,forceInit);
-    MODULE.updateSettings();
+        let initX,initY;
+        if (canvas.scene.data.initial != undefined && canvas.scene.data.initial != null){
+            initX = canvas.scene.data.initial.x;
+            initY = canvas.scene.data.initial.y;
+        }
+        canvas.scene.setFlag('LockView','initX',initX);
+        canvas.scene.setFlag('LockView','initY',initY);
+        MODULE.sendLockView_update(lockPan,lockZoom,autoScale,forceInit);
+        MODULE.updateSettings();
 
-    //set & render ui controls
-    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
-    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
-    ui.controls.render()
+        //set & render ui controls
+        ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
+        ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
+        ui.controls.render()
     }
 }
