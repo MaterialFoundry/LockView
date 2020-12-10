@@ -67,7 +67,7 @@ Autoscale can be set to the following options:
 ### Module Settings
 There are some more settings in the module settings screen:<br>
 <ul>
-<li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV</li>
+<li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV, or for player whose view you want to control</li>
 <li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
 <li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
 <li><b>Force Enable</b> - GM only. Forces all non-GM clients to enable the module</li>
@@ -82,7 +82,7 @@ On the left of the screen, there are new control buttons for the GM:<br>
 <li><b>Set View</b> - Creates a dialog box with options to set the view, see below</li>
 <li><b>Pan Lock</b> - Shows the current state of the 'Pan Lock'. If on, panning is disabled</li>
 <li><b>Zoom Lock</b> - Shows the current state of the 'Zoom Lock'. If on, zooming is disabled</li>
-<li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled clients can see. The color of the square corresponds with the 'Player Color'</li>
+<li><b>Viewbox</b> - Draws a rectangle on the canvas that shows what enabled clients can see. The color of the rectangle corresponds with the 'Player Color'</li>
 <li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the client's view. Right-click dragging drags the viewbox and pans the client's sceen, the scrollwheel increases or decreases the size of the viewbox and zooms the client's screen in or out</li>
 </ul>
 <br>
