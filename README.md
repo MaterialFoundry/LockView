@@ -128,6 +128,8 @@ If you have any suggestions or bugs to report, feel free to contact me on Discor
 <b>Other:</b> 
 -The tooltip class was modified from the vtta-party module by Sebastian Will from <a href="https://www.vttassets.com">VTTA Assets</a><br>
 -settings-extender was written by <a href="https://gitlab.com/foundry-azzurite/settings-extender">Azzurite</a> 
+<br>
+Please consider supporting me on <a href="https://www.patreon.com/materialfoundry">Patreon</a>.
 
 ## Abandonment
 Abandoned modules are a (potential) problem for Foundry, because users and/or other modules might rely on abandoned modules, which might break in future Foundry updates.<br>
