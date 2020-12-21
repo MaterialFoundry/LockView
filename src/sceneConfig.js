@@ -5,6 +5,7 @@ export function renderSceneConfig(app,html){
     let lockZoom_Default = false;
     let autoScale = 0;
     let forceInit = false;
+    let boundingBox = false;
     if(app.object.data.flags["LockView"]){
         if (app.object.data.flags["LockView"].lockPan_Default){
         lockPan_Default = app.object.getFlag('LockView', 'lockPan_Default');
@@ -23,6 +24,10 @@ export function renderSceneConfig(app,html){
         if (app.object.data.flags["LockView"].forceInit){
         forceInit = app.object.getFlag('LockView', 'forceInit');
         } else app.object.setFlag('LockView', 'forceInit', false);
+
+        if (app.object.data.flags["LockView"].boundingBox){
+            boundingBox = app.object.getFlag('LockView', 'boundingBox');
+        } else app.object.setFlag('LockView', 'boundingBox', false);
     } 
     let autoScaleOptions = [
         game.i18n.localize("LockView.Scene.Autoscale.Off"),
@@ -52,6 +57,11 @@ export function renderSceneConfig(app,html){
         <p class="notes">${game.i18n.localize("LockView.Scene.LockZoom_Hint")}</p>
     </div>
     <div class="form-group">
+        <label>${game.i18n.localize("LockView.Scene.boundingBox")}</label>
+        <input id="LockView_boundingBox" type="checkbox" name="LV_boundingBox" data-dtype="Boolean" ${boundingBox ? 'checked' : ''}>
+        <p class="notes">${game.i18n.localize("LockView.Scene.boundingBox_Hint")}</p>
+    </div>
+    <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.Autoscale.Label")}</label>
             <select name="LV_autoScale" id="action" value=${autoScale}>
             <option value="0" ${autoScaleSelected[0]}>${autoScaleOptions[0]}</option>
@@ -77,6 +87,7 @@ export function closeSceneConfig(app,html){let lockPan = html.find("input[name =
     let lockZoom = html.find("input[name ='LV_lockZoom']").is(":checked");
     let autoScale = html.find("select[name='LV_autoScale']")[0].value;
     let forceInit = html.find("input[name ='LV_forceInit']").is(":checked");
+    let boundingBox = html.find("input[name ='LV_boundingBox']").is(":checked");
 
     app.object.setFlag('LockView', 'lockPan',lockPan);
     app.object.setFlag('LockView', 'lockZoom',lockZoom);
@@ -84,6 +95,7 @@ export function closeSceneConfig(app,html){let lockPan = html.find("input[name =
     app.object.setFlag('LockView', 'lockZoom_Default',lockZoom);
     app.object.setFlag('LockView', 'autoScale',autoScale);
     app.object.setFlag('LockView', 'forceInit', forceInit);
+    app.object.setFlag('LockView', 'boundingBox', boundingBox);
 
     if (app.entity.data._id == canvas.scene.data._id){
         let initX,initY;
@@ -93,12 +105,13 @@ export function closeSceneConfig(app,html){let lockPan = html.find("input[name =
         }
         canvas.scene.setFlag('LockView','initX',initX);
         canvas.scene.setFlag('LockView','initY',initY);
-        MODULE.sendLockView_update(lockPan,lockZoom,autoScale,forceInit);
+        MODULE.sendLockView_update(lockPan,lockZoom,autoScale,forceInit,boundingBox);
         MODULE.updateSettings();
 
         //set & render ui controls
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
+        ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
         ui.controls.render()
     }
 }

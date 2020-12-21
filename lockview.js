@@ -1,8 +1,8 @@
 import {registerSettings} from "./src/settings.js";
 import {pushControlButtons} from "./src/controlButtons.js";
-import {registerLayer,Viewbox} from "./src/misc.js";
+import {registerLayer,Viewbox,drawingConfigApp,closeDrawingConfigApp,getControlledTokens} from "./src/misc.js";
 import {renderSceneConfig,closeSceneConfig} from "./src/sceneConfig.js";
-import {_constrainView_Override,pan_OverrideHigherRes,_Override,pan_Override} from "./src/overrides.js";
+import {constrainView_Override,pan_OverrideHigherRes,_Override,pan_Override,onDragCanvasPan_Override,animatePan_Override} from "./src/overrides.js";
 
 export const moduleName = "LockView";
 let _onMouseWheel_Default; //stores mousewheel zoom
@@ -10,12 +10,14 @@ let _onDragCanvasPan_Default; //stores token-to-edge canvas move
 export var pan_Default; //stores right-drag canvas move
 let _onDragLeftMove_Default
 let animatePan_Default;
+let constrainView_Default;
 //let autoScale = 0;
 export var viewboxStorage; 
 export var viewbox = [];
 let windowWidthOld= -1;
 let windowHeightOld = -1;
 let fitScale = -1;
+export var scaleMax = CONFIG.Canvas.maxZoom;
 
 Hooks.on('ready', ()=>{
   game.socket.on(`module.LockView`, (payload) =>{
@@ -70,7 +72,8 @@ Hooks.on('ready', ()=>{
       else if (payload.forceInit == true) updateView(initX,initY,canvas.scene.data.initial.scale);
       let lockPan = payload.lockPan;
       let lockZoom = payload.lockZoom;
-      setBlocks(lockPan,lockZoom);
+      let boundingBox = payload.boundingBox;
+      setBlocks(lockPan,lockZoom,boundingBox);
     }
     else if (payload.msgType == "lockView_resetView"){
       if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
@@ -87,17 +90,13 @@ Hooks.on('ready', ()=>{
       } 
       else scale = canvas.scene.data.initial.scale;
       
-      let lockPanStorage = canvas.scene.getFlag('LockView', 'lockPan');
-      let lockZoomStorage = canvas.scene.getFlag('LockView', 'lockZoom');
-      let lockPan = false;
-      let lockZoom = false;
-      setBlocks(lockPan,lockZoom);
+      let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+      let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+      let boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
+      setBlocks(false,false,false);
       if (payload.autoScale > 0 && payload.autoScale < 4) scaleToFit(payload.autoScale);
       else updateView(initX,initY,scale);
-      lockPan = lockPanStorage;
-      lockZoom = lockZoomStorage;
-      setBlocks(lockPan,lockZoom); 
-      
+      setBlocks(lockPan,lockZoom,boundingBox); 
     }
     else if (payload.msgType == "lockView_newViewport"){
       let scale;
@@ -110,10 +109,10 @@ Hooks.on('ready', ()=>{
         else if (payload.type == "shift") scale = scale = canvas.scene._viewPosition.scale;
         else scale = canvas.scene.data.initial.scale;
       }
-      let lockPanStorage = canvas.scene.getFlag('LockView', 'lockPan');
-      let lockZoomStorage = canvas.scene.getFlag('LockView', 'lockZoom');
-      let lockPan = false;
-      let lockZoom = false;
+      const lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+      const lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+      const boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
+
       let shiftX = canvas.scene._viewPosition.x;
       let shiftY = canvas.scene._viewPosition.y;
       if (payload.type == "grid"){
@@ -131,13 +130,13 @@ Hooks.on('ready', ()=>{
       if (payload.type == "shift" && payload.scaleChange != 0){
         scale = canvas.scene._viewPosition.scale*payload.scaleChange;
       }
-      setBlocks(lockPan,lockZoom);
+      setBlocks(false,false,false);
       
       updateView(shiftX,shiftY,scale);
-      lockPan = lockPanStorage;
-      lockZoom = lockZoomStorage;
-      setBlocks(lockPan,lockZoom);
+
+      setBlocks(lockPan,lockZoom,boundingBox);
     }
+    else if (payload.msgType == "lockView_forceCanvasPan") forceCanvasPan();
   });
 });
 
@@ -147,7 +146,8 @@ Hooks.once('init', function(){
   _onDragCanvasPan_Default = Canvas.prototype._onDragCanvasPan;
   _onDragLeftMove_Default = Canvas.prototype._onDragLeftMove;
   pan_Default = Canvas.prototype.pan;
-  animatePan_Default = Canvas.prototype._animatePan;
+  animatePan_Default = Canvas.prototype.animatePan;
+  constrainView_Default = Canvas.prototype._constrainView;
   
   registerSettings(); //in ./src/settings.js
   registerLayer();
@@ -155,9 +155,9 @@ Hooks.once('init', function(){
 
 Hooks.on("canvasInit", (canvas) => {
   if (game.user.isGM) {
-    for (let i=0; i< viewbox.length; i++)
-      if (viewbox[i] != undefined)
-        viewbox[i].init();
+    //for (let i=0; i< viewbox.length; i++)
+    //  if (viewbox[i] != undefined)
+    //    viewbox[i].init();
   }
 });
   
@@ -168,37 +168,58 @@ Hooks.on('canvasReady',(canvas)=>{
       "senderId": game.userId
     };
     game.socket.emit(`module.LockView`, payload);
-      
-    if(canvas.scene.data.flags["LockView"].lockPan){} 
-    else canvas.scene.setFlag('LockView', 'lockPan', false);
-
-    if (canvas.scene.data.flags["LockView"].lockZoom){}
-    else canvas.scene.setFlag('LockView', 'lockZoom', false);
-
-    if (canvas.scene.data.flags["LockView"].autoScale){}
-    else canvas.scene.setFlag('LockView', 'autoScale', 0);
-  }
-  else if ((game.settings.get("LockView","Enable") || game.settings.get("LockView","ForceEnable")) && canvas.scene.getFlag('LockView', 'lockPan')){
-    if (canvas.scene.data.flags["LockView"].initX){}
-    else {
-      if (canvas.scene.data.initial)
-        initX = canvas.scene.data.initial.x;
-      else initX = -1;
+    
+    if (canvas.scene.data.flags["LockView"] == undefined){
+      canvas.scene.setFlag('LockView', 'lockPan', false);
+      canvas.scene.setFlag('LockView', 'lockZoom', false);
+      canvas.scene.setFlag('LockView', 'autoScale', 0);
+      canvas.scene.setFlag('LockView', 'boundingBox', 0);
     }
-
-    if (canvas.scene.data.flags["LockView"].initY){}
     else {
-      if (canvas.scene.data.initial)
-        initY = canvas.scene.data.initial.y;
-      else initY = -1;
-    } 
+      if(canvas.scene.data.flags["LockView"].lockPan){} 
+      else canvas.scene.setFlag('LockView', 'lockPan', false);
+  
+      if (canvas.scene.data.flags["LockView"].lockZoom){}
+      else canvas.scene.setFlag('LockView', 'lockZoom', false);
+  
+      if (canvas.scene.data.flags["LockView"].autoScale){}
+      else canvas.scene.setFlag('LockView', 'autoScale', 0);
+
+      if (canvas.scene.data.flags["LockView"].boundingBox){}
+      else canvas.scene.setFlag('LockView', 'boundingBox', 0);
+    }
+    
+  }
+  else if ((game.settings.get("LockView","Enable") || game.settings.get("LockView","ForceEnable"))){
+    if (canvas.scene.getFlag('LockView', 'lockPan')){
+      if (canvas.scene.data.flags["LockView"].initX){}
+      else {
+        if (canvas.scene.data.initial)
+          initX = canvas.scene.data.initial.x;
+        else initX = -1;
+      }
+
+      if (canvas.scene.data.flags["LockView"].initY){}
+      else {
+        if (canvas.scene.data.initial)
+          initY = canvas.scene.data.initial.y;
+        else initY = -1;
+      } 
+    }
+    if (canvas.scene.getFlag('LockView', 'boundingBox'))
+      Canvas.prototype.pan = pan_OverrideHigherRes;
+    else
+      Canvas.prototype.pan = pan_Default;
+
   }
   updateSettings();
   checkKeys();
+  forceCanvasPan();
 });
 
-Hooks.on('canvasPan',(canvas)=>{
+Hooks.on('canvasPan',(canvas,data)=>{
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
+  scaleMax = CONFIG.Canvas.maxZoom;
   scaleToFit();
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   if (fitScale > 0 && fitScale != canvas.scene._viewPosition.scale && (autoScale > 0 && autoScale < 4)){
@@ -207,14 +228,10 @@ Hooks.on('canvasPan',(canvas)=>{
       updateView(-1,-1,fitScale);
       let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
       if (lockPan) Canvas.prototype.pan = pan_Override;
-      else Canvas.prototype.pan = pan_Default;
+      else if (canvas.scene.getFlag('LockView', 'boundingBox')==false) Canvas.prototype.pan = pan_Default;
     }
   }
-  sendViewBox(game.data.users.find(users => users.role == 4)._id);
-});
-
-Hooks.on('updateToken',(scene,token,change)=>{
-  
+  sendViewBox(game.data.users.find(users => users.role == 4)._id,data);
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {
@@ -222,6 +239,13 @@ Hooks.on("getSceneControlButtons", (controls) => {
     pushControlButtons(controls);
   }
 });
+
+Hooks.on("updateDrawing",()=>{
+  if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
+  forceCanvasPan();
+});
+
+
 
 Hooks.on("renderPlayerList", (playerlist,init,users) => {
   if (game.user.isGM == false) return;
@@ -257,7 +281,7 @@ Hooks.on("renderSceneControls", (controls) => {
   if (editEnable && controls.activeTool != "EditViewbox"){
     Canvas.prototype._onDragCanvasPan = _onDragCanvasPan_Default;
     Canvas.prototype.pan = pan_Default;
-    Canvas.prototype._animatePan = animatePan_Default;
+    Canvas.prototype.animatePan = animatePan_Default;
     Canvas.prototype._onDragLeftMove = _onDragLeftMove_Default;
     canvas.scene.setFlag('LockView', 'editViewbox', false);
     return;
@@ -276,19 +300,45 @@ Hooks.on("closeSceneConfig", (app, html) => {
 Hooks.on('renderSettings',()=>{
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
     sendViewBox(game.data.users.find(users => users.role == 4)._id);
-  let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
-  let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
-  setBlocks(lockPan,lockZoom); 
+  const lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+  const lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+  const boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
+  setBlocks(lockPan,lockZoom,boundingBox); 
 });
 
-export function sendLockView_update(lockPan,lockZoom,autoScale,forceInit){
+Hooks.on("renderDrawingConfig", (app,html,data)=>{
+  drawingConfigApp(app, html, data)
+});
+
+Hooks.on("closeDrawingConfig", (app,html)=>{
+  closeDrawingConfigApp(app, html)
+});
+
+Hooks.on("closePermissionControl", ()=> {
+  getControlledTokens();
+});
+
+Hooks.on("updateActor", ()=> {
+  getControlledTokens();
+});
+
+function forceCanvasPan(){
+  let position = canvas.scene._viewPosition;
+  position.x = position.x+1;
+  position.y = position.y+1;
+  position.scale = position.scale+0.1;
+  canvas.pan(position);
+}
+
+export function sendLockView_update(lockPan,lockZoom,autoScale,forceInit,boundingBox){
   let payload = {
     "msgType": "lockView_update",
     "senderId": game.userId, 
     "lockPan": lockPan,
     "lockZoom": lockZoom,
     "autoScale": autoScale,
-    "forceInit": forceInit
+    "forceInit": forceInit,
+    "boundingBox": boundingBox
   };
   game.socket.emit(`module.LockView`, payload);
 }
@@ -331,6 +381,7 @@ function scaleToFit(force = 0){
   
   let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
   if (lockPan) Canvas.prototype.pan = pan_Override;
+  else if (canvas.scene.getFlag('LockView', 'boundingBox')) Canvas.prototype.pan = pan_OverrideHigherRes;
   else Canvas.prototype.pan = pan_Default;
 }
 
@@ -340,13 +391,14 @@ export function updateSettings(){
   let initY = canvas.scene.getFlag('LockView', 'initY');
   let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
   let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+  let boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   let forceInit = canvas.scene.getFlag('LockView', 'forceInit');
   if (autoScale > 0 && autoScale < 4) scaleToFit(autoScale);
   else if (autoScale == 4 && forceInit) updateView(initX,initY,getScale());
   else if (autoScale == 4) updateView(-1,-1,getScale());
   else if (forceInit) updateView(initX,initY,canvas.scene.data.initial.scale);
-  setBlocks(lockPan,lockZoom);
+  setBlocks(lockPan,lockZoom,boundingBox);
 }
 
 function getScale(){
@@ -372,7 +424,9 @@ function updateView(moveX,moveY,scale){
 }
 
 //Send data to the GM to draw the viewbox
-function sendViewBox(target){
+function sendViewBox(target,viewPosition=undefined){
+  if (viewPosition == undefined) viewPosition = canvas.scene._viewPosition;
+  
   let payload = {
       "msgType": "lockView_viewport",
       "senderId": game.userId, 
@@ -380,7 +434,7 @@ function sendViewBox(target){
       "senderColor": game.user.color,
       "receiverId": target, 
       "sceneId": canvas.scene.data._id,
-      "viewPosition": canvas.scene._viewPosition,
+      "viewPosition": viewPosition,
       "viewWidth": window.innerWidth,
       "viewHeight": window.innerHeight
   };
@@ -388,21 +442,27 @@ function sendViewBox(target){
 }
 
 //Block zooming and/or panning
-function setBlocks(lockPan,lockZoom){
+function setBlocks(lockPan,lockZoom,boundingBox){
   if (game.settings.get("LockView","Enable") == false && (game.settings.get("LockView","ForceEnable") == false || game.user.isGM)) return;
 
   if (lockZoom == true) Canvas.prototype._onMouseWheel = _Override;
   else if (lockZoom == false) Canvas.prototype._onMouseWheel = _onMouseWheel_Default;
   
-  if (lockPan == true) {
+  if (lockPan) {
     Canvas.prototype._onDragCanvasPan = _Override;  //draggin token to edge of screen
     Canvas.prototype.pan = pan_Override;  //right-mouse click & zoom
     Canvas.prototype.animatePan = _Override;
   }
-  else if (lockPan == false) {
+  else if (boundingBox){
+    Canvas.prototype.pan = pan_OverrideHigherRes;
+    Canvas.prototype._onDragCanvasPan = onDragCanvasPan_Override;
+    Canvas.prototype.animatePan = animatePan_Override;
+    //Canvas.prototype.animatePan = _Override;
+  }
+  else if (lockPan == false && boundingBox == false) {
     Canvas.prototype._onDragCanvasPan = _onDragCanvasPan_Default;
     Canvas.prototype.pan = pan_Default;
-    Canvas.prototype._animatePan = animatePan_Default;
+    Canvas.prototype.animatePan = animatePan_Default;
   }
 }
 
@@ -418,19 +478,23 @@ function checkKeys() {
       fired = true;
       let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
       let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+      let boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
       lockPanStorage = lockPan;
       lockPan = false;
       lockZoomStorage = lockZoom;
       lockZoom = false;
-      setBlocks(lockPan,lockZoom);
+      boundingBoxStorage = boundingBox;
+      boundingBox = false;
+      setBlocks(lockPan,lockZoom,boundingBox);
     }
   });
 
   window.addEventListener("keyup", (e) => {
     fired = false;
-    let lockPan = canvas.scene.getFlag('LockView', 'lockPan');
-    let lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+    const lockPan = canvas.scene.getFlag('LockView', 'lockPan');
+    const lockZoom = canvas.scene.getFlag('LockView', 'lockZoom');
+    const boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
 
-    setBlocks(lockPan,lockZoom);
+    setBlocks(lockPan,lockZoom,boundingBox);
   });
 }

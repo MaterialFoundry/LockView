@@ -140,7 +140,7 @@ export function pushControlButtons(controls){
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock");
           let currentState = currentTool.active;
-          MODULE.sendLockView_update(currentState,-1,-1,-1);
+          MODULE.sendLockView_update(currentState,-1,-1,-1,-1);
           canvas.scene.setFlag('LockView', 'lockPan', currentState);
           currentTool.active = currentState;   
           },
@@ -155,12 +155,26 @@ export function pushControlButtons(controls){
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock");
           let currentState = currentTool.active;
-          MODULE.sendLockView_update(-1,currentState,-1,-1)
+          MODULE.sendLockView_update(-1,currentState,-1,-1,-1)
           canvas.scene.setFlag('LockView', 'lockZoom', currentState);
           currentTool.active = currentState;
           },
         toggle: true,
         active: canvas.scene.getFlag('LockView', 'lockZoom')
+      },
+      {
+        name: "BoundingBox",
+        title: game.i18n.localize("LockView.ControlBtns.Label_BoundingBox"),
+        icon: "fas fa-box",
+        visible: true,
+        onClick: () => {
+          let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox");
+          let currentState = currentTool.active;
+          currentTool.active = currentState;
+          updateBoundingBox(currentState);
+          },
+        toggle: true,
+        active: canvas.scene.getFlag('LockView', 'boundingBox')
       },
       {
         name: "Viewbox",
@@ -186,12 +200,19 @@ export function pushControlButtons(controls){
               game.socket.emit(`module.LockView`, payload);
             }
           }
-          else 
-          for (let i=0; i< MODULE.viewbox.length; i++)
-            if (MODULE.viewbox[i] != undefined)
-                MODULE.viewbox[i].hide();
+          else {
+            for (let i=0; i< MODULE.viewbox.length; i++)
+              if (MODULE.viewbox[i] != undefined)
+                  MODULE.viewbox[i].hide();
+            canvas.scene.setFlag('LockView', 'editViewbox', false);
+            controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active = false;
+            Canvas.prototype.pan = MODULE.pan_Default;
+            controls.find(controls => controls.name == "LockView").activeTool = undefined;
+            ui.controls.render();
+          }
           game.settings.set('LockView', 'viewbox', currentState);
-          currentTool.active = currentState;    
+          currentTool.active = currentState; 
+             
           },
         toggle: true,
         active: game.settings.get("LockView","viewbox")
@@ -237,6 +258,18 @@ export function pushControlButtons(controls){
       },
     ],
   });
+}
+
+async function updateBoundingBox(boundingBox){
+  await MODULE.sendLockView_update(-1,-1,-1,-1,boundingBox)
+  await canvas.scene.setFlag('LockView', 'boundingBox', boundingBox);
+  if (boundingBox){
+    const payload = {
+      "msgType": "lockView_forceCanvasPan",
+      "senderId": game.userId
+    };
+    game.socket.emit(`module.LockView`, payload);
+  }
 }
 
 function _Override_VB_Pan({x=null, y=null, scale=null}={}) {

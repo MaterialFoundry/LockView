@@ -20,15 +20,18 @@
     "LockView.Scene.Autoscale.Vert": "Vertical Fit",
     "LockView.Scene.Autoscale.Auto": "Automatic Fit",
     "LockView.Scene.Autoscale.Grid": "Physical Gridsize",
-    "LockView.Scene.Autoscale_Hint": "Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen",
+    "LockView.Scene.Autoscale_Hint": "Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen. This is overridden by the Bounding Box setting. Panning is not disabled by default",
     "LockView.Scene.ForceInit": "Force Initial View",
     "LockView.Scene.ForceInit_Hint": "Forces the view to the 'Initial View Position' after loading the scene. Note: only works if 'Autoscale' is set to 'Off'",
+    "LockView.Scene.boundingBox": "Bounding Box",
+    "LockView.Scene.boundingBox_Hint": "Limit zoom and pan to stay within a bounding box. By default this is the whole canvas, but this can be defined by drawing a rectangle and editing the drawing configuration. This overrides autoscaling",
 
     "LockView.ControlBtns.Label_SetView": "Set View",
     "LockView.ControlBtns.Label_PanLock": "Pan Lock",
     "LockView.ControlBtns.Label_ZoomLock": "Zoom Lock",
     "LockView.ControlBtns.Label_Viewbox": "Viewbox",
     "LockView.ControlBtns.Label_EditViewbox": "Edit Viewbox",
+    "LockView.ControlBtns.Label_BoundingBox": "Bounding Box",
 
     "LockView.SetView.Title": "Set View",
     "LockView.SetView.Mode0": "Reset to initial view",
@@ -44,6 +47,12 @@
     "LockView.SetView.LabelScale": "Scale",
     "LockView.SetView.BtnOK": "OK",
     "LockView.SetView.BtnCancel": "Cancel",
+
+    "LockView.boundingBox.Note": "You can force player pan and zoom to stay within a bounding box.<br>This needs to first be enabled in the 'Scene Configuration'.<br><br><b>Disabled:</b> the bounding box is equal to the scene<br><b>Owned Tokens:</b> Only force to this box if the player owns a token within the box.<br><b>Always:</b> Always force players to stay within this box.",
+    "LockView.boundingBox.Label": "Force to bounding box",
+    "LockView.boundingBox.Mode0": "Disabled",
+    "LockView.boundingBox.Mode1": "Owned Tokens",
+    "LockView.boundingBox.Mode2": "Always",
 
     "LockView.UI.NoConnect": "No connected and enabled clients on this scene",
     "LockView.UI.ViewboxDisabled": "Viewbox is disabled"

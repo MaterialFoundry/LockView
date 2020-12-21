@@ -1,4 +1,18 @@
 # Changelog
+### v1.3.0 - 20-12-2020
+Fixes:
+<ul>
+<li>Disabling pan lock would not enable canvasPan on token move</li>
+<li>Viewbox is now being updated more reliably</li>
+<li>Fixed some problems with the viewbox when changing scenes</li>
+<li>Disabling the viewbox now also disables 'viewbox edit'</li>
+</ul>
+Additions:
+<ul>
+<li>Limit players' zoom and pan to stay within a drawn rectangle or the canvas</li>
+<li>Confirmed 0.7.9 support</li>
+</ul>
+
 ### v1.2.0 - 08-12-2020
 Fixes:
 <ul>

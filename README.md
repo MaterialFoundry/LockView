@@ -1,18 +1,19 @@
 # Lock View
 Lock View is a <a href="https://foundryvtt.com/">Foundry VTT</a> module that gives the GM control over the zoom and pan capabilities of players, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting. The module was originally made to make play using a digital playmat, such as a horizontally mounted TV, easier. But the module can also be useful for digital play, for example if you have a static screen and you don't want your players to move.<br>
 <br>
-The module has 5 main functions:<br>
+The module has 6 main functions:<br>
 -<b>Autoscaling:</b> Scales the scene in various ways (horizontal fit, vertical fit, automatic fit, or scaled to a physical gridsize)<br>
 -<b>Zoom lock:</b> Locks the zooming of the scene to prevent the user from (accidentally) messing up the autoscale<br>
 -<b>Pan lock:</b> Locks the panning of the scene. If you use physical minis you don't want to accidentally pan<br>
+-<b>Bounding box:</b> Limit zoom and pan to stay within a bounding box<br>
 -<b>Force initial view:</b> After loading a new scene, the view is forced to the initial view (as set in the scene configuration menu), regardless of the position of tokens<br>
 -<b>Viewbox:</b> Allows the GM to see what's shown on the client's screens, and allows the GM to control the pan and zoom of those clients<br>
 <br>
-'Autoscaling', 'Zoom Lock', 'Pan Lock' and 'Force Initial View' can be set for each scene independently.<br>
-'Zoom Lock' and 'Pan Lock' can be enabled and disabled at any time using control buttons.<br>
+'Autoscaling', 'Zoom Lock', 'Pan Lock', 'Bounding Box' and 'Force Initial View' can be set for each scene independently.<br>
+'Zoom Lock', 'Pan Lock' and 'Bounding Box' can be enabled and disabled at any time using control buttons.<br>
 These functions can be applied to selected connected clients (must be set in the client's module settings screen), or to all non-GM connected clients (is set in the GM's module settings screen).<br>
 <br>
-<b>Note: When 'Zoom Lock' or 'Pan Lock' is enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work.</b>
+<b>Note: When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work.</b>
 
 ## Usage
 ### Physical Play
@@ -47,6 +48,7 @@ In the scene settings screen, in 'Ambience and Atmosphere', you can find the fol
 <li><b>Pan Lock</b> - Initial 'Pan Lock' setting</li>
 <li><b>Zoom Lock</b> - Initial 'Zoom Lock' setting</li>
 <li><b>Autoscale</b> - Automatically scales the screen</li>
+<li><b>Bounding box:</b> Limit zoom and pan to stay within a bounding box, see below</li>
 <li><b>Force Initial View</b> - Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off'</li>
 </ul>
 Autoscale can be set to the following options:
@@ -55,39 +57,38 @@ Autoscale can be set to the following options:
 <li><b>Horizontal Fit</b> - Automatically scales the scene to fit the browser window. Horizontal fit, so it may cut off vertical parts of the scene</li>
 <li><b>Vertical Fit</b> - Automatically scales the scene to fit the browser window. Vertical fit, so it may cut off horizontal parts of the scene</li>
 <li><b>Automatic Fit</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
-<li><b>Physical Gridsize</b> - Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1")</li>
+<li><b>Physical Gridsize</b> - Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1"). The gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client</li>
 </ul>
-<b>Note 1:</b> The 'Pan Lock' and 'Zoom Lock' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable the Pan and Zoom lock by pressing the control buttons (see below).<br>
+<b>Note 1:</b> The 'Pan Lock', 'Zoom Lock' and 'Bounding Box' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable them by pressing the control buttons (see below).<br>
 <b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit', 'Automatic Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the player can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
-<b>Note 3:</b> When using 'Physical Gridsize', the on-screen gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client.<br>
 <br>
 
 ![sceneSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/SceneSettings.png)
 
-### Module Settings
-There are some more settings in the module settings screen:<br>
+#### Bounding Box
+The bounding box function limits how much a user can zoom or pan. It needs to be enabled, either in the scene configuration screen, or using control buttons. This function ensures that they always stay within a defined box. By default this box is the canvas size (size of your background image), so users will not see the background color and padding.<br>
+It is also possible to define a bounding box by drawing a rectangle (control buttons => drawing tools => draw rectangle). After drawing the rectangle, you can edit it (double clicking the rectangle) to set the rectangle as a bounding box. This can be done in the Lock View tab, where you have the following options:
 <ul>
-<li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV</li>
-<li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
-<li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
-<li><b>Force Enable</b> - GM only. Forces all non-GM clients to enable the module</li>
-<li><b>Lock Override</b> - Enter a keybinding that allows you to override the zoom and pan lock while the keys are pressed</li>
+<li><b>Disabled:</b> The rectangle is not used as a bounding box</li>
+<li><b>Owned Tokens:</b> Use the rectangle as bounding box if a token that's owned by the user is within the rectangle. You can set multiple rectangles to 'Owned Tokens'. Moving a token from one 'Owned Tokens' rectangle to another forces the view to the new rectangle. If you have multiple owned tokens in different 'Owned Tokens' rectangles, the bounding box will extend to fit all of these rectangles</li>
+<li><b>Always:</b> The rectangle is always used as bounding box, also if no tokens are within the rectangle. This overrides all other rectangles. Only one rectangle should be set to 'Always'. If more rectangles are set to 'Always', only one is chosen</li>
 </ul>
 
-![moduleSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ModuleSettings.png)
+![drawingConfiguration](https://github.com/CDeenen/LockView/blob/master/img/examples/DrawingConfiguration.png)
 
 ### Control Buttons
-On the left of the screen, there are new control buttons for the GM:<br>
+On the left of the screen, there are new control buttons for the GM that display and toggle the current setting on the scene:<br>
 <ul>
 <li><b>Set View</b> - Creates a dialog box with options to set the view, see below</li>
-<li><b>Pan Lock</b> - Shows the current state of the 'Pan Lock'. If on, panning is disabled</li>
-<li><b>Zoom Lock</b> - Shows the current state of the 'Zoom Lock'. If on, zooming is disabled</li>
+<li><b>Pan Lock</b> - Shows the current state of 'Pan Lock'. If on, panning is disabled</li>
+<li><b>Zoom Lock</b> - Shows the current state of 'Zoom Lock'. If on, zooming is disabled</li>
+<li><b>Bounding Box</b> - Shows the current state of 'Bounding Box'. If on, zoom and pan are limited to the bounding box</li>
 <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled clients can see. The color of the square corresponds with the 'Player Color'</li>
 <li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the client's view. Right-click dragging drags the viewbox and pans the client's sceen, the scrollwheel increases or decreases the size of the viewbox and zooms the client's screen in or out</li>
 </ul>
 <br>
 
-![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons2.png)
+![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons.png)
 
 #### Set View Dialog
 After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of connected clients. There's 2 dropdown menu's, and 3 number boxes<br>
@@ -116,8 +117,21 @@ After clicking the 'Set View' control button, a dialog box appears that gives mu
 
 ![viewBox](https://github.com/CDeenen/LockView/blob/master/img/examples/ViewBox.png)
 
+
+### Module Settings
+There are some more settings in the module settings screen:<br>
+<ul>
+<li><b>Enable</b> - Checking this box enables the module for the client. You only want to have this enabled for the client that is connected to the TV</li>
+<li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
+<li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
+<li><b>Force Enable</b> - GM only. Forces all non-GM clients to enable the module</li>
+<li><b>Lock Override</b> - Enter a keybinding that allows you to override the zoom and pan lock while the keys are pressed</li>
+</ul>
+
+![moduleSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ModuleSettings.png)
+
 ## Software Versions & Module Incompatibilities
-<b>Foundry VTT:</b> Tested on 0.6.6 and 0.7.3<br>
+<b>Foundry VTT:</b> 0.7.6 - 0.7.9<br>
 <b>Module Incompatibilities:</b> Modules that try to pan or zoom, such as LookAtThat<br>
 
 ## Feedback
@@ -127,7 +141,9 @@ If you have any suggestions or bugs to report, feel free to contact me on Discor
 <b>Main author:</b> Cristian Deenen (Cris#6864 on Discord)<br>
 <b>Other:</b> 
 -The tooltip class was modified from the vtta-party module by Sebastian Will from <a href="https://www.vttassets.com">VTTA Assets</a><br>
--settings-extender was written by <a href="https://gitlab.com/foundry-azzurite/settings-extender">Azzurite</a> 
+-settings-extender was written by <a href="https://gitlab.com/foundry-azzurite/settings-extender">Azzurite</a><br>
+<br>
+Please consider supporting me on <a href="https://www.patreon.com/materialfoundry">Patreon</a>.
 
 ## Abandonment
 Abandoned modules are a (potential) problem for Foundry, because users and/or other modules might rely on abandoned modules, which might break in future Foundry updates.<br>
