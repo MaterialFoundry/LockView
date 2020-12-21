@@ -13,7 +13,7 @@ The module has 6 main functions:<br>
 'Zoom Lock', 'Pan Lock' and 'Bounding Box' can be enabled and disabled at any time using control buttons.<br>
 These functions can be applied to selected connected clients (must be set in the client's module settings screen), or to all non-GM connected clients (is set in the GM's module settings screen).<br>
 <br>
-<b>Note: When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work.</b>
+<b>Note:</b> When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work.
 
 ## Usage
 ### Physical Play

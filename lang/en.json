@@ -48,7 +48,7 @@
     "LockView.SetView.BtnOK": "OK",
     "LockView.SetView.BtnCancel": "Cancel",
 
-    "LockView.boundingBox.Note": "You can force player pan and zoom to stay within a bounding box.<br>This needs to first be enabled in the 'Scene Configuration'.<br><br><b>Disabled:</b> the bounding box is equal to the scene<br><b>Owned Tokens:</b> Only force to this box if the player owns a token within the box.<br><b>Always:</b> Always force players to stay within this box.",
+    "LockView.boundingBox.Note": "You can force player pan and zoom to stay within a bounding box.<br>This needs to first be enabled in the 'Scene Configuration' or using the control buttons.<br><br><b>Disabled:</b> the bounding box is equal to the scene<br><b>Owned Tokens:</b> Only force to this box if the player owns a token within the box.<br><b>Always:</b> Always force players to stay within this box.",
     "LockView.boundingBox.Label": "Force to bounding box",
     "LockView.boundingBox.Mode0": "Disabled",
     "LockView.boundingBox.Mode1": "Owned Tokens",
