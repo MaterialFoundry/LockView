@@ -74,6 +74,11 @@ import {getControlledTokens,controlledTokens} from "./misc.js";
         rect.Ymax = canvas.dimensions.sceneRect.y+canvas.dimensions.sceneRect.height;
       }
 
+      //If 'excludeSidebar' en enabled and the sidebar is not collapsed, add sidebar width to rect variable
+      if (canvas.scene.getFlag("LockView","excludeSidebar") && ui.sidebar._collapsed == false){
+        rect.Xmax += Math.ceil((window.innerWidth-ui.sidebar._element[0].offsetLeft)/canvas.scene._viewPosition.scale);
+      }
+
       let horizontal;
       if ((window.innerWidth / (rect.Xmax-rect.Xmin)) > (window.innerHeight / (rect.Ymax-rect.Ymin))) horizontal = true;
       else horizontal = false;

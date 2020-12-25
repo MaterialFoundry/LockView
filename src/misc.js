@@ -1,3 +1,5 @@
+import * as MODULE from "../lockview.js";
+
 export function registerLayer() {
   const layers = mergeObject(Canvas.layers, {
     lockview: LockViewLayer
@@ -153,4 +155,154 @@ export function getControlledTokens(){
     if (userPermission > 2) 
       controlledTokens.push(tokens[i]);
   }
+}
+
+export function blackSidebar(en){
+  if (en) document.getElementById("sidebar").style.backgroundColor = "black";
+  else document.getElementById("sidebar").style.backgroundColor = "";
+}
+
+export class enableMenu extends FormApplication {
+  constructor(data, options) {
+      super(data, options);
+  }
+
+  /**
+   * Default Options for this FormApplication
+   */
+  static get defaultOptions() {
+      return mergeObject(super.defaultOptions, {
+          id: "enableMenu",
+          title: "Lock View: "+game.i18n.localize("MaterialDeck.Sett.EnableMenu"),
+          template: "./modules/LockView/templates/enableMenu.html",
+          width: "400px"
+      });
+  }
+
+  /**
+   * Provide data to the template
+   */
+  getData() {
+    const users = game.users._source;
+    const settings = game.settings.get(MODULE.moduleName,'userSettings');
+    let data = [];
+
+    for (let i=0; i<users.length; i++){
+      const userData = users[i];
+      let role;
+      if (userData.role == 0) role = game.i18n.localize("USER.RoleNone");
+      else if (userData.role == 1) role = game.i18n.localize("USER.RolePlayer");
+      else if (userData.role == 2) role = game.i18n.localize("USER.RoleTrusted");
+      else if (userData.role == 3) role = game.i18n.localize("USER.RoleAssistant");
+      else if (userData.role == 4) role = game.i18n.localize("USER.RoleGamemaster");
+
+      const dataNew = {
+        index: i,
+        name: userData.name,
+        role: role,
+        color: userData.color,
+        id: userData._id,
+        enable: getEnable(userData._id),
+        viewbox: getViewboxEnable(userData._id)
+
+      }
+      data.push(dataNew);
+    }
+      return {
+          data: data
+      } 
+  }
+
+  /**
+   * Update on form submit
+   * @param {*} event 
+   * @param {*} formData 
+   */
+  async _updateObject(event, formData) {
+    let settings = [];
+    for (let i=0; i<formData.id.length; i++){
+      let settingsNew = {
+        id: formData.id[i],
+        enable: formData.enable[i],
+        viewbox: formData.viewbox[i]
+      }
+      settings.push(settingsNew);
+    }
+    this.updateSettings(settings);
+  }
+
+  activateListeners(html) {
+      super.activateListeners(html);
+      
+  }
+
+  async updateSettings(settings){
+    await game.settings.set(MODULE.moduleName,'userSettings',settings);
+    //if (MODULE.viewboxStorage == undefined || MODULE.viewboxStorage.sceneId == undefined || MODULE.viewboxStorage.sceneId != canvas.scene.data._id) {
+      for (let i=0; i< MODULE.viewbox.length; i++)
+        if (MODULE.viewbox[i] != undefined)
+            MODULE.viewbox[i].hide();
+
+    const payload = {
+      "msgType": "lockView_refreshSettings",
+      "senderId": game.userId
+    };
+    game.socket.emit(`module.LockView`, payload);
+  }
+}
+
+export class helpMenu extends FormApplication {
+  constructor(data, options) {
+      super(data, options);
+  }
+
+  /**
+   * Default Options for this FormApplication
+   */
+  static get defaultOptions() {
+      return mergeObject(super.defaultOptions, {
+          id: "helpMenu",
+          title: "Lock View: "+game.i18n.localize("MaterialDeck.Sett.HelpMenu"),
+          template: "./modules/LockView/templates/helpMenu.html",
+          width: "500px"
+      });
+  }
+
+  /**
+   * Provide data to the template
+   */
+  getData() {
+    
+      return {
+         
+      } 
+  }
+
+  /**
+   * Update on form submit
+   * @param {*} event 
+   * @param {*} formData 
+   */
+  async _updateObject(event, formData) {
+
+  }
+
+  activateListeners(html) {
+      super.activateListeners(html);
+      
+  }
+}
+
+export function getEnable(userId){
+  const settings = game.settings.get("LockView","userSettings");
+  for (let i=0; i<settings.length; i++)
+    if (settings[i].id == userId && settings[i].enable) return true;
+  return false;
+}
+
+export function getViewboxEnable(userId){
+  const settings = game.settings.get("LockView","userSettings");
+  for (let i=0; i<settings.length; i++)
+  if (settings[i].id == userId && settings[i].viewbox) return true;
+  return false;
 }

@@ -1,14 +1,19 @@
 {
-    "LockView.Sett.Enable": "Enable",
-    "LockView.Sett.Enable_Hint": "Enables the module on the local (TV's) client",
+    "MaterialDeck.Sett.EnableMenu": "User Configuration",
+    "MaterialDeck.Sett.HelpMenu": "Help",
     "LockView.Sett.ScreenWidth": "Screen Width",
     "LockView.Sett.ScreenWidth_Hint": "The real world screen width in mm or inch. Must be set on the local (TV's) client",
     "LockView.Sett.Gridsize": "Gridsize",
     "LockView.Sett.Gridsize_Hint": "The real world grid size in mm or inch (e.g. 25 mm or 1 inch). Unit has to be the same as 'Screen Width'. Must be set on the local (TV's) client",
-    "LockView.Sett.ForceEnable": "Force Enable",
-    "LockView.Sett.ForceEnable_Hint": "Enables the module on all non-GM clients",
     "LockView.Sett.LockOverride": "Lock Override",
-    "LockView.Sett.LockOverride_Hint": "Enter a keybinding to override the zoom and pan lock",
+    "LockView.Sett.LockOverride_Hint": "Enter a keybinding to allow users to override the zoom and pan lock",
+
+    "LockView.EnMenu.Description": "Select for which players the module and viewbox should be enabled.",
+    "LockView.EnMenu.Name": "Name",
+    "LockView.EnMenu.Role": "Role",
+    "LockView.EnMenu.Enable": "Enable",
+    "LockView.EnMenu.Viewbox": "Viewbox",
+    "LockView.EnMenu.Save": "Save",
 
     "LockView.Scene.LockPan": "Lock Pan",
     "LockView.Scene.LockPan_Hint": "Disables panning functionality",
@@ -25,6 +30,11 @@
     "LockView.Scene.ForceInit_Hint": "Forces the view to the 'Initial View Position' after loading the scene. Note: only works if 'Autoscale' is set to 'Off'",
     "LockView.Scene.boundingBox": "Bounding Box",
     "LockView.Scene.boundingBox_Hint": "Limit zoom and pan to stay within a bounding box. By default this is the whole canvas, but this can be defined by drawing a rectangle and editing the drawing configuration. This overrides autoscaling",
+    "LockView.Scene.ExcludeSidebar": "Exclude Sidebar",
+    "LockView.Scene.excludeSidebar_Hint":  "Excludes the area behind the sidebar from the bounding box or autoscaling",
+    "LockView.Scene.BlackenSidebar": "Blacken Sidebar",
+    "LockView.Scene.blackenSidebar_Hint": "Blackens the background of the sidebar to prevent users from seeing outside of the bounding box or canvas<br>(only works if 'Exclude Sidebar' is enabled",
+
 
     "LockView.ControlBtns.Label_SetView": "Set View",
     "LockView.ControlBtns.Label_PanLock": "Pan Lock",

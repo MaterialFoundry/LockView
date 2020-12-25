@@ -1,15 +1,20 @@
 import * as MODULE from "../lockview.js";
+import { enableMenu, helpMenu } from "./misc.js";
 
 export const registerSettings = function() {
     //initialize all settings
-  game.settings.register(MODULE.moduleName,'Enable', {
-    name: "LockView.Sett.Enable",
-    hint: "LockView.Sett.Enable_Hint",
-    scope: "client",
-    config: true,
-    default: false,
-    type: Boolean,
-    onChange: x => window.location.reload()
+  game.settings.registerMenu(MODULE.moduleName, 'helpMenu',{
+    name: "MaterialDeck.Sett.HelpMenu",
+    label: "MaterialDeck.Sett.HelpMenu",
+    type: helpMenu,
+    restricted: true
+  });
+
+  game.settings.registerMenu(MODULE.moduleName, 'enableMenu',{
+    name: "MaterialDeck.Sett.EnableMenu",
+    label: "MaterialDeck.Sett.EnableMenu",
+    type: enableMenu,
+    restricted: true
   });
   game.settings.register(MODULE.moduleName, "ScreenWidth", {
     name: "LockView.Sett.ScreenWidth",
@@ -29,15 +34,6 @@ export const registerSettings = function() {
     type: Number,
     onChange: x => MODULE.updateSettings()
   });
-  game.settings.register(MODULE.moduleName,'ForceEnable', {
-    name: "Force Enable",
-    hint: "Enables the module on all non-GM clients",
-    scope: "world",
-    config: true,
-    default: false,
-    type: Boolean,
-    onChange: x => window.location.reload()
-});
   game.settings.register(MODULE.moduleName,'viewbox', {
     name: "LockView.Sett.ForceEnable",
     hint: "LockView.Sett.ForceEnable_Hint",
@@ -46,6 +42,7 @@ export const registerSettings = function() {
     default: false,
     type: Boolean,
   });
+  /*
   game.settings.register(MODULE.moduleName,'lockOverride', {
     name: "LockView.Sett.LockOverride",
     hint: "LockView.Sett.LockOverride_Hint",
@@ -54,6 +51,7 @@ export const registerSettings = function() {
     default: "Alt + Z",
     type: window.Azzu.SettingsTypes.KeyBinding,
   });
+  */
   game.settings.register(MODULE.moduleName,'editViewbox', {
     name: "Viewbox edit mode",
     hint: "",
@@ -62,4 +60,12 @@ export const registerSettings = function() {
     default: false,
     type: Boolean
   });
+
+  game.settings.register(MODULE.moduleName, 'userSettings', {
+    name: "userSettings",
+    scope: "world",
+    type: Object,
+    default: [],
+    config: false
+});
 }

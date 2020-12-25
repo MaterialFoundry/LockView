@@ -1,4 +1,18 @@
 # Changelog
+### v1.3.1 - 25-12-2020
+Additions:
+<ul>
+<li>Option to exclude the sidebar area from the boundary box and autoscaling</li>
+<li>Option to blacken the background of the sidebar when sidebar area is excluded</li>
+<li>User config button in the module settings that replaces the 'Enable' and 'Force Enable' settings</li>
+<li>Help button in the module settings</li>
+</ul>
+Other:
+<ul>
+<li>(Temporary) removed the hotkey lock override, since it no longer works</li>
+<li>Moved LockView settings in the Scene Config to its own section</li>
+</ul>
+
 ### v1.3.0 - 20-12-2020
 Fixes:
 <ul>
