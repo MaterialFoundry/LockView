@@ -140,8 +140,7 @@ export function pushControlButtons(controls){
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock");
           let currentState = currentTool.active;
-          MODULE.sendLockView_update(currentState,-1,-1,-1,-1);
-          canvas.scene.setFlag('LockView', 'lockPan', currentState);
+          updatePanLock(currentState);
           currentTool.active = currentState;   
           },
         toggle: true,
@@ -155,8 +154,7 @@ export function pushControlButtons(controls){
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock");
           let currentState = currentTool.active;
-          MODULE.sendLockView_update(-1,currentState,-1,-1,-1)
-          canvas.scene.setFlag('LockView', 'lockZoom', currentState);
+          updateZoomLock(currentState);
           currentTool.active = currentState;
           },
         toggle: true,
@@ -260,6 +258,18 @@ export function pushControlButtons(controls){
   });
 }
 
+async function updatePanLock(panLock){
+  await MODULE.sendLockView_update(panLock,-1,-1,-1,-1);
+  await canvas.scene.setFlag('LockView', 'lockPan', panLock);
+  await MODULE.setBlocks(panLock,canvas.scene.getFlag('LockView', 'lockZoom'),canvas.scene.getFlag('LockView', 'boundingBox'));
+}
+
+async function updateZoomLock(zoomLock){
+  await MODULE.sendLockView_update(-1,zoomLock,-1,-1,-1);
+  await canvas.scene.setFlag('LockView', 'lockZoom', zoomLock);
+  await MODULE.setBlocks(canvas.scene.getFlag('LockView', 'lockPan'),zoomLock,canvas.scene.getFlag('LockView', 'boundingBox'));
+}
+
 async function updateBoundingBox(boundingBox){
   await MODULE.sendLockView_update(-1,-1,-1,-1,boundingBox)
   await canvas.scene.setFlag('LockView', 'boundingBox', boundingBox);
@@ -270,6 +280,9 @@ async function updateBoundingBox(boundingBox){
     };
     game.socket.emit(`module.LockView`, payload);
   }
+  
+  await MODULE.setBlocks(canvas.scene.getFlag('LockView', 'lockPan'),canvas.scene.getFlag('LockView', 'lockZoom'),boundingBox);
+  MODULE.forceCanvasPan();
 }
 
 function _Override_VB_Pan({x=null, y=null, scale=null}={}) {

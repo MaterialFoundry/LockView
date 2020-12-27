@@ -152,7 +152,42 @@ Hooks.on('ready', ()=>{
       sendViewBox(payload.senderId);
     }
   });
+  if (game.settings.get("LockView","updatePopupV1.3.2") == false && game.user.isGM) {
+    updatePopup()
+  }
 });
+
+function updatePopup(){
+  let d = new Dialog({
+    title: "Lock View update v1.3.2",
+    content: `
+    <h3>Lock View has been updated to version 1.3.2</h3>
+    <p>
+    -Some bugs have been fixed<br>
+    -You'll now find some new settings in the Scene Configuration screen related to setting up a bounding box.<br>
+    -All Lock View settings have been moved to their own section in the Scene Configuration.<br>
+    -The module settings now includes a help button, there you'll find more info on these new functions and all other Lock View Functions.<br>
+    -The 'Enable' and 'Force Enable' settings have been removed, in favor or a 'User Configuration' screen that you will find in the module settings.<br>
+    <br>
+    <b>The old enable settings no longer work, you need to set them up in the new User Configuration screen in the Module Settings</b><br>
+    <br>
+    <input type="checkbox" name="hide" data-dtype="Boolean">
+    Don't show this screen again
+    </p>`,
+    buttons: {
+     ok: {
+      icon: '<i class="fas fa-check"></i>',
+      label: "OK"
+     }
+    },
+    default: "OK",
+    close: html => {
+      if (html.find("input[name ='hide']").is(":checked")) game.settings.set("LockView","updatePopupV1.3.2",true);
+    }
+   });
+   d.render(true);
+}
+
 
 Hooks.once('init', function(){
  // CONFIG.debug.hooks = true;
@@ -204,7 +239,7 @@ Hooks.on('canvasReady',(canvas)=>{
     }
     
   }
-  else if (getEnable(game.userId)){
+  if (getEnable(game.userId)){
     if (canvas.scene.getFlag('LockView', 'lockPan')){
       if (canvas.scene.data.flags["LockView"].initX){}
       else {
@@ -225,11 +260,18 @@ Hooks.on('canvasReady',(canvas)=>{
     else
       Canvas.prototype.pan = pan_Default;
 
-  }
   updateSettings();
   checkKeys();
   forceCanvasPan();
+ 
+  scaleToFit();
+  let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
+  if (fitScale > 0 && fitScale != canvas.scene._viewPosition.scale && (autoScale > 0 && autoScale < 4)){
+      updateView(-1,-1,fitScale);
+  }
   sendViewBox(game.data.users.find(users => users.role == 4)._id);
+  }
+  
 });
 
 Hooks.on('canvasPan',(canvas,data)=>{
@@ -260,8 +302,6 @@ Hooks.on("updateDrawing",()=>{
   if (getEnable(game.userId) == false) return;
   forceCanvasPan();
 });
-
-
 
 Hooks.on("renderPlayerList", (playerlist,init,users) => {
   if (game.user.isGM == false) return;
@@ -342,11 +382,12 @@ Hooks.on("updateActor", ()=> {
   getControlledTokens();
 });
 
-function forceCanvasPan(){
+export function forceCanvasPan(){
+  if (getEnable(game.userId) == false) return;
   let position = canvas.scene._viewPosition;
   position.x = position.x+1;
   position.y = position.y+1;
-  position.scale = position.scale+0.1;
+  position.scale = position.scale+0.01;
   canvas.pan(position);
 }
 
@@ -364,6 +405,7 @@ export function sendLockView_update(lockPan,lockZoom,autoScale,forceInit,boundin
 }
 
 function scaleToFit(force = 0){
+  
   let horizontal;
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   let excludeSidebar = false;
@@ -372,7 +414,7 @@ function scaleToFit(force = 0){
     excludeSidebar = true;
     sidebarOffset = window.innerWidth-ui.sidebar._element[0].offsetLeft;
   }
-
+  
   if ((autoScale == 1 && force == 0) || force == 1) horizontal = true;
   else if ((autoScale == 2 && force == 0) || force == 2) horizontal = false;
   else if ((autoScale == 3 && force == 0) || force == 3) {
@@ -381,7 +423,6 @@ function scaleToFit(force = 0){
   }
   else return;
   Canvas.prototype.pan = pan_OverrideHigherRes;
-
   let scale = -1;
   if (horizontal){
     let windowWidth = window.innerWidth;
@@ -423,6 +464,7 @@ export function updateSettings(){
   let boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
   let autoScale = canvas.scene.getFlag('LockView', 'autoScale');
   let forceInit = canvas.scene.getFlag('LockView', 'forceInit');
+
   if (autoScale > 0 && autoScale < 4) scaleToFit(autoScale);
   else if (autoScale == 4 && forceInit) updateView(initX,initY,getScale());
   else if (autoScale == 4) updateView(-1,-1,getScale());
@@ -488,7 +530,7 @@ function sendViewBox(target,viewPosition=undefined){
 }
 
 //Block zooming and/or panning
-function setBlocks(lockPan,lockZoom,boundingBox,force=false){
+export function setBlocks(lockPan,lockZoom,boundingBox,force=false){
   if (force==false && getEnable(game.userId) == false) return;
 
   if (lockZoom == true) Canvas.prototype._onMouseWheel = _Override;

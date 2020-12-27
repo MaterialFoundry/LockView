@@ -1,4 +1,13 @@
 # Changelog
+### v1.3.2 - 27-12-2020
+Fixes:
+<ul>
+<li>Enabling zoom and pan lock for the GM caused issues</li>
+<li>Fixed issues where scene config settings would not properly load</li>
+<li>Autoscale would not load in scene load</li>
+<li>Scene would not properly load to Initial View Position, even with module off for the user</li> 
+</ul>
+
 ### v1.3.1 - 25-12-2020
 Additions:
 <ul>

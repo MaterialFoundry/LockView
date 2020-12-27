@@ -9,15 +9,15 @@ export function renderSceneConfig(app,html){
     let excludeSidebar = false;
     let blackenSidebar = false;
     if(app.object.data.flags["LockView"]){
-        if (app.object.data.flags["LockView"].lockPan_Default){
-        lockPan_Default = app.object.getFlag('LockView', 'lockPan_Default');
+        if (app.object.data.flags["LockView"].lockPan){
+        lockPan_Default = app.object.getFlag('LockView', 'lockPan');
         } 
-        else app.object.setFlag('LockView', 'lockPan_Default', false);
+        else app.object.setFlag('LockView', 'lockPan', false);
 
-        if (app.object.data.flags["LockView"].lockZoom_Default){
-        lockZoom_Default = app.object.getFlag('LockView', 'lockZoom_Default');
+        if (app.object.data.flags["LockView"].lockZoom){
+        lockZoom_Default = app.object.getFlag('LockView', 'lockZoom');
         } 
-        else app.object.setFlag('LockView', 'lockZoom_Default', false);
+        else app.object.setFlag('LockView', 'lockZoom', false);
 
         if (app.object.data.flags["LockView"].autoScale){
         autoScale = app.object.getFlag('LockView', 'autoScale');
@@ -39,6 +39,7 @@ export function renderSceneConfig(app,html){
             blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
         } else app.object.setFlag('LockView', 'blackenSidebar', false);
     } 
+    
     let autoScaleOptions = [
         game.i18n.localize("LockView.Scene.Autoscale.Off"),
         game.i18n.localize("LockView.Scene.Autoscale.Hor"),
@@ -112,7 +113,6 @@ export function closeSceneConfig(app,html){let lockPan = html.find("input[name =
     let boundingBox = html.find("input[name ='LV_boundingBox']").is(":checked");
     let excludeSidebar = html.find("input[name ='LV_excludeSidebar']").is(":checked");
     let blackenSidebar = html.find("input[name ='LV_blackenSidebar']").is(":checked");
-
     app.object.setFlag('LockView', 'lockPan',lockPan);
     app.object.setFlag('LockView', 'lockZoom',lockZoom);
     app.object.setFlag('LockView', 'lockPan_Default',lockPan);
