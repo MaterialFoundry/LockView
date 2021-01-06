@@ -16,6 +16,6 @@
       }
     ],
     "url": "https://github.com/CDeenen/LockView",
-    "manifest": "https://github.com/CDeenen/LockView/releases/download/v1.4.1/module.json",
-    "download": "https://github.com/CDeenen/LockView/releases/download/v1.4.1/LockView.zip"
+    "manifest": "https://raw.githubusercontent.com/CDeenen/LockView/master/module.json",
+    "download": "https://github.com/CDeenen/LockView/archive/master.zip"
   }
