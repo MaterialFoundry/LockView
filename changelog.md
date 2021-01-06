@@ -1,4 +1,16 @@
 # Changelog
+### v1.4.0 - 06-01-2021
+Additions:
+<ul>
+<li>Added a way to change the view of individual players by adding a move and scale icon on the top-left and bottom-right corners of the viewbox if the 'Edit Viewbox' control button is selected</li>
+<li>Added the name of the player above each viewbox</li>
+<li>Module settings for new non-GM players are automatically enabled</li>
+</ul>
+Fixes:
+<ul>
+<li>Much of the code has been rewritten for improved stability and performance, and a lot of bugs have been fixed</li>
+</ul>
+
 ### v1.3.2 - 27-12-2020
 Fixes:
 <ul>

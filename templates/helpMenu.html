@@ -7,7 +7,7 @@
         <br>
 
         <h1>Introduction</h1>
-        Lock View is a module that gives the GM control over the zoom and pan capabilities of players, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting.<br>
+        Lock View is a module that gives the GM control over the zoom and pan capabilities of users, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting.<br>
         The module was originally made as a companion app for my <a href="https://github.com/CDeenen/MaterialPlane">Material Plane</a> module, and to make play using a digital playmat, 
         such as a horizontally mounted TV, easier.<br>
         Over time, however, the module's features have expanded greatly, including many functions that can be useful for digital play.<br>
@@ -19,11 +19,11 @@
             <li><b>Pan lock:</b> Locks the panning of the scene. If you use physical minis you don't want to accidentally pan</li>
             <li><b>Bounding box:</b> Limit zoom and pan to stay within a bounding box</li>
             <li><b>Force initial view:</b> After loading a new scene, the view is forced to the initial view (as set in the scene configuration menu), regardless of the position of tokens</li>
-            <li><b>Viewbox:</b> Allows the GM to see what's shown on players screens, and allows the GM to control the pan and zoom of those players</li>
+            <li><b>Viewbox:</b> Allows the GM to see what's shown on users screens, and allows the GM to control the pan and zoom of those users</li>
         </ul>
         'Autoscaling', 'Zoom Lock', 'Pan Lock', 'Bounding Box' and 'Force Initial View' can be set for each scene independently.<br>
         'Zoom Lock', 'Pan Lock' and 'Bounding Box' can be enabled and disabled at any time using control buttons.<br>
-        These functions can be applied to selected connected players (must be set in the GM's module settings).<br>
+        These functions can be applied to selected connected users (must be set in the GM's module settings).<br>
         <br>
         <b>Note:</b> When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work.
 
@@ -32,7 +32,7 @@
         When using a horizontally mounted screen, for the purpose of playing with physical minis, you should do the following:<br>
         <br>
         <b>GM's client, module settings:</b><br>
-        -In the User Configuration screen, enable the module and viewbox for the player that is connected to the TV<br>
+        -In the User Configuration screen, enable the module and viewbox for the user that is connected to the TV<br>
         <br>
         <b>GM's client, scene configuration menu (for each scene):</b><br>
         -Set 'Autoscale' to 'Physical Gridsize', which forces the TV's client to a specific zoom, ensuring the grid is always the same physical size<br>
@@ -45,25 +45,25 @@
         Refer to the 'Settings and Controls' section below to see how the GM can manipulate the view of the TV's client.
 
         <h2>Digital Play</h2>
-        The module can also be used when playing digitally (every player has their own computer). When doing so, you can ignore the following settings:<br>
+        The module can also be used when playing digitally (every user has their own computer). When doing so, you can ignore the following settings:<br>
         -'Gridsize' and 'Screen Width' in the module settings<br>
         -'Physical Gridsize' in the scene configuration menu (Autoscale option) and in the 'Set View' dialog box<br>
         <br>
         <b>GM's client, module settings:</b><br>
-        In the User Configuration screen, enable the module and viewbox for each player whose view you want to control/view.<br>
+        In the User Configuration screen, enable the module and viewbox for each user whose view you want to control/view.<br>
         <br>
         <b>GM's client, scene configuration menu (for each scene):</b><br>
         Set up the settings as desired (see below)<br>
         <br>
-        Refer to the 'Settings and Controls' section below to see how the GM can manipulate the view of the player clients.
+        Refer to the 'Settings and Controls' section below to see how the GM can manipulate the view of the user clients.
 
         <h1>Settings and Controls</h1>
         <h2>Module Settings</h2>
         <img src="modules/LockView/img/examples/ModuleSettings.png" align="right" HSPACE="5" width="450">
-        In the module settings, as a GM you will find a button to open the player configuration screen, where you can enable the module and viewbox for each player.<br>
-        The module must be enabled for each player if you want to use any of the functions of this module, except for displaying the viewbox, which has its own enable setting.<br>
+        In the module settings, as a GM you will find a button to open the user configuration screen, where you can enable the module and viewbox for each user. By default, both are enabled for non-GM users.<br>
+        The module must be enabled for each user if you want to use any of the functions of this module, except for displaying the viewbox, which has its own enable setting.<br>
         <br>
-        All connected players will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
+        All connected users will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
         <br>
         The settings are:
         <ul>
@@ -94,7 +94,7 @@
         <li><b>Physical Gridsize</b> - Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1"). The gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client</li>
         </ul>
         <b>Note 1:</b> The 'Pan Lock', 'Zoom Lock' and 'Bounding Box' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable them by pressing the control buttons (see below).<br>
-        <b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit', 'Automatic Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the player can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
+        <b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit', 'Automatic Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the user can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
    
         <h2> Control Buttons</h2>
         <img src="modules/LockView/img/examples/ControlButtons.png" align="right" HSPACE="5" width="50">
@@ -105,14 +105,14 @@
         <li><b>Pan Lock</b> - Shows/switches the current state of 'Pan Lock'. If on, panning is disabled</li>
         <li><b>Zoom Lock</b> - Shows/switches the current state of 'Zoom Lock'. If on, zooming is disabled</li>
         <li><b>Bounding Box</b> - Shows/switches the current state of 'Bounding Box'. If on, zoom and pan are limited to the bounding box</li>
-        <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled players can see. The color of the square corresponds with the 'Player Color'</li>
-        <li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the players' view. Right-click dragging drags the viewbox and pans the players' sceen, the scrollwheel increases or decreases the size of the viewbox and zooms the players' screen in or out</li>
+        <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled users can see. The color of the square corresponds with the 'Player Color'</li>
+        <li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the users' view. Right-click dragging drags the viewbox and pans all enabled users sceens, the scrollwheel increases or decreases the size of the viewbox and zooms the screen of all enabled users in or out. Additionally, two icons appear next to each viewbox which can be used to zoom or pan the view of individual users.</li>
         </ul>
 
         <BR CLEAR="right" />
 
         <h3 style="width:100%">Set View Dialog</h3>
-        After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of players. There's 2 dropdown menu's, and 3 number boxes<br>
+        After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of users. There's 2 dropdown menu's, and 3 number boxes<br>
         <b>Top dropdown menu (X & Y movement)</b><br>
         <ul>
         <li><b>Reset to initial view</b> - Resets the view to the initial view position, as set in the scene configuration screen</li>
@@ -146,11 +146,13 @@
         </ul>
 
         <h1>Viewbox</h1>
-        The viewbox is a function that allows the GM so see what players can see. 
-        If enabled (enable for the player in the User Configuration screen in the module settings, and enable the 'Viewbox' control button), 
-        a rectangle is drawn that corresponds with the view of the player. The color of the rectangle is the player color.<br>
+        The viewbox is a function that allows the GM so see what users can see.<br>
+        If enabled (enable for the user in the User Configuration screen in the module settings, and enable the 'Viewbox' control button), 
+        a rectangle is drawn that corresponds with the view of the user. The color of the rectangle is the user color, and above the rectangle you can find the user name.<br>
         <br>
-        It is possible for the GM to control the view of the players by enabling the 'Edit Viewbox' control button. If enabled, the GM can pan by left-click dragging and zoom by using the scroll wheel.<br>
+        It is possible for the GM to control the view of the users by enabling the 'Edit Viewbox' control button.<br>
+        If enabled, the GM can either control the view of all enabled users: pan by left-click dragging and zoom by using the scroll wheel.<br>
+        Or control the view of individual users by dragging the icons next to each viewbox that appear when the 'Edit Viewbox' control button is pressed: Drag the upper-left icon to pan, drag the lower-right icon to zoom.<br>
 
         <img src="modules/LockView/img/examples/ViewBox.png" align="center" HSPACE="5" VSPACE="5">
 
@@ -158,9 +160,7 @@
         If you have any suggestions or bugs to report, feel free to contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.
 
         <h1>Credits</h1>
-        <b>Main author:</b> Cristian Deenen (Cris#6864 on Discord)<br>
-        <b>Other:</b> 
-        -The tooltip class was modified from the vtta-party module by Sebastian Will from <a href="https://www.vttassets.com">VTTA Assets</a><br>
+        <b>Author:</b> Cristian Deenen (Cris#6864 on Discord)<br>
         <br>
         If you enjoy using my modules, please consider supporting me on <a href="https://www.patreon.com/materialfoundry">Patreon</a>.
     </div>    

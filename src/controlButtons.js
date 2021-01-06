@@ -1,9 +1,57 @@
 import * as MODULE from "../lockview.js";
+import * as MISC from "./misc.js";
+import * as VIEWBOX from "./viewbox.js";
+import * as BLOCKS from "./blocks.js";
 
 let oldVB_viewPosition;
 
+export function registerLayer() {
+  const layers = mergeObject(Canvas.layers, {
+    lockview: LockViewLayer
+  });
+  Object.defineProperty(Canvas, 'layers', {
+    get: function () {
+      return layers
+    }
+  });
+}
+
+class LockViewLayer extends PlaceablesLayer {
+  constructor() {
+    super();
+  }
+
+  static get layerOptions() {
+    return mergeObject(super.layerOptions, {
+      canDragCreate: false,
+      objectClass: Note,
+      sheetClass: NoteConfig
+    });
+  }
+
+  activate() {
+    CanvasLayer.prototype.activate.apply(this);
+    return this;
+  }
+
+  deactivate() {
+    CanvasLayer.prototype.deactivate.apply(this);
+    return this;
+  }
+
+  async draw() {
+    super.draw();
+  }
+}
+
+/*
+ * Push the Lock View control buttons
+ */
 export function pushControlButtons(controls){
-  if (canvas == null) return;
+  if (game.user.isGM == false || canvas == null) return;
+
+  BLOCKS.getFlags();
+
   controls.push({
     name: "LockView",
     title: "Lock View",
@@ -16,121 +64,7 @@ export function pushControlButtons(controls){
         icon: "fas fa-compress-arrows-alt",
         visible: true,
         button: true,
-        onClick: () => {
-          if (MODULE.viewboxStorage == undefined || MODULE.viewboxStorage.sceneId == undefined || MODULE.viewboxStorage.sceneId != canvas.scene.data._id) {
-            ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
-            return;
-          }
-          let options = `
-            <option value=0>${game.i18n.localize("LockView.SetView.Mode0")}</option>
-            <option value=1>${game.i18n.localize("LockView.SetView.Mode1")}</option>
-            <option value=2>${game.i18n.localize("LockView.SetView.Mode2")}</option>
-            <option value=3>${game.i18n.localize("LockView.SetView.Mode3")}</option>
-            <option value=4>${game.i18n.localize("LockView.SetView.Mode4")}</option>
-            <option value=5>${game.i18n.localize("LockView.SetView.Mode5")}</option>
-          `;
-          let optionsScale = `
-            <option value=0>${game.i18n.localize("LockView.SetView.Scale0")}</option>
-            <option value=1>${game.i18n.localize("LockView.SetView.Scale1")}</option>
-            <option value=2>${game.i18n.localize("LockView.SetView.Scale2")}</option>
-            <option value=3>${game.i18n.localize("LockView.SetView.Scale3")}</option>
-          `;
-          let dialogTemplate = 
-          `
-          <div class="form-group">
-            <div style="display:flex"> 
-              <div  style="flex:1"></div>
-              <span style="flex:1">
-                <select style="width:200px" id="selectOption">${options}</select>
-              </span>
-              <div  style="flex:1"></div>
-            </div>
-            <p style="margin-bottom:10px;">
-            <div style="display:flex"> 
-              <div  style="flex:1"></div>
-              <span style="flex:1;">
-                <select style="width:200px" id="scaleOption">${optionsScale}</select>
-              </span>
-              <div  style="flex:1"></div>
-            </div>
-            <p style="margin-bottom:15px;">
-          </div>
-          <div class="form-group" style="display:flex; flex-direction:row; justify-content:space-around" id="numberBoxes">
-              <span style="flex-basis=20%">
-                X: 
-                <input id="val1" type="number" style="width:75px" value=0 />
-              </span>
-              <span style="flex-basis=20%">
-                Y: 
-                <input id="val2" type="number" style="width:75px" value=0 />
-              </span>
-              <span style="flex-basis=20%">
-              ${game.i18n.localize("LockView.SetView.LabelScale")}: 
-                <input id="sc" type="number" style="width:75px" value=1 />
-              </span>
-          </div>
-          <p style="margin-bottom:10px;">
-          <div>
-            <div  style="flex:1"></div>
-            
-            <p style="margin-bottom:10px;">
-          </div>   
-          `;
-          let d = new Dialog({
-            title: game.i18n.localize("LockView.SetView.Title"),
-            content: dialogTemplate,
-            buttons:{
-              Yes: {
-                label: game.i18n.localize("LockView.SetView.BtnOK"),
-                callback: (html) => {
-                  let option = html.find("#selectOption")[0].value;
-                  let scaleSett = html.find("#scaleOption")[0].value;
-                  let payload;
-
-                  let x = html.find("#val1")[0].value;
-                  let y = html.find("#val2")[0].value;
-                  let scale = html.find("#sc")[0].value;
-
-                  if (option < 4){
-                    payload = {
-                      "msgType": "lockView_resetView",
-                      "senderId": game.userId,
-                      "scaleSett": scaleSett, 
-                      "autoScale": option,
-                      "scale": scale
-                    };
-                  }
-                  else if (option == 4){
-                    payload = {
-                      "msgType": "lockView_newViewport",
-                      "senderId": game.userId, 
-                      "shiftX": x,
-                      "shiftY": y,
-                      "scaleSett": scaleSett, 
-                      "scale": scale,
-                      "type": "grid"
-                    };
-                  }
-                  else if (option == 5){
-                    payload = {
-                      "msgType": "lockView_newViewport",
-                      "senderId": game.userId, 
-                      "shiftX": x,
-                      "shiftY": y,
-                      "scaleSett": scaleSett, 
-                      "scale": scale,
-                      "type": "coords"
-                    };
-                  }
-                  game.socket.emit(`module.LockView`, payload);
-                }
-              },
-              Cancel: {
-                label: game.i18n.localize("LockView.SetView.BtnCancel")
-              }
-            }
-          }).render(true);
-        }
+        onClick: () => { setViewDialog(controls) }
       },
       {
         name: "PanLock",
@@ -138,13 +72,16 @@ export function pushControlButtons(controls){
         icon: "fas fa-arrows-alt",
         visible: true,
         onClick: () => {
+          controls.find(controls => controls.name == "LockView").activeTool = undefined;
+          mouseManager(false);
+          ui.controls.render();
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock");
           let currentState = currentTool.active;
-          updatePanLock(currentState);
+          BLOCKS.updatePanLock(currentState);
           currentTool.active = currentState;   
           },
         toggle: true,
-        active: canvas.scene.getFlag('LockView', 'lockPan')
+        active: BLOCKS.lockPan
       },
       {
         name: "ZoomLock",
@@ -152,13 +89,16 @@ export function pushControlButtons(controls){
         icon: "fas fa-search-plus",
         visible: true,
         onClick: () => {
+          controls.find(controls => controls.name == "LockView").activeTool = undefined;
+          mouseManager(false);
+          ui.controls.render();
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock");
           let currentState = currentTool.active;
-          updateZoomLock(currentState);
+          BLOCKS.updateZoomLock(currentState);
           currentTool.active = currentState;
           },
         toggle: true,
-        active: canvas.scene.getFlag('LockView', 'lockZoom')
+        active: BLOCKS.lockZoom
       },
       {
         name: "BoundingBox",
@@ -166,13 +106,16 @@ export function pushControlButtons(controls){
         icon: "fas fa-box",
         visible: true,
         onClick: () => {
+          controls.find(controls => controls.name == "LockView").activeTool = undefined;
+          mouseManager(false);
+          ui.controls.render();
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox");
           let currentState = currentTool.active;
+          BLOCKS.updateBoundingBox(currentState);
           currentTool.active = currentState;
-          updateBoundingBox(currentState);
           },
         toggle: true,
-        active: canvas.scene.getFlag('LockView', 'boundingBox')
+        active: BLOCKS.boundingBox
       },
       {
         name: "Viewbox",
@@ -182,36 +125,8 @@ export function pushControlButtons(controls){
         onClick: () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox");
           let currentState = currentTool.active;
-          if (currentState) {
-            if (MODULE.viewboxStorage == undefined || MODULE.viewboxStorage.sceneId == undefined || MODULE.viewboxStorage.sceneId != canvas.scene.data._id) {
-              for (let i=0; i< MODULE.viewbox.length; i++)
-                if (MODULE.viewbox[i] != undefined)
-                    MODULE.viewbox[i].hide();
-                  ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
-            }
-            else {
-              game.settings.set("LockView","viewbox",true);
-              let payload = {
-                "msgType": "lockView_getData",
-                "senderId": game.userId
-              };
-              game.socket.emit(`module.LockView`, payload);
-            }
-          }
-          else {
-            for (let i=0; i< MODULE.viewbox.length; i++)
-              if (MODULE.viewbox[i] != undefined)
-                  MODULE.viewbox[i].hide();
-            canvas.scene.setFlag('LockView', 'editViewbox', false);
-            controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active = false;
-            Canvas.prototype.pan = MODULE.pan_Default;
-            controls.find(controls => controls.name == "LockView").activeTool = undefined;
-            ui.controls.render();
-          }
-          game.settings.set('LockView', 'viewbox', currentState);
-          currentTool.active = currentState; 
-             
-          },
+          viewbox(currentState,currentTool);
+        },
         toggle: true,
         active: game.settings.get("LockView","viewbox")
       },
@@ -220,37 +135,7 @@ export function pushControlButtons(controls){
         title: game.i18n.localize("LockView.ControlBtns.Label_EditViewbox"),
         icon: "fas fa-vector-square",
         visible: true,
-        onClick: () => {
-          if (MODULE.viewboxStorage == undefined || MODULE.viewboxStorage.sceneId == undefined || MODULE.viewboxStorage.sceneId != canvas.scene.data._id) {
-            for (let i=0; i< MODULE.viewbox.length; i++)
-              if (MODULE.viewbox[i] != undefined)
-                MODULE.viewbox[i].hide();
-            ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
-            canvas.scene.setFlag('LockView', 'editViewbox', false);
-            controls.find(controls => controls.name == "LockView").activeTool = undefined;
-            ui.controls.render();
-            return;
-          }
-          if (controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active == false){
-            ui.notifications.warn(game.i18n.localize("LockView.UI.ViewboxDisabled"));
-            canvas.scene.setFlag('LockView', 'editViewbox', false);
-            controls.find(controls => controls.name == "LockView").activeTool = undefined;
-            ui.controls.render();
-            return;
-          }
-          let currentState = canvas.scene.getFlag('LockView', 'editViewbox') ? false : true;
-          if (currentState == false) controls.find(controls => controls.name == "LockView").activeTool = undefined;
-          canvas.scene.setFlag('LockView', 'editViewbox', currentState);
-          ui.controls.render();
-          if (currentState) {
-            Canvas.prototype.pan = _Override_VB_Pan;
-            oldVB_viewPosition = canvas.scene._viewPosition;
-          }
-          else {
-            Canvas.prototype.pan = MODULE.pan_Default;
-          }
-
-          },
+        onClick: () => { editViewboxConfig(controls) },
         toggle: false,
         active: game.settings.get("LockView","editViewbox")
       },
@@ -258,31 +143,174 @@ export function pushControlButtons(controls){
   });
 }
 
-async function updatePanLock(panLock){
-  await MODULE.sendLockView_update(panLock,-1,-1,-1,-1);
-  await canvas.scene.setFlag('LockView', 'lockPan', panLock);
-  await MODULE.setBlocks(panLock,canvas.scene.getFlag('LockView', 'lockZoom'),canvas.scene.getFlag('LockView', 'boundingBox'));
-}
-
-async function updateZoomLock(zoomLock){
-  await MODULE.sendLockView_update(-1,zoomLock,-1,-1,-1);
-  await canvas.scene.setFlag('LockView', 'lockZoom', zoomLock);
-  await MODULE.setBlocks(canvas.scene.getFlag('LockView', 'lockPan'),zoomLock,canvas.scene.getFlag('LockView', 'boundingBox'));
-}
-
-async function updateBoundingBox(boundingBox){
-  await MODULE.sendLockView_update(-1,-1,-1,-1,boundingBox)
-  await canvas.scene.setFlag('LockView', 'boundingBox', boundingBox);
-  if (boundingBox){
-    const payload = {
-      "msgType": "lockView_forceCanvasPan",
-      "senderId": game.userId
-    };
-    game.socket.emit(`module.LockView`, payload);
+async function viewbox(currentState,currentTool){
+  await game.settings.set("LockView","viewbox",currentState);
+  if (currentState) {
+    if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
+      for (let i=0; i< VIEWBOX.viewbox.length; i++)
+        if (VIEWBOX.viewbox[i] != undefined)
+          VIEWBOX.viewbox[i].hide();
+        ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
+    }
+    else {
+      VIEWBOX.getViewboxData();
+    }
   }
+  else {
+    for (let i=0; i< VIEWBOX.viewbox.length; i++)
+      if (VIEWBOX.viewbox[i] != undefined)
+        VIEWBOX.viewbox[i].hide();
+    canvas.scene.setFlag('LockView', 'editViewbox', false);
+    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active = false;
+    BLOCKS.getFlags();
+    BLOCKS.setBlocks();
+    ui.controls.controls.find(controls => controls.name == "LockView").activeTool = undefined;
+    mouseManager(false);
+    ui.controls.render();
+  }
+  currentTool.active = currentState; 
+}
+
+export let mouseMode = null;
+let viewboxId;
+let startOffset = {};
+let screenWidth;
+
+function mouseManager(en){
+  if (en) {
+    canvas.mouseInteractionManager.target.addListener("mousedown", (e) => {
+      let position = e.data.getLocalPosition(canvas.stage);
+      const d = canvas.dimensions;
+      for (let i=0; i<VIEWBOX.viewbox.length; i++){
+        if (VIEWBOX.viewbox[i] == undefined) continue;
+        const moveLocation = VIEWBOX.viewbox[i].moveLocation;
+        const scaleLocation = VIEWBOX.viewbox[i].scaleLocation;
+
+        if (Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
+        if (Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
+
+        if (mouseMode == 'move' || mouseMode == 'scale'){
+          startOffset = {
+            x: position.x - moveLocation.x,
+            y: position.y - moveLocation.y
+          }
+          viewboxId = VIEWBOX.viewbox[i].userId;
+          screenWidth = VIEWBOX.viewbox[i].screenWidth;
+          canvas.mouseInteractionManager.target.addListener("mouseup", (e) => {
+            mouseMode = null; 
+            canvas.mouseInteractionManager.target.removeListener("mousemove");
+            VIEWBOX.getViewboxData();
+          });
+          canvas.mouseInteractionManager.target.addListener("mousemove", (e) => {
+            let position = e.data.getLocalPosition(canvas.stage);
+            let width = VIEWBOX.viewbox[i].boxWidth;
+            let height = VIEWBOX.viewbox[i].boxHeight;
+            
+            if (mouseMode == 'move') {
+              position.x += 20 - startOffset.x + VIEWBOX.viewbox[i].boxWidth/2
+              position.y += 20 - startOffset.y + VIEWBOX.viewbox[i].boxHeight/2
+
+              let payload = {
+                "msgType": "newView",
+                "senderId": game.userId, 
+                "shiftX": position.x,
+                "shiftY": position.y,
+                "scaleChange": null,
+                "scaleSett": 0,
+                "type": "coordsAbs",
+                "receiverId": viewboxId
+              };
+              game.socket.emit(`module.LockView`, payload);
+            }
+            else {
+              let offset = VIEWBOX.viewbox[i].scaleLocation.x - position.x;
+              position.scale = (width - offset)/width;
+              
+              position.x = VIEWBOX.viewbox[i].xStorage + Math.floor(width / 2) - offset/2;
+              position.y = VIEWBOX.viewbox[i].yStorage + Math.floor(height / 2) - offset*height/(2*width);
+              
+              width *= position.scale;
+              height *= position.scale;
+
+              if (width <= screenWidth/CONFIG.Canvas.maxZoom) return;
+              
+              let payload = {
+                "msgType": "newView",
+                "senderId": game.userId, 
+                "shiftX": position.x,
+                "shiftY": position.y,
+                "scaleChange": width,
+                "scaleSett": 0,
+                "type": "coordsAbs",
+                "receiverId": viewboxId
+              };
+              game.socket.emit(`module.LockView`, payload);
+            }
+
+            //update viewbox
+            VIEWBOX.viewbox[i].updateViewbox(
+              {
+                x: position.x,
+                y: position.y,
+                width: width,
+                height: height,
+                color: VIEWBOX.viewbox[i].boxColor,
+                name: VIEWBOX.viewbox[i].boxName,
+                controlBtn: true
+              }
+            );
+          });
+          return;
+        }
+      }
+    });
+  }  
+  else {
+    canvas.mouseInteractionManager.target.removeListener("mousedown");
+    canvas.mouseInteractionManager.target.removeListener("mouseup");
+    canvas.mouseInteractionManager.target.removeListener("mousemove");
+    VIEWBOX.getViewboxData();
+  }
+}
+
+async function editViewboxConfig(controls) {
+  let currentState = !canvas.scene.getFlag('LockView', 'editViewbox');
+
+  if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
+    for (let i=0; i< VIEWBOX.viewbox.length; i++)
+      if (VIEWBOX.viewbox[i] != undefined)
+        VIEWBOX.viewbox[i].hide();
+    ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
+    canvas.scene.setFlag('LockView', 'editViewbox', false);
+    controls.find(controls => controls.name == "LockView").activeTool = undefined;
+    ui.controls.render();
+    return;
+  }
+  if (controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active == false){
+    ui.notifications.warn(game.i18n.localize("LockView.UI.ViewboxDisabled"));
+    canvas.scene.setFlag('LockView', 'editViewbox', false);
+    controls.find(controls => controls.name == "LockView").activeTool = undefined;
+    ui.controls.render();
+    return;
+  }
+
+  await canvas.scene.setFlag('LockView', 'editViewbox', currentState);
   
-  await MODULE.setBlocks(canvas.scene.getFlag('LockView', 'lockPan'),canvas.scene.getFlag('LockView', 'lockZoom'),boundingBox);
-  MODULE.forceCanvasPan();
+  if (currentState) {
+    Canvas.prototype.pan = _Override_VB_Pan;
+    Canvas.prototype._onMouseWheel = BLOCKS._onMouseWheel_Default;
+    oldVB_viewPosition = canvas.scene._viewPosition;
+  }
+  else {
+    //Canvas.prototype.pan = BLOCKS.pan_Default;
+    controls.find(controls => controls.name == "LockView").activeTool = undefined;
+    await BLOCKS.getFlags();
+    if (MISC.getEnable(game.userId)) await BLOCKS.setBlocks( {pan:BLOCKS.lockPan, zoom:BLOCKS.lockZoom, bBox: BLOCKS.boundingBox} );
+    else await BLOCKS.setBlocks( {pan:false, zoom:false, bBox:false, force: true} );
+  }
+  ui.controls.render();
+  mouseManager(currentState);
+  VIEWBOX.getViewboxData();
 }
 
 function _Override_VB_Pan({x=null, y=null, scale=null}={}) {
@@ -297,13 +325,138 @@ function _Override_VB_Pan({x=null, y=null, scale=null}={}) {
   else scaleChange = scale/oldVB_viewPosition.scale;
 
   let payload = {
-    "msgType": "lockView_newViewport",
+    "msgType": "newView",
     "senderId": game.userId, 
     "shiftX": diffX,
     "shiftY": diffY,
     "scaleChange": scaleChange,
-    "type": "shift"
+    "type": "shift",
+    "receiverId": 'all'
   };
   game.socket.emit(`module.LockView`, payload);
-  
+}
+
+/*
+ * Render the 'Set View' dialog
+ */
+function setViewDialog(controls) {
+  controls.find(controls => controls.name == "LockView").activeTool = undefined;
+  mouseManager(false);
+  ui.controls.render();
+  if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
+    ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
+    return;
+  }
+  let options = `
+    <option value=0>${game.i18n.localize("LockView.SetView.Mode0")}</option>
+    <option value=1>${game.i18n.localize("LockView.SetView.Mode1")}</option>
+    <option value=2>${game.i18n.localize("LockView.SetView.Mode2")}</option>
+    <option value=3>${game.i18n.localize("LockView.SetView.Mode3")}</option>
+    <option value=4>${game.i18n.localize("LockView.SetView.Mode4")}</option>
+    <option value=5>${game.i18n.localize("LockView.SetView.Mode5")}</option>
+  `;
+  let optionsScale = `
+    <option value=0>${game.i18n.localize("LockView.SetView.Scale0")}</option>
+    <option value=1>${game.i18n.localize("LockView.SetView.Scale1")}</option>
+    <option value=2>${game.i18n.localize("LockView.SetView.Scale2")}</option>
+    <option value=3>${game.i18n.localize("LockView.SetView.Scale3")}</option>
+  `;
+  let dialogTemplate = 
+  `
+  <div class="form-group">
+    <div style="display:flex"> 
+      <div  style="flex:1"></div>
+      <span style="flex:1">
+        <select style="width:200px" id="selectOption">${options}</select>
+      </span>
+      <div  style="flex:1"></div>
+    </div>
+    <p style="margin-bottom:10px;">
+    <div style="display:flex"> 
+      <div  style="flex:1"></div>
+      <span style="flex:1;">
+        <select style="width:200px" id="scaleOption">${optionsScale}</select>
+      </span>
+      <div  style="flex:1"></div>
+    </div>
+    <p style="margin-bottom:15px;">
+  </div>
+  <div class="form-group" style="display:flex; flex-direction:row; justify-content:space-around" id="numberBoxes">
+      <span style="flex-basis=20%">
+        X: 
+        <input id="val1" type="number" style="width:75px" value=0 />
+      </span>
+      <span style="flex-basis=20%">
+        Y: 
+        <input id="val2" type="number" style="width:75px" value=0 />
+      </span>
+      <span style="flex-basis=20%">
+      ${game.i18n.localize("LockView.SetView.LabelScale")}: 
+        <input id="sc" type="number" style="width:75px" value=1 />
+      </span>
+  </div>
+  <p style="margin-bottom:10px;">
+  <div>
+    <div  style="flex:1"></div>
+    
+    <p style="margin-bottom:10px;">
+  </div>   
+  `;
+  let d = new Dialog({
+    title: game.i18n.localize("LockView.SetView.Title"),
+    content: dialogTemplate,
+    buttons:{
+      Yes: {
+        label: game.i18n.localize("LockView.SetView.BtnOK"),
+        callback: (html) => {
+          let option = html.find("#selectOption")[0].value;
+          let scaleSett = html.find("#scaleOption")[0].value;
+          let payload;
+
+          let x = html.find("#val1")[0].value;
+          let y = html.find("#val2")[0].value;
+          let scale = html.find("#sc")[0].value;
+
+          if (option < 4){
+            payload = {
+              "msgType": "resetView",
+              "senderId": game.userId,
+              "scaleSett": scaleSett, 
+              "autoScale": option,
+              "scale": scale,
+              "receiverId": 'all'
+            };
+          }
+          else if (option == 4){
+            payload = {
+              "msgType": "newView",
+              "senderId": game.userId, 
+              "shiftX": x,
+              "shiftY": y,
+              "scaleSett": scaleSett, 
+              "scale": scale,
+              "type": "grid",
+              "receiverId": 'all'
+            };
+          }
+          else if (option == 5){
+            payload = {
+              "msgType": "newView",
+              "senderId": game.userId, 
+              "shiftX": x,
+              "shiftY": y,
+              "scaleSett": scaleSett, 
+              "scale": scale,
+              "type": "coords",
+              "receiverId": 'all'
+            };
+          }
+          game.socket.emit(`module.LockView`, payload);
+        }
+      },
+      Cancel: {
+        label: game.i18n.localize("LockView.SetView.BtnCancel")
+      }
+    }
+  }).render(true);
 }

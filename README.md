@@ -46,7 +46,7 @@ Refer to the 'Settings and Controls' section below to see how the GM can manipul
 
 ## Settings and Controls
 ### Module Settings
-In the module settings, as a GM you will find a button to open the player configuration screen, where you can enable the module and viewbox for each player.<br>
+In the module settings, as a GM you will find a button to open the player configuration screen, where you can enable the module and viewbox for each player. By default, both are enabled for non-GM users.<br>
 The module must be enabled for each player if you want to use any of the functions of this module, except for displaying the viewbox, which has its own enable setting.<br>
 <br>
 All connected players will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
@@ -92,7 +92,7 @@ From the top to the bottom:<br>
 <li><b>Zoom Lock</b> - Shows/switches the current state of 'Zoom Lock'. If on, zooming is disabled</li>
 <li><b>Bounding Box</b> - Shows/switches the current state of 'Bounding Box'. If on, zoom and pan are limited to the bounding box</li>
 <li><b>Viewbox</b> - Draws a square on the canvas that shows what enabled players can see. The color of the square corresponds with the 'Player Color'</li>
-<li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the players' view. Right-click dragging drags the viewbox and pans the players' sceen, the scrollwheel increases or decreases the size of the viewbox and zooms the players' screen in or out</li>
+<li><b>Edit Viewbox</b> - Allows the GM to edit the viewbox, and the players view. Right-click dragging drags the viewbox and pans all enabled players sceens, the scrollwheel increases or decreases the size of the viewbox and zooms the screen of all enabled players in or out. Additionally, two icons appear next to each viewbox which can be used to zoom or pan the view of individual players.</li>
 </ul>
 
 ![controlButtons](https://github.com/CDeenen/LockView/blob/master/img/examples/ControlButtons.png)
@@ -134,11 +134,13 @@ It is also possible to define a bounding box by drawing a rectangle (control but
 ![drawingConfiguration](https://github.com/CDeenen/LockView/blob/master/img/examples/DrawingConfiguration.png)
 
 ## Viewbox
-The viewbox is a function that allows the GM so see what players can see. 
-If enabled (enable for the player in the User Configuration screen in the module settings, and enable the 'Viewbox' control button), 
-a rectangle is drawn that corresponds with the view of the player. The color of the rectangle is the player color.<br>
+The viewbox is a function that allows the GM so see what users can see.<br>
+If enabled (enable for the user in the User Configuration screen in the module settings, and enable the 'Viewbox' control button), 
+a rectangle is drawn that corresponds with the view of the user. The color of the rectangle is the user color, and above the rectangle you can find the user name.<br>
 <br>
-It is possible for the GM to control the view of the players by enabling the 'Edit Viewbox' control button. If enabled, the GM can pan by left-click dragging and zoom by using the scroll wheel.<br>
+It is possible for the GM to control the view of the users by enabling the 'Edit Viewbox' control button.<br>
+If enabled, the GM can either control the view of all enabled users: pan by left-click dragging and zoom by using the scroll wheel.<br>
+Or control the view of individual users by dragging the icons next to each viewbox that appear when the 'Edit Viewbox' control button is pressed: Drag the upper-left icon to pan, drag the lower-right icon to zoom.<br>
 
 ![viewBox](https://github.com/CDeenen/LockView/blob/master/img/examples/ViewBox.png)
 
@@ -146,9 +148,7 @@ It is possible for the GM to control the view of the players by enabling the 'Ed
 If you have any suggestions or bugs to report, feel free to contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.
 
 <h1>Credits</h1>
-<b>Main author:</b> Cristian Deenen (Cris#6864 on Discord)<br>
-<b>Other:</b> 
--The tooltip class was modified from the vtta-party module by Sebastian Will from <a href="https://www.vttassets.com">VTTA Assets</a><br>
+<b>Author:</b> Cristian Deenen (Cris#6864 on Discord)<br>
 <br>
 If you enjoy using my modules, please consider supporting me on <a href="https://www.patreon.com/materialfoundry">Patreon</a>.
 

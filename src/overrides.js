@@ -1,34 +1,42 @@
-import {getControlledTokens,controlledTokens} from "./misc.js";
+import * as MODULE from "../lockview.js";
+import * as BLOCKS from "./blocks.js";
+import * as MISC from "./misc.js";
 
   /**
    * Modified _constrainView from foundry.js line 10117
    * Allows higher scaling resolution
    */
   export function constrainView_Override({x, y, scale}) {
-    const d = canvas.dimensions;
-    if (Number.isNumeric(scale) == false) scale = canvas.stage.scale.x;
-    let boxDefined = false;
-    let bound = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};
-    let rect = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};
-    let scaleChange = false;
-    let drawings = canvas.scene.data.drawings;
-    let scaleMin;
+    const d = canvas.dimensions;                    //Canvas dimensions
+    let boxDefined = false;                         //Whether a bounding box has been drawn
+    let bound = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};      //Stores the bounding box values
+    let rect = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};       //Stores the bounding rectangle values
+    let scaleChange = false;                        //Checks if the scale must be changed
+    let drawings = canvas.scene.data.drawings;      //The drawings on the canvas
+    let scaleMin;                                   //The minimum acceptable scale
+    let controlledTokens = [];                      //Array or tokens that are controlled by the user
 
-    if (canvas.scene.getFlag('LockView', 'boundingBox')){
-      getControlledTokens();
-      let tokensInBox = 0;
-      let force = false;
+    if (BLOCKS.boundingBox && MISC.getEnable(game.userId)) {
+      let tokensInBox = 0;                            //Number of tokens in the bounding box
+      let force = false;                              //Rectangle is defined as 'Force Always'
+      
+      //Get the controlled tokens
+      if (game.user.isGM == false) controlledTokens = MISC.getControlledTokens(); 
+
       //Check all drawings in the scene
       for (let i=0; i<drawings.length; i++){
-        //If drawing isn't a rectangle, continue
-        if (drawings[i].type != "r" || force) continue;
+
+      //If drawing isn't a rectangle, continue
+      if (drawings[i].type != "r" || force) continue;
 
         //Check boundingbox mode of the rectangle
         if (drawings[i].flags.LockView == undefined) continue;
         if (drawings[i].flags.LockView.boundingBox_mode == 0) continue;
         const mode = drawings[i].flags.LockView.boundingBox_mode;
-       
+
+        //Get the line width of the rectangle
         const lineWidth = drawings[i].strokeWidth;
+
         //Store rectangle location
         let rectTemp = {
           Xmin : drawings[i].x+lineWidth,
@@ -37,6 +45,7 @@ import {getControlledTokens,controlledTokens} from "./misc.js";
           Ymax : drawings[i].y+drawings[i].height-2*lineWidth
         }
 
+        //If 'mode' is 'Always', set the rect variable and break the 'for statement'
         if (mode == 2) {
           rect.Xmin = rectTemp.Xmin;
           rect.Xmax = rectTemp.Xmax;
@@ -46,15 +55,18 @@ import {getControlledTokens,controlledTokens} from "./misc.js";
           force = true;
           break;
         }
-        //Check if once of the tokens that are controlled by the user are within the box
+
+        //Check if one of the tokens that are controlled by the user are within the rectangle
         let activeToken = false;
         for (let j=0; j<controlledTokens.length; j++){
+          //Get the center of the token
           let center = controlledTokens[j].getCenter(controlledTokens[j].x,controlledTokens[j].y);
-          const x = center.x;
-          const y = center.y;
-          if (x>=rectTemp.Xmin && x<=rectTemp.Xmax && y>=rectTemp.Ymin && y<=rectTemp.Ymax){
+          
+          //Check if it is within the rectangle
+          if (center.x>=rectTemp.Xmin && center.x<=rectTemp.Xmax && center.y>=rectTemp.Ymin && center.y<=rectTemp.Ymax){
             activeToken = true;
             tokensInBox++;
+
             //Extend rect variable so all rectanges that a controlled token is within are included
             if (rect.Xmin == 0 || rectTemp.Xmin < rect.Xmin) rect.Xmin = rectTemp.Xmin;
             if (rect.Xmax == 0 || rectTemp.Xmax > rect.Xmax) rect.Xmax = rectTemp.Xmax;
@@ -62,77 +74,73 @@ import {getControlledTokens,controlledTokens} from "./misc.js";
             if (rect.Ymax == 0 || rectTemp.Ymax > rect.Ymax) rect.Ymax = rectTemp.Ymax;
           }
         }
+
         if (activeToken == false) continue;
-        boxDefined = true;
-        
+            boxDefined = true;
       }
 
-      if ((boxDefined == false || tokensInBox != controlledTokens.length) && force == false) {
+      let controlledTokensLength = 0;
+      if (game.user.isGM) 
+        boxDefined = false; 
+      else
+        controlledTokensLength = controlledTokens.length;
+
+      //If there is no box defined, or not all tokens are in the box, and no rectangle is set to 'Force Always', set 'rect' to the canvas size
+      if ((boxDefined == false || tokensInBox != controlledTokensLength) && force == false) {
         rect.Xmin = canvas.dimensions.sceneRect.x;
         rect.Xmax = canvas.dimensions.sceneRect.x+canvas.dimensions.sceneRect.width;
         rect.Ymin = canvas.dimensions.sceneRect.y;
         rect.Ymax = canvas.dimensions.sceneRect.y+canvas.dimensions.sceneRect.height;
       }
 
-      //If 'excludeSidebar' en enabled and the sidebar is not collapsed, add sidebar width to rect variable
-      if (canvas.scene.getFlag("LockView","excludeSidebar") && ui.sidebar._collapsed == false){
+      //If 'excludeSidebar' is enabled and the sidebar is not collapsed, add sidebar width to rect variable
+      if (BLOCKS.excludeSidebar && ui.sidebar._collapsed == false)
         rect.Xmax += Math.ceil((window.innerWidth-ui.sidebar._element[0].offsetLeft)/canvas.scene._viewPosition.scale);
-      }
 
-      let horizontal;
-      if ((window.innerWidth / (rect.Xmax-rect.Xmin)) > (window.innerHeight / (rect.Ymax-rect.Ymin))) horizontal = true;
-      else horizontal = false;
+      //Compare ratio between window size and rect size in x and y direction to determine if the fit should be horizontal or vertical
+      const horizontal = ((window.innerWidth / (rect.Xmax-rect.Xmin)) > (window.innerHeight / (rect.Ymax-rect.Ymin))) ? true : false;
 
+      //Get the minimum allowable scale
       if (horizontal) scaleMin = window.innerWidth/(rect.Xmax-rect.Xmin);
       else scaleMin = window.innerHeight/(rect.Ymax-rect.Ymin);
     }
 
-    if ( Number.isNumeric(scale) && (scale !== canvas.stage.scale.x) ) {
-      scaleChange = true;
-      const max = CONFIG.Canvas.maxZoom;
-      const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
-      let min = 1 / ratio;
-      if (canvas.scene.getFlag('LockView', 'boundingBox')) min = scaleMin;
-      
-      scale = Math.round(Math.clamped(scale, min, max) * 2000) / 2000;
+    //Check if the scale is a number, otherwise set it to the current canvas' scale
+    if ( Number.isNumeric(scale) == false) scale = canvas.scene._viewPosition.scale;
+    
+    //Get the max zoom
+    const max = CONFIG.Canvas.maxZoom;
 
-    } else {
-      scale = canvas.stage.scale.x;
+    //Calculate the min zoom
+    const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
+    let min = 1 / ratio;
+    if (BLOCKS.boundingBox) min = scaleMin;
+    
+    //Get the new scale
+    scale = Math.round(Math.clamped(scale, min, max) * 2000) / 2000;
+    
+    //Set the bounding box
+    bound.Xmin = rect.Xmin+window.innerWidth/(2*scale);
+    bound.Xmax = rect.Xmax-window.innerWidth/(2*scale);
+    bound.Ymin = rect.Ymin+window.innerHeight/(2*scale);
+    bound.Ymax = rect.Ymax-window.innerHeight/(2*scale);
+   
+    //Get the new x value
+    if (Number.isNumeric(x) == false) x = canvas.stage.pivot.x;
+    const padw = 0.4 * (window.innerWidth / scale);
+    if (BLOCKS.boundingBox){
+      x = Math.clamped(x, bound.Xmin, bound.Xmax);
     }
-    /*
-    if (boxDefined == false) {
-      bound.Xmin = canvas.dimensions.sceneRect.x+window.innerWidth/(2*scale);
-      bound.Xmax = canvas.dimensions.sceneRect.x+canvas.dimensions.sceneRect.width-window.innerWidth/(2*scale);
-      bound.Ymin = canvas.dimensions.sceneRect.y+window.innerHeight/(2*scale);
-      bound.Ymax = canvas.dimensions.sceneRect.y+canvas.dimensions.sceneRect.height-window.innerHeight/(2*scale);
+    else x = Math.clamped(x, -padw, d.width + padw);
+   
+    //Get the new y value
+    if (Number.isNumeric(y) == false) y = canvas.stage.pivot.y;
+    const padh = 0.4 * (window.innerHeight / scale);
+    if (BLOCKS.boundingBox){
+      y = Math.clamped(y, bound.Ymin, bound.Ymax);
     }
-    else {*/
-      bound.Xmin = rect.Xmin+window.innerWidth/(2*scale);
-      bound.Xmax = rect.Xmax-window.innerWidth/(2*scale);
-      bound.Ymin = rect.Ymin+window.innerHeight/(2*scale);
-      bound.Ymax = rect.Ymax-window.innerHeight/(2*scale);
-    //}
-    if ( Number.isNumeric(x) && x !== canvas.stage.pivot.x || scaleChange) {
-      if (Number.isNumeric(x) == false)
-        x = canvas.stage.pivot.x;
-      const padw = 0.4 * (window.innerWidth / scale);
-      if (canvas.scene.getFlag('LockView', 'boundingBox')){
-        x = Math.clamped(x, bound.Xmin, bound.Xmax);
-      }
-      else x = Math.clamped(x, -padw, d.width + padw);
-    }
-    else x = canvas.stage.pivot.x;
-    if ( Number.isNumeric(y) && x !== canvas.stage.pivot.y || scaleChange) {
-      if (Number.isNumeric(y) == false)
-        y = canvas.stage.pivot.y;
-      const padh = 0.4 * (window.innerHeight / scale);
-      if (canvas.scene.getFlag('LockView', 'boundingBox')){
-        y = Math.clamped(y, bound.Ymin, bound.Ymax);
-      }
-      else y = Math.clamped(y, -padh, d.height + padh);
-    }
-    else y = canvas.stage.pivot.y;
-  
+    else y = Math.clamped(y, -padh, d.height + padh);
+    
     return {x, y, scale};
   }
 
@@ -141,6 +149,7 @@ import {getControlledTokens,controlledTokens} from "./misc.js";
  * redirects _constrainView to _constrainView_Override for higher scaling resolution
  */
   export function pan_OverrideHigherRes({x=null, y=null, scale=null}={}) {
+    
     const constrained = constrainView_Override({x, y, scale});
     this.stage.pivot.set(constrained.x, constrained.y);
     this.stage.scale.set(constrained.scale, constrained.scale);

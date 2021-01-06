@@ -8,10 +8,10 @@
     "LockView.Sett.LockOverride": "Lock Override",
     "LockView.Sett.LockOverride_Hint": "Enter a keybinding to allow users to override the zoom and pan lock",
 
-    "LockView.EnMenu.Description": "Select for which players the module and viewbox should be enabled.",
+    "LockView.EnMenu.Description": "Select which users the module can control and for what users the viewbox should be enabled.",
     "LockView.EnMenu.Name": "Name",
     "LockView.EnMenu.Role": "Role",
-    "LockView.EnMenu.Enable": "Enable",
+    "LockView.EnMenu.Control": "Control",
     "LockView.EnMenu.Viewbox": "Viewbox",
     "LockView.EnMenu.Save": "Save",
 
