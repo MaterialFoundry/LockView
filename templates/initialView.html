@@ -1,0 +1,66 @@
+<form autocomplete="off" onsubmit="event.preventDefault()">
+
+    <div class="form-group initial-position">
+        <label>{{localize "LockView.SetInitialView.Old"}}</label>
+        <div class="flex-container" style="display:flex; align:left; width:100%">
+            <label>x&nbsp;</label>
+            <input type="text" name="initial.x" value={{initial.x}} data-dtype="Number" style="width:20%; color:#5e5e5e" readonly="readonly">  
+            <label>&nbsp;y&nbsp;</label>
+            <input type="text" name="initial.y" value={{initial.y}} data-dtype="Number" style="width:20%; color:#5e5e5e" readonly="readonly">  
+            <label>&nbsp;{{localize "LockView.SetView.LabelScale"}}&nbsp;</label> 
+            <input type="text" name="initial.scale" value={{initial.scale}} data-dtype="Number" style="width:20%; color:#5e5e5e" readonly="readonly">
+        </div>
+    </div>
+    <div class="form-group initial-position">
+        <label>{{localize "LockView.SetInitialView.New"}}</label>
+        <div class="flex-container" style="align:right">
+            <label>x</label>
+            <input type="text" name="dataX" value={{initial.x}} data-dtype="Number" style="width:20%">  
+            <label>y</label>
+            <input type="text" name="dataY" value={{initial.y}} data-dtype="Number" style="width:20%">  
+            <lavel>{{localize "LockView.SetView.LabelScale"}}</lavel>
+            <input type="text" name="dataScale" value={{initial.scale}} data-dtype="Number" style="width:20%">
+        </div>
+    </div>
+    <div class="form-group initial-position">
+        <label>{{localize "LockView.SetInitialView.GridSpaces"}}</label>
+        <div class="flex-container" style="align:right">
+            <label>x</label>
+            <input type="text" name="gridX" value={{grid.x}} data-dtype="Number" style="width:20%">  
+            <label>y</label>
+            <input type="text" name="gridY" value={{grid.y}} data-dtype="Number" style="width:20%">  
+        </div>
+    </div>
+    <div class="form-group initial-position">
+        <label>{{localize "LockView.SetInitialView.GridScale"}}</label>
+        <button type="button" name="physicalGrid" style="width:25%; ">
+            {{localize "LockView.SetView.Scale3"}}
+        </button>
+    </div>
+    <div class="form-group initial-position">
+        <label>{{localize "LockView.SetInitialView.Snap"}}</label>
+        <div class="flex-container" style="align:right">
+            <select name="snapDir" class="select" id="snapDir" default="" style="width:30%;">
+                <option value="topLeft">{{localize "LockView.SetInitialView.TopLeft"}}</option>
+                <option value="topRight">{{localize "LockView.SetInitialView.TopRight"}}</option>
+                <option value="downLeft">{{localize "LockView.SetInitialView.BottomLeft"}}</option>
+                <option value="downRight">{{localize "LockView.SetInitialView.BottomRight"}}</option>
+            </select>
+            <button type="button" name="snapGrid" style="width:68%">
+                {{localize "LockView.SetInitialView.Snap"}}
+            </button>
+        </div>
+    </div>
+    
+    <div class = "form-group">
+        <button type="save" name="save" style="width:25%;">
+            <i class="far fa-save"></i> {{localize "LockView.SetInitialView.BtnSave"}}
+        </button>
+        <button type="cancel" name="cancel" style="width:25%;">
+            <i class="far fa-delete"></i> {{localize "LockView.SetView.BtnCancel"}}
+        </button>
+    </div>
+    
+
+
+</form>

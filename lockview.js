@@ -24,7 +24,8 @@ Hooks.on("renderSceneControls", (controls) => { onRenderSceneControls(controls) 
 Hooks.on("renderDrawingConfig", (app,html,data)=>{ DRAWING.drawingConfigApp(app, html, data) });
 Hooks.on("closeDrawingConfig", (app,html)=>{ DRAWING.closeDrawingConfigApp(app, html) });
 Hooks.on("updateDrawing",()=>{ forceConstrain() });
-Hooks.on("sidebarCollapse", () => { applySettings(); forceConstrain() });
+Hooks.on("sidebarCollapse", () => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); forceConstrain() });
+Hooks.on("closeinitialViewForm", () => { SCENECONFIG.closeInitialViewForm() })
 
 Hooks.on('canvasPan',(canvas,data)=>{
   if (MISC.getEnable(game.userId)) 
@@ -161,6 +162,7 @@ async function initializeFlags(){
  */
 async function onCanvasReady(){
   if (game.user.isGM){
+
     //If the user is the GM, request viewbox data from connected players
     VIEWBOX.getViewboxData();
     
@@ -201,6 +203,7 @@ async function onCanvasReady(){
  * Apply the settings
  */
 export async function applySettings(force=false) {
+  
   //If module isn't enabled for this client, return
   if (MISC.getEnable(game.userId) == false) return;
 

@@ -7,35 +7,17 @@ export function getControlledTokens(){
   if (game.user.isGM) return;
   //Get a list of all tokens that are controlled by the user
   controlledTokens = [];
-  let tokens = canvas.tokens.children[0].children;
+  const tokens = canvas.tokens.children[0].children;
   for (let i=0; i<tokens.length; i++){
-    //Get the permission of each token, and store owned tokens in array
-    const permission = tokens[i].actor.data.permission;
-    let permissionString = JSON.stringify(permission);
-    permissionString = permissionString.replace('{','');
-    permissionString = permissionString.replace('}','');
-    permissionString = permissionString.replaceAll('"','');
-    let permissionArray = permissionString.split(',');
-    let defaultPermission;
-    let userPermission;
-    for (let j=0; j<permissionArray.length; j++){
-      const array = permissionArray[j].split(':');
-      if (array[0] == 'default') defaultPermission = array[1];
-      else if (array[0] == game.userId) userPermission = array[1];
-      if (userPermission == undefined) userPermission = defaultPermission;
-    }
+    //Get the permissions of each token
+    let defaultPermission = tokens[i].actor.data.permission.default;
+    let userPermission = tokens[i].actor.data.permission?.[game.userId];
+    if (userPermission == undefined) userPermission = defaultPermission;
+
     if (userPermission > 2) 
       controlledTokens.push(tokens[i]);
   }
   return controlledTokens;
-}
-
-/*
- * Blacken or remove blackening of the sidebar background
- */
-export function blackSidebar(en){
-  if (en) document.getElementById("sidebar").style.backgroundColor = "black";
-  else document.getElementById("sidebar").style.backgroundColor = "";
 }
 
 /*
@@ -86,3 +68,10 @@ export function updatePopup(){
   }
 }
 
+/*
+ * Blacken or remove blackening of the sidebar background
+ */
+export function blackSidebar(en){
+  if (en) document.getElementById("sidebar").style.backgroundColor = "black";
+  else document.getElementById("sidebar").style.backgroundColor = "";
+}

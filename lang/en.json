@@ -35,7 +35,6 @@
     "LockView.Scene.BlackenSidebar": "Blacken Sidebar",
     "LockView.Scene.blackenSidebar_Hint": "Blackens the background of the sidebar to prevent users from seeing outside of the bounding box or canvas<br>(only works if 'Exclude Sidebar' is enabled",
 
-
     "LockView.ControlBtns.Label_SetView": "Set View",
     "LockView.ControlBtns.Label_PanLock": "Pan Lock",
     "LockView.ControlBtns.Label_ZoomLock": "Zoom Lock",
@@ -65,5 +64,18 @@
     "LockView.boundingBox.Mode2": "Always",
 
     "LockView.UI.NoConnect": "No connected and enabled clients on this scene",
-    "LockView.UI.ViewboxDisabled": "Viewbox is disabled"
+    "LockView.UI.ViewboxDisabled": "Viewbox is disabled",
+    "LockView.UI.NotOnScene": "You cannot set the initial view position for a scene that you are not viewing",
+
+    "LockView.SetInitialView.Title": "Configure Initial View Position",
+    "LockView.SetInitialView.Old": "Old initial view position",
+    "LockView.SetInitialView.New": "New initial view position",
+    "LockView.SetInitialView.GridSpaces": "Size in grid spaces",
+    "LockView.SetInitialView.GridScale": "Set to physical gridscale",
+    "LockView.SetInitialView.Snap": "Snap to grid",
+    "LockView.SetInitialView.TopLeft": "Top left",
+    "LockView.SetInitialView.TopRight": "Top right",
+    "LockView.SetInitialView.BottomLeft": "Bottom left",
+    "LockView.SetInitialView.BottomRight": "Bottom right",
+    "LockView.SetInitialView.BtnSave": "Save"
 }

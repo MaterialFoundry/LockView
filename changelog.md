@@ -1,4 +1,15 @@
 # Changelog
+### v1.4.1 - 01-02-2021
+Fixes:
+<ul>
+<li>Fixed issue where dragging the viewbox would lock the GM's cursor in place</li>
+<li>Autoscale now resets when sidebar is opened/collapsed and pan lock and zoom lock are enabled</li>
+</ul>
+
+<ul>
+<li>Added a button to the scene configuration (next to 'Force Initial View') that opens a dialog to allow precise initial view position configuration</li>
+</ul>
+
 ### v1.4.0 - 06-01-2021
 Additions:
 <ul>

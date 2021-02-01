@@ -75,7 +75,7 @@
 
         <h2>Scene Settings</h2>
         In the scene configuration screen, you'll find a new Lock View section with the following settings:<br>
-        <img src="modules/LockView/img/examples/SceneSettings.png" align="right" HSPACE="5" width="500">
+        <img src="modules/LockView/img/examples/SceneSettings.png" align="right" HSPACE="5" width="450">
         <ul>
         <li><b>Pan Lock</b> - Initial 'Pan Lock' setting</li>
         <li><b>Zoom Lock</b> - Initial 'Zoom Lock' setting</li>
@@ -84,6 +84,7 @@
         <li><b>Exclude Sidebar</b> - Exclude the area behind the sidebar from the bounding box or autoscaling. This can be enabled because the sidebar can obscure parts of the map</li>
         <li><b>Blacken Sidebar</b> - Blackens the background of the sidebar to prevent users from seeing outsie of the bounding box or canvas (only works if 'Exclude Sidebar' is enabled)</li>
         <li><b>Force Initial View</b> - Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off'</li>
+        <li><b>Configure Initial View Position button</b> - The button is located to the right of the 'Force Initial View' checkbox. Pressing it opens the 'Configure Initial View Position dialog screen (see below)</li>
         </ul>
         Autoscale can be set to the following options:<br>
         <ul>
@@ -95,7 +96,27 @@
         </ul>
         <b>Note 1:</b> The 'Pan Lock', 'Zoom Lock' and 'Bounding Box' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable them by pressing the control buttons (see below).<br>
         <b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit', 'Automatic Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the user can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
-   
+        <br>
+        
+        <h3><b>Configure Initial View Position</b></h3>
+        <img src="modules/LockView/img/examples/SetInitialViewPosition.png" align="right" HSPACE="5" width="450">
+        By pressing the 'Congigure Initial View Position' button to the right of the 'Force Initial View' checkbox, a dialog box opens and a red square is drawn on the canvas. 
+        This red square corresponds with the 'Initial View Position' as set in the 'Ambience and Atmosphere' section of the 'Scene Configuration Screen'.<br>
+        Pressing the 'move' icon at the top left of the red box moves the box around while pressing the 'scale' icon at the right bottom scales the box.
+        <br>
+        <br>
+        In the dialog box, you'll find the following values and buttons:
+        <ul>
+            <li><b>Old initial view position</b> - The old initial view position as it is currently set in the scene configuration</li>
+            <li><b>New initial view position</b> - The new initial view position as displayed by the red box. These values are user editable</li>
+            <li><b>Size in grid spaces</b> - The size of the view expressed in grid spaces. These values are user editable</li>
+            <li><b>Set to physical gridscale</b> - Scales the 'new initial view position' to correspond with the physical gridsize as set in the module settings</li>
+            <li><b>Snap to grid</b> - Snaps the 'new initial view poisition' to the grid. With the dropdown menu you can select which corner of the box should be snapped to the grid</li>
+        </ul>
+        By pressing the 'Cancel', 'Save', or 'Close' button, you'll return to the scene configuration. Only when the 'Save' button is pressed the initial view position on the scene configuration will be updated.<br>
+        Don't forget to save the scene configuration to have the new settings take effect.
+        
+
         <h2> Control Buttons</h2>
         <img src="modules/LockView/img/examples/ControlButtons.png" align="right" HSPACE="5" width="50">
         On the left of the screen, there are new control buttons for the GM that display and toggle the current setting on the scene.<br>

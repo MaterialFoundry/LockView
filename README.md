@@ -59,6 +59,25 @@ The settings are:
 
 ![moduleSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ModuleSettings.png)
 
+#### Configure Initial View Position
+By pressing the 'Congigure Initial View Position' button to the right of the 'Force Initial View' checkbox, a dialog box opens and a red square is drawn on the canvas. 
+This red square corresponds with the 'Initial View Position' as set in the 'Ambience and Atmosphere' section of the 'Scene Configuration Screen'.<br>
+Pressing the 'move' icon at the top left of the red box moves the box around while pressing the 'scale' icon at the right bottom scales the box.
+<br>
+<br>
+In the dialog box, you'll find the following values and buttons:
+<ul>
+    <li><b>Old initial view position</b> - The old initial view position as it is currently set in the scene configuration</li>
+    <li><b>New initial view position</b> - The new initial view position as displayed by the red box. These values are user editable</li>
+    <li><b>Size in grid spaces</b> - The size of the view expressed in grid spaces. These values are user editable</li>
+    <li><b>Set to physical gridscale</b> - Scales the 'new initial view position' to correspond with the physical gridsize as set in the module settings</li>
+    <li><b>Snap to grid</b> - Snaps the 'new initial view poisition' to the grid. With the dropdown menu you can select which corner of the box should be snapped to the grid</li>
+</ul>
+By pressing the 'Cancel', 'Save', or 'Close' button, you'll return to the scene configuration. Only when the 'Save' button is pressed the initial view position on the scene configuration will be updated.<br>
+Don't forget to save the scene configuration to have the new settings take effect.
+
+![SetInitialViewPosition](https://github.com/CDeenen/LockView/blob/master/img/examples/SetInitialViewPosition.png)
+
 ### Scene Settings
 In the scene configuration screen, you'll find a new Lock View section with the following settings:<br>
 <ul>

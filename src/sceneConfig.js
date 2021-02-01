@@ -103,12 +103,23 @@ export function renderSceneConfig(app,html){
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.ForceInit")}</label>
-        <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${forceInit ? 'checked' : ''}>
+        <div class="form-fields">
+            <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${forceInit ? 'checked' : ''}>
+            <button class="capture-position" type="button" title="Set Initial View" id="LockView_setInitialView"><i class="fas fa-ruler-combined"></i></button>
+        </div>
         <p class="notes">${game.i18n.localize("LockView.Scene.ForceInit_Hint")}</p>
     </div>
     `
     const submitBtn = html.find("button[name = 'submit']");
     submitBtn.before(fxHtml);
+
+    const setInitialViewButton = html.find("button[id = 'LockView_setInitialView']");
+    setInitialViewButton.on("click",event => {
+        if (app.object.id == canvas.scene.id)
+            handleInitialView(app.object);
+        else
+            ui.notifications.warn(game.i18n.localize("LockView.UI.NotOnScene"));
+    })
 }
 
 /*
@@ -145,7 +156,388 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
         canvas.scene.setFlag('LockView', 'editViewbox', false);
-        ui.controls.controls.find(controls => controls.name == "LockView").activeTool = undefined;
-        ui.controls.render()
+    }
+}
+
+let initialViewBox = {};
+let initialViewDialog;
+
+function handleInitialView(scene){
+    scene.sheet.close();
+    initialViewBox = new InitialViewBox();
+    canvas.stage.addChild(initialViewBox);
+    initialViewBox.init();
+    initialViewBox.updateBox(scene.data.initial);
+    let dialog = new initialViewForm();
+    dialog.pushData(scene);
+    dialog.render(true)
+    canvas.mouseInteractionManager.target.addListener("mousedown", mouseDownEvent );
+    ui.controls.controls.find(c => c.name == ui.controls.activeControl).activeTool = undefined;
+}
+
+/*
+ * 
+ */
+class InitialViewBox extends CanvasLayer {
+    constructor() {
+      super();
+      this.init();
+      this.data = {};
+    }
+  
+    init() {
+      this.container = new PIXI.Container();
+      this.addChild(this.container);
+    }
+  
+    async draw() {
+      super.draw();
+    }
+  
+    /*
+     * Update the viewbox
+     */
+    updateBox(data) {
+        const color = 0xff0000;
+        
+        const width = window.innerWidth/data.scale;
+        const height = window.innerHeight/data.scale;
+        
+        const x = data.x - Math.floor(width / 2);
+        const y = data.y - Math.floor(height / 2);
+    
+        this.container.removeChildren();
+        var drawing = new PIXI.Graphics();
+        drawing.lineStyle(2, color, 1);
+        drawing.drawRect(0,0,width,height);
+        this.container.addChild(drawing);  
+    
+        var drawingCircles = new PIXI.Graphics();
+        drawingCircles.lineStyle(2, color, 1);
+        drawingCircles.beginFill(color);
+        drawingCircles.drawCircle(-20,-20,20);
+        drawingCircles.drawCircle(width+20,height+20,20);
+        this.container.addChild(drawingCircles);
+
+        var moveIcon = PIXI.Sprite.from('modules/LockView/img/icons/arrows-alt-solid.png');
+        moveIcon.anchor.set(0.5);
+        moveIcon.scale.set(0.25);
+        moveIcon.position.set(-20,-20)
+        this.container.addChild(moveIcon);
+
+        var scaleIcon = PIXI.Sprite.from('modules/LockView/img/icons/compress-arrows-alt-solid.png');
+        scaleIcon.anchor.set(0.5);
+        scaleIcon.scale.set(0.20);
+        scaleIcon.position.set(width+20,height+20)
+        this.container.addChild(scaleIcon);
+        
+        this.container.setTransform(x, y);
+        this.container.visible = true;
+
+        this.data = {
+            x: x,
+            y: y,
+            centerX: data.x,
+            centerY: data.y,
+            width: width,
+            height: height,
+            scale: data.scale
+        }
+    }
+    
+    /*
+     * Hide the viewbox
+     */
+    hide() {
+      this.container.visible = false;
+    }
+  
+    /*
+     * Show the viewbox
+     */
+    show() {
+      this.container.visible = true;
+    }
+  
+    /*
+     * Remove the viewbox
+     */
+    remove() {
+      this.container.removeChildren();
+    }
+  }
+
+let mouseMode = null;
+let startOffset = {};
+//let screenWidth;
+var mouseDownEvent = function(e) { handleMouseDown(e) };
+var mouseUpEvent = function(e) { handleMouseUp(e) };
+var mouseMoveEvent = function(e) { handleMouseMove(e) };
+
+function handleMouseDown(e){
+    let position = e.data.getLocalPosition(canvas.stage);
+    const d = canvas.dimensions;
+  
+    const moveLocation = {x: initialViewBox.data.x-20, y: initialViewBox.data.y-20};
+    const scaleLocation = {x: initialViewBox.data.x+initialViewBox.data.width+20, y: initialViewBox.data.y+initialViewBox.data.height+20};
+
+    if (Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
+    else if (Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
+    else return;
+
+    if (mouseMode == 'move'){
+        startOffset = {
+            x: position.x - moveLocation.x,
+            y: position.y - moveLocation.y
+          }
+
+    }
+    else {
+        startOffset = {
+            x: position.x - scaleLocation.x,
+            y: position.y - scaleLocation.y
+          }
+    }
+    
+    //screenWidth = VIEWBOX.viewbox[i].screenWidth;
+    canvas.mouseInteractionManager.target.addListener("mouseup", mouseUpEvent );
+    canvas.mouseInteractionManager.target.addListener("mousemove", mouseMoveEvent );
+    
+}
+
+function handleMouseUp(){
+  mouseMode = null; 
+  canvas.mouseInteractionManager.target.removeListener("mousemove", mouseMoveEvent );
+
+}
+
+function handleMouseMove(e){
+  let position = e.data.getLocalPosition(canvas.stage);
+  position.scale = initialViewBox.data.scale;
+  let width = initialViewBox.data.width;
+  let height = initialViewBox.data.height;
+
+  if (mouseMode == 'move') {
+    position.x += -startOffset.x + 20 + initialViewBox.data.width/2
+    position.y += -startOffset.y + 20 + initialViewBox.data.height/2
+  }
+  else {
+    let offsetX = initialViewBox.data.x + width + 20 - position.x;
+    position.scale = (width + offsetX)/width;
+    let newWidth = width - offsetX;
+    
+
+    if (newWidth <= window.innerWidth/CONFIG.Canvas.maxZoom) return;
+
+    position.scale = window.innerWidth/newWidth;
+    let offsetY = offsetX*height/width;
+
+    position.x = initialViewBox.data.centerX - offsetX/2;
+    position.y = initialViewBox.data.centerY - offsetY/2;
+  }
+
+  initialViewBox.updateBox(position);
+  position.x = Math.round(position.x);
+  position.y = Math.round(position.y);
+
+  position.scale = Math.round(position.scale*100)/100;
+
+    if (document.getElementById("initialViewForm") != null) {
+        let elementX = document.getElementsByName("dataX")[0];
+        let elementY = document.getElementsByName("dataY")[0];
+        let elementScale = document.getElementsByName("dataScale")[0];
+        elementX.value = position.x;
+        elementY.value = position.y;
+        elementScale.value = position.scale;
+    }
+}
+
+export function closeInitialViewForm(){
+    canvas.scene.sheet.render(true);
+    initialViewBox.remove();
+    canvas.mouseInteractionManager.target.removeListener("mousedown", mouseDownEvent );
+    canvas.mouseInteractionManager.target.removeListener("mouseup", mouseUpEvent );
+    canvas.mouseInteractionManager.target.removeListener("mousemove", mouseMoveEvent );
+}
+
+export class initialViewForm extends FormApplication {
+    constructor(data, options) {
+        super(data, options);
+        this.scene;
+        this.initial = canvas.scene.data.initial;
+    }
+
+    /**
+     * Default Options for this FormApplication
+     */
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            id: "initialViewForm",
+            title: game.i18n.localize("LockView.SetInitialView.Title"),
+            template: "./modules/LockView/templates/initialView.html",
+            classes: ["sheet"]
+        });
+    }
+
+    pushData(scene) {
+        this.scene = scene;
+        this.initial = scene.data.initial;
+    }
+
+    /**
+     * Provide data to the template
+     */
+    getData() {
+        const gridSpaces = {
+            x: initialViewBox.data.width/canvas.scene.data.grid,
+            y: initialViewBox.data.height/canvas.scene.data.grid
+        }
+        return {
+            initial: this.initial,
+            grid: gridSpaces
+        } 
+    }
+
+    /**
+     * Update on form submit
+     * @param {*} event 
+     * @param {*} formData 
+     */
+    async _updateObject(event, formData) {
+        if (event.submitter.name == 'save') {
+            let initial = {
+                x: formData.dataX,
+                y: formData.dataY,
+                scale: formData.dataScale
+            }
+            this.scene.update({initial:initial})
+        }
+        
+       // closeInitialViewForm();
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+        const dataX = html.find("input[name='dataX']");
+        const dataY = html.find("input[name='dataY']");
+        const dataScale = html.find("input[name='dataScale']");
+        const gridX = html.find("input[name='gridX']");
+        const gridY = html.find("input[name='gridY']");
+        const physicalScale = html.find("button[name='physicalGrid']");
+        const snapGrid = html.find("button[name='snapGrid']");
+        
+        dataX.on("change", event => {
+            const newData = {
+                x: event.target.value,
+                y: initialViewBox.data.centerY,
+                scale: initialViewBox.data.scale
+            }
+            initialViewBox.updateBox(newData);
+        });
+
+        dataY.on("change", event => {
+            const newData = {
+                x: initialViewBox.data.centerX,
+                y: event.target.value,
+                scale: initialViewBox.data.scale
+            }
+            initialViewBox.updateBox(newData);
+        });
+
+        dataScale.on("change", event => {
+            let scale = event.target.value;
+            if (scale > CONFIG.Canvas.maxZoom){
+                scale = CONFIG.Canvas.maxZoom;
+                html.find("input[name='dataScale']")[0].value = scale;
+            }
+            const newData = {
+                x: initialViewBox.data.centerX,
+                y: initialViewBox.data.centerY,
+                scale: scale
+            }
+            initialViewBox.updateBox(newData);
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+        });
+
+        gridX.on("change", event => {
+            let scale = window.innerWidth/(canvas.scene.data.grid*event.target.value);
+            if (scale > CONFIG.Canvas.maxZoom){
+                scale = CONFIG.Canvas.maxZoom;
+                html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
+            }
+            const newData = {
+                x: initialViewBox.data.centerX,
+                y: initialViewBox.data.centerY,
+                scale: scale
+            }
+            initialViewBox.updateBox(newData);
+            html.find("input[name='dataScale']")[0].value = scale;
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+        });
+
+        gridY.on("change", event => {
+            let scale = window.innerHeight/(canvas.scene.data.grid*event.target.value);
+            if (scale > CONFIG.Canvas.maxZoom){
+                scale = CONFIG.Canvas.maxZoom;
+                html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+            }
+            const newData = {
+                x: initialViewBox.data.centerX,
+                y: initialViewBox.data.centerY,
+                scale: scale
+            }
+            initialViewBox.updateBox(newData);
+            html.find("input[name='dataScale']")[0].value = scale;
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
+        });
+
+        physicalScale.on("click", event => {
+            let scale = MODULE.getPhysicalScale();
+            if (scale > CONFIG.Canvas.maxZoom){
+                scale = CONFIG.Canvas.maxZoom;
+            }
+            const newData = {
+                x: initialViewBox.data.centerX,
+                y: initialViewBox.data.centerY,
+                scale: scale
+            }
+            initialViewBox.updateBox(newData);
+            html.find("input[name='dataScale']")[0].value = scale;
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+        });
+
+        snapGrid.on("click", event => {
+            const snapDir = html.find("select[name='snapDir']")[0].value;
+
+            let position = {};
+            if (snapDir == 'topLeft') position = {x: initialViewBox.data.x, y: initialViewBox.data.y};
+            else if (snapDir == 'topRight') position = {x: initialViewBox.data.x + initialViewBox.data.width, y: initialViewBox.data.y};
+            else if (snapDir == 'downLeft') position = {x: initialViewBox.data.x, y: initialViewBox.data.y + initialViewBox.data.height};
+            else if (snapDir == 'downRight') position = {x: initialViewBox.data.x + initialViewBox.data.width, y: initialViewBox.data.y + initialViewBox.data.height};
+
+            const center = canvas.grid.getCenter(position.x,position.y);
+            const gridSize = this.scene.data.grid;
+            let offset = {
+                x:gridSize/2, 
+                y:gridSize/2
+            };
+            if (position.x - center[0] <= 0) offset.x = -gridSize/2;
+            if (position.y - center[1] <= 0) offset.y = -gridSize/2;
+            position.x = center[0] + offset.x;
+            position.y = center[1] + offset.y;
+
+            let newData = {}
+            if (snapDir == 'topLeft')           {newData.x = position.x + initialViewBox.data.width/2; newData.y = position.y + initialViewBox.data.height/2}
+            else if (snapDir == 'topRight')     {newData.x = position.x - initialViewBox.data.width/2; newData.y = position.y + initialViewBox.data.height/2}
+            else if (snapDir == 'downLeft')     {newData.x = position.x + initialViewBox.data.width/2; newData.y = position.y - initialViewBox.data.height/2}
+            else if (snapDir == 'downRight')    {newData.x = position.x - initialViewBox.data.width/2; newData.y = position.y - initialViewBox.data.height/2}
+
+            newData.scale = initialViewBox.data.scale;
+            initialViewBox.updateBox(newData);
+            html.find("input[name='dataX']")[0].value = newData.x;
+            html.find("input[name='dataY']")[0].value = newData.y;
+        });
     }
 }

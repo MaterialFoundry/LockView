@@ -175,102 +175,112 @@ export let mouseMode = null;
 let viewboxId;
 let startOffset = {};
 let screenWidth;
+let selectedViewbox;
+var mouseDownEvent = function(e) { handleMouseDown(e) };
+var mouseUpEvent = function(e) { handleMouseUp(e) };
+var mouseMoveEvent = function(e) { handleMouseMove(e) };
 
 function mouseManager(en){
   if (en) {
-    canvas.mouseInteractionManager.target.addListener("mousedown", (e) => {
-      let position = e.data.getLocalPosition(canvas.stage);
-      const d = canvas.dimensions;
-      for (let i=0; i<VIEWBOX.viewbox.length; i++){
-        if (VIEWBOX.viewbox[i] == undefined) continue;
-        const moveLocation = VIEWBOX.viewbox[i].moveLocation;
-        const scaleLocation = VIEWBOX.viewbox[i].scaleLocation;
-
-        if (Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
-        if (Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
-
-        if (mouseMode == 'move' || mouseMode == 'scale'){
-          startOffset = {
-            x: position.x - moveLocation.x,
-            y: position.y - moveLocation.y
-          }
-          viewboxId = VIEWBOX.viewbox[i].userId;
-          screenWidth = VIEWBOX.viewbox[i].screenWidth;
-          canvas.mouseInteractionManager.target.addListener("mouseup", (e) => {
-            mouseMode = null; 
-            canvas.mouseInteractionManager.target.removeListener("mousemove");
-            VIEWBOX.getViewboxData();
-          });
-          canvas.mouseInteractionManager.target.addListener("mousemove", (e) => {
-            let position = e.data.getLocalPosition(canvas.stage);
-            let width = VIEWBOX.viewbox[i].boxWidth;
-            let height = VIEWBOX.viewbox[i].boxHeight;
-            
-            if (mouseMode == 'move') {
-              position.x += 20 - startOffset.x + VIEWBOX.viewbox[i].boxWidth/2
-              position.y += 20 - startOffset.y + VIEWBOX.viewbox[i].boxHeight/2
-
-              let payload = {
-                "msgType": "newView",
-                "senderId": game.userId, 
-                "shiftX": position.x,
-                "shiftY": position.y,
-                "scaleChange": null,
-                "scaleSett": 0,
-                "type": "coordsAbs",
-                "receiverId": viewboxId
-              };
-              game.socket.emit(`module.LockView`, payload);
-            }
-            else {
-              let offset = VIEWBOX.viewbox[i].scaleLocation.x - position.x;
-              position.scale = (width - offset)/width;
-              
-              position.x = VIEWBOX.viewbox[i].xStorage + Math.floor(width / 2) - offset/2;
-              position.y = VIEWBOX.viewbox[i].yStorage + Math.floor(height / 2) - offset*height/(2*width);
-              
-              width *= position.scale;
-              height *= position.scale;
-
-              if (width <= screenWidth/CONFIG.Canvas.maxZoom) return;
-              
-              let payload = {
-                "msgType": "newView",
-                "senderId": game.userId, 
-                "shiftX": position.x,
-                "shiftY": position.y,
-                "scaleChange": width,
-                "scaleSett": 0,
-                "type": "coordsAbs",
-                "receiverId": viewboxId
-              };
-              game.socket.emit(`module.LockView`, payload);
-            }
-
-            //update viewbox
-            VIEWBOX.viewbox[i].updateViewbox(
-              {
-                x: position.x,
-                y: position.y,
-                width: width,
-                height: height,
-                color: VIEWBOX.viewbox[i].boxColor,
-                name: VIEWBOX.viewbox[i].boxName,
-                controlBtn: true
-              }
-            );
-          });
-          return;
-        }
-      }
-    });
+    canvas.mouseInteractionManager.target.addListener("mousedown", mouseDownEvent );
   }  
   else {
-    canvas.mouseInteractionManager.target.removeListener("mousedown");
-    canvas.mouseInteractionManager.target.removeListener("mouseup");
-    canvas.mouseInteractionManager.target.removeListener("mousemove");
+    canvas.mouseInteractionManager.target.removeListener("mousedown", mouseDownEvent );
+    canvas.mouseInteractionManager.target.removeListener("mouseup", mouseUpEvent );
+    canvas.mouseInteractionManager.target.removeListener("mousemove", mouseMoveEvent );
     VIEWBOX.getViewboxData();
   }
+}
+
+function handleMouseDown(e){
+  let position = e.data.getLocalPosition(canvas.stage);
+  const d = canvas.dimensions;
+  for (let i=0; i<VIEWBOX.viewbox.length; i++){
+    if (VIEWBOX.viewbox[i] == undefined) continue;
+    const moveLocation = VIEWBOX.viewbox[i].moveLocation;
+    const scaleLocation = VIEWBOX.viewbox[i].scaleLocation;
+
+    if (Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
+    else if (Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
+    else continue;
+
+    selectedViewbox = i;
+    startOffset = {
+      x: position.x - moveLocation.x,
+      y: position.y - moveLocation.y
+    }
+    viewboxId = VIEWBOX.viewbox[i].userId;
+    screenWidth = VIEWBOX.viewbox[i].screenWidth;
+    canvas.mouseInteractionManager.target.addListener("mouseup", mouseUpEvent );
+    canvas.mouseInteractionManager.target.addListener("mousemove", mouseMoveEvent );
+    return;
+  }
+}
+
+function handleMouseUp(){
+  mouseMode = null; 
+  canvas.mouseInteractionManager.target.removeListener("mousemove", mouseMoveEvent );
+  VIEWBOX.getViewboxData();
+}
+
+function handleMouseMove(e){
+  let position = e.data.getLocalPosition(canvas.stage);
+  let width = VIEWBOX.viewbox[selectedViewbox].boxWidth;
+  let height = VIEWBOX.viewbox[selectedViewbox].boxHeight;
+  
+  if (mouseMode == 'move') {
+    position.x += 20 - startOffset.x + VIEWBOX.viewbox[selectedViewbox].boxWidth/2
+    position.y += 20 - startOffset.y + VIEWBOX.viewbox[selectedViewbox].boxHeight/2
+
+    let payload = {
+      "msgType": "newView",
+      "senderId": game.userId, 
+      "shiftX": position.x,
+      "shiftY": position.y,
+      "scaleChange": null,
+      "scaleSett": 0,
+      "type": "coordsAbs",
+      "receiverId": viewboxId
+    };
+    game.socket.emit(`module.LockView`, payload);
+  }
+  else {
+    let offset = VIEWBOX.viewbox[selectedViewbox].scaleLocation.x - position.x;
+    position.scale = (width - offset)/width;
+    
+    position.x = VIEWBOX.viewbox[selectedViewbox].xStorage + Math.floor(width / 2) - offset/2;
+    position.y = VIEWBOX.viewbox[selectedViewbox].yStorage + Math.floor(height / 2) - offset*height/(2*width);
+    
+    width *= position.scale;
+    height *= position.scale;
+
+    if (width <= screenWidth/CONFIG.Canvas.maxZoom) return;
+    
+    let payload = {
+      "msgType": "newView",
+      "senderId": game.userId, 
+      "shiftX": position.x,
+      "shiftY": position.y,
+      "scaleChange": width,
+      "scaleSett": 0,
+      "type": "coordsAbs",
+      "receiverId": viewboxId
+    };
+    game.socket.emit(`module.LockView`, payload);
+  }
+
+  //update viewbox
+  VIEWBOX.viewbox[selectedViewbox].updateViewbox(
+    {
+      x: position.x,
+      y: position.y,
+      width: width,
+      height: height,
+      color: VIEWBOX.viewbox[selectedViewbox].boxColor,
+      name: VIEWBOX.viewbox[selectedViewbox].boxName,
+      controlBtn: true
+    }
+  );
 }
 
 async function editViewboxConfig(controls) {
