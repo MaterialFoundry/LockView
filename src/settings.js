@@ -10,16 +10,16 @@ import * as BLOCKS from "./blocks.js";
 export const registerSettings = function() {
   //Create the Help button
   game.settings.registerMenu(MODULE.moduleName, 'helpMenu',{
-    name: "MaterialDeck.Sett.HelpMenu",
-    label: "MaterialDeck.Sett.HelpMenu",
+    name: "LockView.Sett.HelpMenu",
+    label: "LockView.Sett.HelpMenu",
     type: helpMenu,
     restricted: true
   });
 
   //Create the User Configuration button
   game.settings.registerMenu(MODULE.moduleName, 'enableMenu',{
-    name: "MaterialDeck.Sett.EnableMenu",
-    label: "MaterialDeck.Sett.EnableMenu",
+    name: "LockView.Sett.EnableMenu",
+    label: "LockView.Sett.EnableMenu",
     type: enableMenu,
     restricted: true
   });
@@ -102,7 +102,7 @@ export class enableMenu extends FormApplication {
   static get defaultOptions() {
       return mergeObject(super.defaultOptions, {
           id: "enableMenu",
-          title: "Lock View: "+game.i18n.localize("MaterialDeck.Sett.EnableMenu"),
+          title: "Lock View: "+game.i18n.localize("LockView.Sett.EnableMenu"),
           template: "./modules/LockView/templates/enableMenu.html",
           width: "400px"
       });
@@ -195,7 +195,7 @@ export class helpMenu extends FormApplication {
   static get defaultOptions() {
       return mergeObject(super.defaultOptions, {
           id: "helpMenu",
-          title: "Lock View: "+game.i18n.localize("MaterialDeck.Sett.HelpMenu"),
+          title: "Lock View: "+game.i18n.localize("LockView.Sett.HelpMenu"),
           template: "./modules/LockView/templates/helpMenu.html",
           width: "500px"
       });

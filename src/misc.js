@@ -1,4 +1,41 @@
+import * as BLOCKS from "./blocks.js";
+import * as CBUTTONS from "./controlButtons.js";
+
 export var controlledTokens = [];
+
+export async function setLockView(data) {
+  let enable;
+  if (data.panLock != undefined) {
+    if (data.panLock == 'toggle') enable = !canvas.scene.getFlag('LockView', 'lockPan');
+    else enable = data.panLock;
+    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = enable;
+    await BLOCKS.updatePanLock(enable);
+  }
+  if (data.zoomLock != undefined) {
+    if (data.zoomLock == 'toggle') enable = !canvas.scene.getFlag('LockView', 'lockZoom');
+    else enable = data.zoomLock;
+    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = enable;
+    await BLOCKS.updateZoomLock(enable);
+  }
+  if (data.boundingBox != undefined) {
+    if (data.boundingBox == 'toggle') enable = !canvas.scene.getFlag('LockView', 'boundingBox');
+    else enable = data.boundingBox;
+    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = enable;
+    await BLOCKS.updateBoundingBox(enable);
+  }
+  if (data.viewbox != undefined) {
+    if (data.viewbox == 'toggle') enable = !game.settings.get("LockView","viewbox");
+    else enable = data.viewbox;
+    ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active = enable;
+    await CBUTTONS.viewbox(enable);
+  }
+  await ui.controls.render();
+  if (data.editViewbox != undefined) {
+    if (data.editViewbox == 'toggle') enable = !canvas.scene.getFlag('LockView', 'editViewbox');
+    else enable = data.editViewbox;
+    await CBUTTONS.editViewboxConfig(ui.controls.controls);
+  }
+}
 
 /*
  * Get all tokens that are controlled by the player and store them into the 'controlledTokens' array

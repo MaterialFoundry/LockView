@@ -26,6 +26,7 @@ Hooks.on("closeDrawingConfig", (app,html)=>{ DRAWING.closeDrawingConfigApp(app, 
 Hooks.on("updateDrawing",()=>{ forceConstrain() });
 Hooks.on("sidebarCollapse", () => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); forceConstrain() });
 Hooks.on("closeinitialViewForm", () => { SCENECONFIG.closeInitialViewForm() })
+Hooks.on("setLockView", (data) => { MISC.setLockView(data) })
 
 Hooks.on('canvasPan',(canvas,data)=>{
   if (MISC.getEnable(game.userId)) 

@@ -143,7 +143,7 @@ export function pushControlButtons(controls){
   });
 }
 
-async function viewbox(currentState,currentTool){
+export async function viewbox(currentState,currentTool=false){
   await game.settings.set("LockView","viewbox",currentState);
   if (currentState) {
     if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
@@ -168,7 +168,7 @@ async function viewbox(currentState,currentTool){
     mouseManager(false);
     ui.controls.render();
   }
-  currentTool.active = currentState; 
+  if (currentTool != false) currentTool.active = currentState; 
 }
 
 export let mouseMode = null;
@@ -283,7 +283,7 @@ function handleMouseMove(e){
   );
 }
 
-async function editViewboxConfig(controls) {
+export async function editViewboxConfig(controls) {
   let currentState = !canvas.scene.getFlag('LockView', 'editViewbox');
 
   if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {

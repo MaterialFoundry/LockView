@@ -1,4 +1,8 @@
 # Changelog
+### v1.4.2 - 25-02-2021
+Additions:
+-Added hooks and hook listeners for external module integrations
+
 ### v1.4.1 - 01-02-2021
 Fixes:
 <ul>

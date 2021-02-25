@@ -1,6 +1,6 @@
 {
-    "MaterialDeck.Sett.EnableMenu": "User Configuration",
-    "MaterialDeck.Sett.HelpMenu": "Help",
+    "LockView.Sett.EnableMenu": "User Configuration",
+    "LockView.Sett.HelpMenu": "Help",
     "LockView.Sett.ScreenWidth": "Screen Width",
     "LockView.Sett.ScreenWidth_Hint": "The real world screen width in mm or inch. Must be set on the local (TV's) client",
     "LockView.Sett.Gridsize": "Gridsize",
