@@ -103,6 +103,34 @@ export function updatePopup(){
     });
     d.render(true);
   }
+  if (game.settings.get("LockView","updatePopupV1.4.3") == false && game.user.isGM) {
+    let d = new Dialog({
+      title: "Lock View update v1.4.3",
+      content: `
+      <h3>Lock View has been updated to version 1.4.3</h3>
+      <p>
+      In the scene configuration you'll find a new 'Autoscale' option: 'Automatic Fit (outside)'<br>
+      This option allows you to autoscale the view in such a way that the whole canvas is always visible, instead of zooming in to fit like it did with the old 'Automatic Fit'. This function is
+      still there by setting it to 'Automatic Fit (inside)'.<br>
+      <br>
+      <b>Due to this change, any scene that you had configured with 'Autoscale: Physical Gridscale' is now set to 'Automatic Fit (outside)'. Unfortunately you'll have to manually reconfigure those scenes.</b>
+      <br>
+      <input type="checkbox" name="hide" data-dtype="Boolean">
+      Don't show this screen again
+      </p>`,
+      buttons: {
+      ok: {
+        icon: '<i class="fas fa-check"></i>',
+        label: "OK"
+      }
+      },
+      default: "OK",
+      close: html => {
+        if (html.find("input[name ='hide']").is(":checked")) game.settings.set("LockView","updatePopupV1.4.3",true);
+      }
+    });
+    d.render(true);
+  }
 }
 
 /*

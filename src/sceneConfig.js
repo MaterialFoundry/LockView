@@ -50,6 +50,7 @@ export function renderSceneConfig(app,html){
         game.i18n.localize("LockView.Scene.Autoscale.Hor"),
         game.i18n.localize("LockView.Scene.Autoscale.Vert"),
         game.i18n.localize("LockView.Scene.Autoscale.Auto"),
+        game.i18n.localize("LockView.Scene.Autoscale.AutoOutside"),
         game.i18n.localize("LockView.Scene.Autoscale.Grid")
     ];
     
@@ -88,6 +89,7 @@ export function renderSceneConfig(app,html){
             <option value="2" ${autoScaleSelected[2]}>${autoScaleOptions[2]}</option>
             <option value="3" ${autoScaleSelected[3]}>${autoScaleOptions[3]}</option>
             <option value="4" ${autoScaleSelected[4]}>${autoScaleOptions[4]}</option>
+            <option value="5" ${autoScaleSelected[5]}>${autoScaleOptions[5]}</option>
             </select>
         <p class="notes">${game.i18n.localize("LockView.Scene.Autoscale_Hint")}</p>
     </div>

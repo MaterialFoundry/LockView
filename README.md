@@ -42,7 +42,18 @@ The module can also be used when playing digitally (every player has their own c
 -'Physical Gridsize' in the scene configuration menu (Autoscale option) and in the 'Set View' dialog box<br>
 <br>
 In the User Configuration screen, enable the module and viewbox for each player whose view you want to control/view.<br>
-Refer to the 'Settings and Controls' section below to see how the GM can manipulate the view of the player clients. 
+Refer to the 'Settings and Controls' section below to see how the GM can manipulate the view of the player clients.<br>
+<br>
+
+<b>Example for a static landing page or full screen 'splashscreen':</b><br>
+Make sure the module is enabled for all players in the module settings.<br>
+In the Scene Configuration:<br>
+-Set 'Autoscale' to 'Automatic Fit'. You can choose either the inside (crops a part of the canvas to make it full screen) or outside option (shows the whole canvas,
+but can show some padding)<br>
+-Enable 'Lock Pan' and 'Lock Zoom'<br>
+-Make sure 'Bounding Box' is disabled<br>
+-Optionally enable 'Exclude Sidebar' and 'Blacken Sidebar' to make sure the sidebar isn't blocking part of the scene<br>
+-Set the scene background color to black ('#000000')<br>
 
 ## Settings and Controls
 ### Module Settings
@@ -94,7 +105,8 @@ Autoscale can be set to the following options:<br>
 <li><b>Off</b> - Autoscale disabled</li>
 <li><b>Horizontal Fit</b> - Automatically scales the scene to fit the browser window. Horizontal fit, so it may cut off vertical parts of the scene</li>
 <li><b>Vertical Fit</b> - Automatically scales the scene to fit the browser window. Vertical fit, so it may cut off horizontal parts of the scene</li>
-<li><b>Automatic Fit</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
+<li><b>Automatic Fit (inside)</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
+<li><b>Automatic Fit (outside)</b> - Automatically chooses horizontal or vertical fit so the full background can be seen, but can show the padding (area outside of the background image)</li>
 <li><b>Physical Gridsize</b> - Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1"). The gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client</li>
 </ul>
 <b>Note 1:</b> The 'Pan Lock', 'Zoom Lock' and 'Bounding Box' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable them by pressing the control buttons (see below).<br>
@@ -123,7 +135,8 @@ After clicking the 'Set View' control button, a dialog box appears that gives mu
 <li><b>Reset to initial view</b> - Resets the view to the initial view position, as set in the scene configuration screen</li>
 <li><b>Horizontal fit</b> - Scale and move the view so the scene fits horizontally</li>
 <li><b>Vertical fit</b> - Scale and move the view so the scene fits vertically</li>
-<li><b>Automatic Fit</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
+<li><b>Automatic Fit (inside)</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
+<li><b>Automatic Fit (outside)</b> - Automatically chooses horizontal or vertical fit so the full background can be seen, but can show the padding (area outside of the background image)</li>
 <li><b>Move grid spaces</b> - Moves the view in grid-units, relative to the current view. So setting X to 1 will move the view 1 gridspace to the right</li>
 <li><b>Move to coordinates</b> - Moves the view to the absolute coordinates as set in the number boxes</li>
 </ul>

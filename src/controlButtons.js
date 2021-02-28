@@ -364,6 +364,7 @@ function setViewDialog(controls) {
     <option value=3>${game.i18n.localize("LockView.SetView.Mode3")}</option>
     <option value=4>${game.i18n.localize("LockView.SetView.Mode4")}</option>
     <option value=5>${game.i18n.localize("LockView.SetView.Mode5")}</option>
+    <option value=6>${game.i18n.localize("LockView.SetView.Mode5")}</option>
   `;
   let optionsScale = `
     <option value=0>${game.i18n.localize("LockView.SetView.Scale0")}</option>
@@ -427,7 +428,7 @@ function setViewDialog(controls) {
           let y = html.find("#val2")[0].value;
           let scale = html.find("#sc")[0].value;
 
-          if (option < 4){
+          if (option < 5){
             payload = {
               "msgType": "resetView",
               "senderId": game.userId,
@@ -437,7 +438,7 @@ function setViewDialog(controls) {
               "receiverId": 'all'
             };
           }
-          else if (option == 4){
+          else if (option == 5){
             payload = {
               "msgType": "newView",
               "senderId": game.userId, 
@@ -449,7 +450,7 @@ function setViewDialog(controls) {
               "receiverId": 'all'
             };
           }
-          else if (option == 5){
+          else if (option == 6){
             payload = {
               "msgType": "newView",
               "senderId": game.userId, 

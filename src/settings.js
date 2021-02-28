@@ -63,6 +63,13 @@ export const registerSettings = function() {
     type: Boolean,
   });
 
+  game.settings.register(MODULE.moduleName,'updatePopupV1.4.3', {
+    scope: "world",
+    config: false,
+    default: false,
+    type: Boolean,
+  });
+
   /*
   game.settings.register(MODULE.moduleName,'lockOverride', {
     name: "LockView.Sett.LockOverride",

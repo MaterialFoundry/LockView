@@ -212,9 +212,9 @@ export async function applySettings(force=false) {
   await BLOCKS.getFlags();
 
   //If 'autoScale' if 'horizontal fit', 'vertical fit' or 'automatic fit'
-  if (BLOCKS.autoScale > 0 && BLOCKS.autoScale < 4 && force) 
+  if (BLOCKS.autoScale > 0 && BLOCKS.autoScale < 5 && force) 
     scaleToFit(BLOCKS.autoScale);
-  else if (BLOCKS.autoScale > 0 && BLOCKS.autoScale < 4) 
+  else if (BLOCKS.autoScale > 0 && BLOCKS.autoScale < 5) 
     scaleToFit();
   else {
     let newPosition = {};
@@ -224,7 +224,7 @@ export async function applySettings(force=false) {
       newPosition = canvas.scene.data.initial;
 
     //If 'autoScale' is set to 'physical gridsize', calculate the scale, and set it in 'newPosition'
-    if (BLOCKS.autoScale == 4)
+    if (BLOCKS.autoScale == 5)
       newPosition.scale = getPhysicalScale();
 
     //Check if current view falls within the bounding box
@@ -260,7 +260,6 @@ export async function scaleToFit(force = 0){
   //If exclude sidebar is on, and the sidebar is not collapsed, store the sidebar width to 'sidebarOffset'
   if (BLOCKS.excludeSidebar && ui.sidebar._collapsed == false) 
     sidebarOffset = window.innerWidth-ui.sidebar._element[0].offsetLeft;
-  
   //Horizontal fit
   if (autoScaleTemp == 1) horizontal = true;
   //Vertical fit
@@ -269,9 +268,11 @@ export async function scaleToFit(force = 0){
   else if (autoScaleTemp == 3) 
     //Compare ratio between window size and canvas size in x and y direction to determine if the fit should be horizontal or vertical
     horizontal = (((windowWidth-sidebarOffset) / sceneWidth) > (windowHeight / sceneHeight)) ? true : false;
+  else if (autoScaleTemp == 4) 
+    //Compare ratio between window size and canvas size in x and y direction to determine if the fit should be horizontal or vertical
+    horizontal = (((windowWidth-sidebarOffset) / sceneWidth) > (windowHeight / sceneHeight)) ? false : true;
   
   else return;
-
   //If the windowWidth or windowHeight is the same as last time this function ran, and if the function is not forced to run, return
   if (windowWidth == windowWidthOld && windowHeight == windowHeightOld && force == 0) return;
 

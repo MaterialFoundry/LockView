@@ -29,7 +29,7 @@ async function resetView(payload){
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
     else if (payload.scaleSett == 3){
-      if (BLOCKS.autoScale == 4) newPosition.scale = MODULE.getPhysicalScale();
+      if (BLOCKS.autoScale == 5) newPosition.scale = MODULE.getPhysicalScale();
       else newPosition.scale = canvas.scene._viewPosition.scale;
     } 
   
@@ -37,7 +37,7 @@ async function resetView(payload){
     await BLOCKS.setBlocks( {pan:false,zoom:false,bBox:false} );
   
     //Pan to the new position
-    if (payload.autoScale > 0 && payload.autoScale < 4) await MODULE.scaleToFit(payload.autoScale);
+    if (payload.autoScale > 0 && payload.autoScale < 5) await MODULE.scaleToFit(payload.autoScale);
     else await canvas.pan( newPosition );
   
     //Set blocks

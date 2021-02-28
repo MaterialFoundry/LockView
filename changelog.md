@@ -1,7 +1,15 @@
 # Changelog
+### v1.4.3 - 28-02-2021
+Additions:
+<ul>
+<li>Added 'Automatic Fit (outside) autoscale option (makes sure the whole canvas can always be seen, instead of zooming in, like the 'Automatic Fit (inside) option does)</li>
+</ul>
+
 ### v1.4.2 - 25-02-2021
 Additions:
--Added hooks and hook listeners for external module integrations
+<ul>
+<li>Added hooks and hook listeners for external module integrations</li>
+</ul>
 
 ### v1.4.1 - 01-02-2021
 Fixes:
