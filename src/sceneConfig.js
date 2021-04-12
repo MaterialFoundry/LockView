@@ -12,6 +12,8 @@ export function renderSceneConfig(app,html){
     let boundingBox = false;
     let excludeSidebar = false;
     let blackenSidebar = false;
+    let hideUI = false;
+    let collapseSidebar = false;
 
     if(app.object.data.flags["LockView"]){
         if (app.object.data.flags["LockView"].lockPanInit){
@@ -43,6 +45,14 @@ export function renderSceneConfig(app,html){
         if (app.object.data.flags["LockView"].blackenSidebar){
             blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
         } else app.object.setFlag('LockView', 'blackenSidebar', false);
+
+        if (app.object.data.flags["LockView"].hideUI){
+            hideUI = app.object.getFlag('LockView', 'hideUI');
+        } else app.object.setFlag('LockView', 'hideUI', false);
+
+        if (app.object.data.flags["LockView"].collapseSidebar){
+            collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
+        } else app.object.setFlag('LockView', 'collapseSidebar', false);
     } 
     
     let autoScaleOptions = [
@@ -104,6 +114,16 @@ export function renderSceneConfig(app,html){
         <p class="notes">${game.i18n.localize("LockView.Scene.blackenSidebar_Hint")}</p>
     </div>
     <div class="form-group">
+        <label>${game.i18n.localize("LockView.Scene.CollapseSidebar")}</label>
+        <input id="LockView_collapseSidebar" type="checkbox" name="LV_collapseSidebar" data-dtype="Boolean" ${collapseSidebar ? 'checked' : ''}>
+        <p class="notes">${game.i18n.localize("LockView.Scene.CollapseSidebar_Hint")}</p>
+    </div>
+    <div class="form-group">
+        <label>${game.i18n.localize("LockView.Scene.HideUI")}</label>
+        <input id="LockView_hideUI" type="checkbox" name="LV_hideUI" data-dtype="Boolean" ${hideUI ? 'checked' : ''}>
+        <p class="notes">${game.i18n.localize("LockView.Scene.HideUI_Hint")}</p>
+    </div>
+    <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.ForceInit")}</label>
         <div class="form-fields">
             <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${forceInit ? 'checked' : ''}>
@@ -112,8 +132,9 @@ export function renderSceneConfig(app,html){
         <p class="notes">${game.i18n.localize("LockView.Scene.ForceInit_Hint")}</p>
     </div>
     `
-    const submitBtn = html.find("button[name = 'submit']");
-    submitBtn.before(fxHtml);
+    
+    const initPositionClass = html.find('div[class="form-group initial-position"]')
+    initPositionClass.after(fxHtml);
 
     const setInitialViewButton = html.find("button[id = 'LockView_setInitialView']");
     setInitialViewButton.on("click",event => {
@@ -134,6 +155,8 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
     let boundingBox = html.find("input[name ='LV_boundingBox']").is(":checked");
     let excludeSidebar = html.find("input[name ='LV_excludeSidebar']").is(":checked");
     let blackenSidebar = html.find("input[name ='LV_blackenSidebar']").is(":checked");
+    let hideUI = html.find("input[name ='LV_hideUI']").is(":checked");
+    let collapseSidebar = html.find("input[name ='LV_collapseSidebar']").is(":checked");
     await app.object.setFlag('LockView', 'lockPan',lockPan);
     await app.object.setFlag('LockView', 'lockPanInit',lockPan);
     await app.object.setFlag('LockView', 'lockZoom',lockZoom);
@@ -144,6 +167,8 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
     await app.object.setFlag('LockView', 'boundingBoxInit', boundingBox);
     await app.object.setFlag('LockView', 'excludeSidebar', excludeSidebar);
     await app.object.setFlag('LockView', 'blackenSidebar', blackenSidebar);
+    await app.object.setFlag('LockView', 'hideUI', hideUI);
+    await app.object.setFlag('LockView', 'collapseSidebar', collapseSidebar);
 
     if (app.entity.data._id == canvas.scene.data._id){
 

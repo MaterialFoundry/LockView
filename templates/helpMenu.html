@@ -1,11 +1,6 @@
 <form autocomplete="off" onsubmit="event.preventDefault()">
 
     <div style="width:1200px">
-        <h2>For users coming from a version older than 1.3.1</h2>
-        <b>The 'Enable' and 'Force Enable' settings have been removed, in favor or a 'User Configuration' screen that you will find in the module settings.</b>
-        <br>
-        <br>
-
         <h1>Introduction</h1>
         Lock View is a module that gives the GM control over the zoom and pan capabilities of users, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting.<br>
         The module was originally made as a companion app for my <a href="https://github.com/CDeenen/MaterialPlane">Material Plane</a> module, and to make play using a digital playmat, 
@@ -94,6 +89,8 @@
         <li><b>Autoscale</b> - Automatically scales the screen</li>
         <li><b>Exclude Sidebar</b> - Exclude the area behind the sidebar from the bounding box or autoscaling. This can be enabled because the sidebar can obscure parts of the map</li>
         <li><b>Blacken Sidebar</b> - Blackens the background of the sidebar to prevent users from seeing outsie of the bounding box or canvas (only works if 'Exclude Sidebar' is enabled)</li>
+        <li><b>Collapse Sidebar on Scene Load</b> - Collapses the sidebar when the scene is loaded, mainly useful in combination with 'Hide UI on Sidebar Collapse'</li>
+        <li><b>Hide UI on Sidebar Collapse</b> - Hides all UI elements (such as the macro hotbar, scene navigation, etc), expect for the sidebar, when the sidebar is collapsed, great for landing pages or splash screens</li>
         <li><b>Force Initial View</b> - Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off'</li>
         <li><b>Configure Initial View Position button</b> - The button is located to the right of the 'Force Initial View' checkbox. Pressing it opens the 'Configure Initial View Position dialog screen (see below)</li>
         </ul>

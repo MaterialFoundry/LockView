@@ -1,4 +1,23 @@
 # Changelog
+### v1.4.4 - 12-04-2021
+Fixes:
+<ul>
+<li>Fixed issue where User Configuration would not be saved if no players were configured.</li>
+<li>Fixed issue with Pathfinder 2e, where the zoom and pan lock would only be applied on the first loaded scene</li>
+<li>Fixed "Cannot read property 'filter' of null" error on first load</li>
+</ul>
+
+Additions:
+<ul>
+<li>Added option to scene configuration to collapse the sidebar when a scene is loaded</li>
+<li>Added option to scene configuration to hide the UI when the sidebar is collapsed</li>
+</ul>
+
+Other:
+<ul>
+<li>Removed popups to notify users of previous breaking setting changes, since I'm assuming all users have updated their settings already</li>
+</ul>
+
 ### v1.4.3 - 28-02-2021
 Additions:
 <ul>

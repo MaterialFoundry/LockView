@@ -56,30 +56,15 @@ export const registerSettings = function() {
     type: Boolean,
   });
 
-  game.settings.register(MODULE.moduleName,'updatePopupV1.3.2', {
-    scope: "world",
-    config: false,
-    default: false,
-    type: Boolean,
-  });
-
+  /*
   game.settings.register(MODULE.moduleName,'updatePopupV1.4.3', {
     scope: "world",
     config: false,
     default: false,
     type: Boolean,
   });
-
-  /*
-  game.settings.register(MODULE.moduleName,'lockOverride', {
-    name: "LockView.Sett.LockOverride",
-    hint: "LockView.Sett.LockOverride_Hint",
-    scope: "world",
-    config: true,
-    default: "Alt + Z",
-    type: window.Azzu.SettingsTypes.KeyBinding,
-  });
   */
+
   game.settings.register(MODULE.moduleName,'editViewbox', {
     name: "Viewbox edit mode",
     hint: "",
@@ -120,7 +105,7 @@ export class enableMenu extends FormApplication {
    */
   getData() {
     const users = game.users._source;
-    const settings = game.settings.get(MODULE.moduleName,'userSettings');
+    //const settings = game.settings.get(MODULE.moduleName,'userSettings');
     let data = [];
 
     for (let i=0; i<users.length; i++){
@@ -156,11 +141,22 @@ export class enableMenu extends FormApplication {
    */
   async _updateObject(event, formData) {
     let settings = [];
-    for (let i=0; i<formData.id.length; i++){
+    const idArray = formData.id;
+    if (Array.isArray(idArray)) {
+      for (let i=0; i<formData.id.length; i++){
+        let settingsNew = {
+          id: formData.id[i],
+          enable: formData.enable[i],
+          viewbox: formData.viewbox[i]
+        }
+        settings.push(settingsNew);
+      }
+    }
+    else {
       let settingsNew = {
-        id: formData.id[i],
-        enable: formData.enable[i],
-        viewbox: formData.viewbox[i]
+        id: formData.id,
+        enable: formData.enable,
+        viewbox: formData.viewbox
       }
       settings.push(settingsNew);
     }

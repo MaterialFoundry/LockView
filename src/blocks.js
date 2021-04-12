@@ -57,7 +57,7 @@ export function setBlocks( {pan=null,zoom=null,bBox=null,force=false}={} ){
     }
 
     if (force==false && MISC.getEnable(game.userId) == false) return;
-  
+
     //Store the values in the global variables
     if (pan != null) lockPan = pan;
     if (zoom != null) lockZoom = zoom;

@@ -77,32 +77,7 @@ export function getEnable(userId){
 }
 
 export function updatePopup(){
-  if (game.settings.get("LockView","updatePopupV1.3.2") == false && game.user.isGM) {
-    let d = new Dialog({
-      title: "Lock View update v1.4.0",
-      content: `
-      <h3>Lock View has been updated to version 1.4.0</h3>
-      <p>
-      The 'Enable' and 'Force Enable' module settings have been removed, in favor or a 'User Configuration' screen that you will find in the module settings.<br>
-      <br>
-      <b>The old enable settings no longer work, you need to set them up in the new User Configuration screen in the Module Settings</b><br>
-      <br>
-      <input type="checkbox" name="hide" data-dtype="Boolean">
-      Don't show this screen again
-      </p>`,
-      buttons: {
-      ok: {
-        icon: '<i class="fas fa-check"></i>',
-        label: "OK"
-      }
-      },
-      default: "OK",
-      close: html => {
-        if (html.find("input[name ='hide']").is(":checked")) game.settings.set("LockView","updatePopupV1.3.2",true);
-      }
-    });
-    d.render(true);
-  }
+  /*
   if (game.settings.get("LockView","updatePopupV1.4.3") == false && game.user.isGM) {
     let d = new Dialog({
       title: "Lock View update v1.4.3",
@@ -131,6 +106,7 @@ export function updatePopup(){
     });
     d.render(true);
   }
+  */
 }
 
 /*

@@ -35,6 +35,10 @@
     "LockView.Scene.excludeSidebar_Hint":  "Excludes the area behind the sidebar from the bounding box or autoscaling",
     "LockView.Scene.BlackenSidebar": "Blacken Sidebar",
     "LockView.Scene.blackenSidebar_Hint": "Blackens the background of the sidebar to prevent users from seeing outside of the bounding box or canvas<br>(only works if 'Exclude Sidebar' is enabled",
+    "LockView.Scene.HideUI": "Hide UI on Sidebar Collapse",
+    "LockView.Scene.HideUI_Hint": "Hides the UI (except for the sidebar) when the sidebar is collapsed",
+    "LockView.Scene.CollapseSidebar": "Collapse Sidebar on Scene Load",
+    "LockView.Scene.CollapseSidebar_Hint": "Collapses the sidebar when the scene is loaded",
 
     "LockView.ControlBtns.Label_SetView": "Set View",
     "LockView.ControlBtns.Label_PanLock": "Pan Lock",

@@ -16,7 +16,8 @@ let windowHeightOld = -1;
 //CONFIG.debug.hooks = true;
 
 Hooks.on('ready', ()=>{ SOCKET.socket(); MISC.updatePopup() });
-Hooks.on('renderSidebarTab',()=>{ onCanvasReady() });
+Hooks.on('canvasReady',()=>{ onCanvasReady() });
+Hooks.on('renderSidebarTab',()=>{ onRenderSidebarTab() });
 Hooks.on("renderSceneConfig", (app, html) => { SCENECONFIG.renderSceneConfig(app,html) });
 Hooks.on("closeSceneConfig", (app, html) => { SCENECONFIG.closeSceneConfig(app,html) });
 Hooks.on("getSceneControlButtons", (controls) => { CBUTTONS.pushControlButtons(controls) });
@@ -27,6 +28,7 @@ Hooks.on("updateDrawing",()=>{ forceConstrain() });
 Hooks.on("sidebarCollapse", () => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); forceConstrain() });
 Hooks.on("closeinitialViewForm", () => { SCENECONFIG.closeInitialViewForm() })
 Hooks.on("setLockView", (data) => { MISC.setLockView(data) })
+Hooks.on("sidebarCollapse", (app,collapse) => { setUI(collapse) });
 
 Hooks.on('canvasPan',(canvas,data)=>{
   if (MISC.getEnable(game.userId)) 
@@ -61,12 +63,32 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
   VIEWBOX.getViewboxData();
 });
 
+function setUI(hide) {
+  if (hide && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'hideUI')) {
+    $('#logo').hide();
+    $('#navigation').hide();
+    $('#controls').hide();
+    $('#players').hide();
+    $('#hotbar').hide();
+  }
+  else {
+    $('#logo').show();
+    $('#navigation').show();
+    $('#controls').show();
+    $('#players').show();
+    $('#hotbar').show();
+  }
+}
+
 /*
  * If the scene controls are rendered, check whether editViewbox should be enabled
  */
 async function onRenderSceneControls(controls){
   //If no canvas is defined, or the user is not a GM, return
   if (canvas == null || game.user.isGM == false) return;
+  
+  if (MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'collapseSidebar')) 
+    ui.sidebar.collapse();
 
   //Get all flags
   await BLOCKS.getFlags();
@@ -162,6 +184,16 @@ async function initializeFlags(){
  * Run when canvas is ready
  */
 async function onCanvasReady(){
+  await BLOCKS.getFlags();
+
+  //Apply the settings
+  await applySettings(true);
+
+  //forceCanvasPan();
+  VIEWBOX.sendViewBox();
+}
+
+async function onRenderSidebarTab(){
   if (game.user.isGM){
 
     //If the user is the GM, request viewbox data from connected players
@@ -194,7 +226,7 @@ async function onCanvasReady(){
   }
 
   //Apply the settings
-  await applySettings(true);
+  if (game.system.id != "pf2e") await applySettings(true);
 
   //forceCanvasPan();
   VIEWBOX.sendViewBox();
@@ -232,7 +264,7 @@ export async function applySettings(force=false) {
       newPosition = OVERRIDES.constrainView_Override(canvas.scene._viewPosition);
 
     //Pan to the new position
-    if (canvas != null) await canvas.pan( newPosition );
+    if (canvas != null && isNaN(newPosition.x)==false) await canvas.pan( newPosition );
   }
 
   //Set sidebar background to black if 'blackenSidebar' and 'excludeSidebar' are on
