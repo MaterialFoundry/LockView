@@ -1,4 +1,10 @@
 # Changelog
+### v1.4.5 - 14-05-2021
+Fixes:
+<ul>
+<li>Fixed issue where, if 'Collapse Sidebar on Scene Load' was enabled, it would also collapse the sidebar whenever a control button was pressed</li>
+</ul>
+
 ### v1.4.4 - 12-04-2021
 Fixes:
 <ul>

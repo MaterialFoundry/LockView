@@ -12,6 +12,7 @@ export const moduleName = "LockView";
 
 let windowWidthOld= -1;
 let windowHeightOld = -1;
+let newSceneLoad = true;
 
 //CONFIG.debug.hooks = true;
 
@@ -54,6 +55,9 @@ Hooks.on("canvasInit", (canvas) => {
 
   //Disable all blocks
   BLOCKS.setBlocks( {pan:false,zoom:false,bBox:false} );
+
+  newSceneLoad = true;
+  setTimeout(function(){newSceneLoad = false;},1000);
 });
 
 Hooks.on("renderPlayerList", (playerlist,init,users) => {
@@ -87,7 +91,7 @@ async function onRenderSceneControls(controls){
   //If no canvas is defined, or the user is not a GM, return
   if (canvas == null || game.user.isGM == false) return;
   
-  if (MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'collapseSidebar')) 
+  if (newSceneLoad == true && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'collapseSidebar')) 
     ui.sidebar.collapse();
 
   //Get all flags
