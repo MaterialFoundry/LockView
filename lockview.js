@@ -89,10 +89,12 @@ function setUI(hide) {
  */
 async function onRenderSceneControls(controls){
   //If no canvas is defined, or the user is not a GM, return
-  if (canvas == null || game.user.isGM == false) return;
+  if (canvas == null) return;
   
   if (newSceneLoad == true && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'collapseSidebar')) 
     ui.sidebar.collapse();
+
+  if (game.user.isGM == false) return;
 
   //Get all flags
   await BLOCKS.getFlags();

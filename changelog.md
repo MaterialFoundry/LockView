@@ -1,4 +1,10 @@
 # Changelog
+### v1.4.6 - 15-05-2021
+Fixes:
+<ul>
+<li>Sidebar collapse option didn't work for players</li>
+</ul>
+
 ### v1.4.5 - 14-05-2021
 Fixes:
 <ul>
