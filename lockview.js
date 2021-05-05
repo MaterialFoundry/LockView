@@ -26,10 +26,11 @@ Hooks.on("renderSceneControls", (controls) => { onRenderSceneControls(controls) 
 Hooks.on("renderDrawingConfig", (app,html,data)=>{ DRAWING.drawingConfigApp(app, html, data) });
 Hooks.on("closeDrawingConfig", (app,html)=>{ DRAWING.closeDrawingConfigApp(app, html) });
 Hooks.on("updateDrawing",()=>{ forceConstrain() });
-Hooks.on("sidebarCollapse", () => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); forceConstrain() });
 Hooks.on("closeinitialViewForm", () => { SCENECONFIG.closeInitialViewForm() })
 Hooks.on("setLockView", (data) => { MISC.setLockView(data) })
-Hooks.on("sidebarCollapse", (app,collapse) => { setUI(collapse) });
+Hooks.on("sidebarCollapse", (app,collapse) => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); scaleToFit(); forceConstrain(); setUI(collapse) });
+Hooks.on("collapseSidebar", (app,collapse) => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); scaleToFit(); forceConstrain(); setUI(collapse) });
+Hooks.on("lightingRefresh", () => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); });
 
 Hooks.on('canvasPan',(canvas,data)=>{
   if (MISC.getEnable(game.userId)) 
@@ -57,7 +58,7 @@ Hooks.on("canvasInit", (canvas) => {
   BLOCKS.setBlocks( {pan:false,zoom:false,bBox:false} );
 
   newSceneLoad = true;
-  setTimeout(function(){newSceneLoad = false;},1000);
+  setTimeout(function(){newSceneLoad = false;},2000);
 });
 
 Hooks.on("renderPlayerList", (playerlist,init,users) => {
@@ -91,7 +92,7 @@ async function onRenderSceneControls(controls){
   //If no canvas is defined, or the user is not a GM, return
   if (canvas == null) return;
   
-  if (newSceneLoad == true && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'collapseSidebar')) 
+  if (newSceneLoad == true && MISC.getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) 
     ui.sidebar.collapse();
 
   if (game.user.isGM == false) return;
@@ -266,11 +267,11 @@ export async function applySettings(force=false) {
       newPosition.scale = getPhysicalScale();
 
     //Check if current view falls within the bounding box
-    if (BLOCKS.autoScale == 0 && BLOCKS.forceInit == false && canvas != null)
+    if (BLOCKS.autoScale == 0 && BLOCKS.forceInit == false && canvas?.scene != null)
       newPosition = OVERRIDES.constrainView_Override(canvas.scene._viewPosition);
 
     //Pan to the new position
-    if (canvas != null && isNaN(newPosition.x)==false) await canvas.pan( newPosition );
+    if (canvas?.scene != null && isNaN(newPosition.x)==false) await canvas.pan( newPosition );
   }
 
   //Set sidebar background to black if 'blackenSidebar' and 'excludeSidebar' are on
@@ -298,7 +299,8 @@ export async function scaleToFit(force = 0){
   //If exclude sidebar is on, and the sidebar is not collapsed, store the sidebar width to 'sidebarOffset'
   if (BLOCKS.excludeSidebar && ui.sidebar._collapsed == false) 
     sidebarOffset = window.innerWidth-ui.sidebar._element[0].offsetLeft;
-  //Horizontal fit
+  
+    //Horizontal fit
   if (autoScaleTemp == 1) horizontal = true;
   //Vertical fit
   else if (autoScaleTemp == 2) horizontal = false;
@@ -377,7 +379,6 @@ export function forceConstrain(){
     game.socket.emit(`module.LockView`, payload);
   }
   if (MISC.getEnable(game.userId) == false) return;
-
   const newPosition = OVERRIDES.constrainView_Override(canvas.scene._viewPosition);
   canvas.pan( newPosition );
   VIEWBOX.sendViewBox();

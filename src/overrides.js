@@ -12,7 +12,7 @@ import * as MISC from "./misc.js";
     let bound = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};      //Stores the bounding box values
     let rect = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};       //Stores the bounding rectangle values
     let scaleChange = false;                        //Checks if the scale must be changed
-    let drawings = canvas.scene.data.drawings;      //The drawings on the canvas
+    let drawings = MISC.compatibleCore("0.8.2") ? canvas.scene.data.drawings.contents : canvas.scene.data.drawings;      //The drawings on the canvas
     let scaleMin;                                   //The minimum acceptable scale
     let controlledTokens = [];                      //Array or tokens that are controlled by the user
 
@@ -25,24 +25,24 @@ import * as MISC from "./misc.js";
 
       //Check all drawings in the scene
       for (let i=0; i<drawings.length; i++){
+        const drawing = MISC.compatibleCore("0.8.2") ? drawings[i].data : drawings[i];
 
       //If drawing isn't a rectangle, continue
-      if (drawings[i].type != "r" || force) continue;
-
+      if (drawing.type != "r" || force) continue;
         //Check boundingbox mode of the rectangle
-        if (drawings[i].flags.LockView == undefined) continue;
-        if (drawings[i].flags.LockView.boundingBox_mode == 0) continue;
-        const mode = drawings[i].flags.LockView.boundingBox_mode;
+        if (drawing.flags.LockView == undefined) continue;
+        if (drawing.flags.LockView.boundingBox_mode == 0) continue;
+        const mode = drawing.flags.LockView.boundingBox_mode;
 
         //Get the line width of the rectangle
-        const lineWidth = drawings[i].strokeWidth;
+        const lineWidth = drawing.strokeWidth;
 
         //Store rectangle location
         let rectTemp = {
-          Xmin : drawings[i].x+lineWidth,
-          Xmax : drawings[i].x+drawings[i].width-2*lineWidth,
-          Ymin : drawings[i].y+lineWidth,
-          Ymax : drawings[i].y+drawings[i].height-2*lineWidth
+          Xmin : drawing.x+lineWidth,
+          Xmax : drawing.x+drawing.width-2*lineWidth,
+          Ymin : drawing.y+lineWidth,
+          Ymax : drawing.y+drawing.height-2*lineWidth
         }
 
         //If 'mode' is 'Always', set the rect variable and break the 'for statement'

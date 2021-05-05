@@ -6,21 +6,19 @@ import * as BLOCKS from "./blocks.js";
 let oldVB_viewPosition;
 
 export function registerLayer() {
-  const layers = mergeObject(Canvas.layers, {
-    lockview: LockViewLayer
-  });
-  Object.defineProperty(Canvas, 'layers', {
-    get: function () {
-      return layers
-    }
-  });
+  let canvasLayers = Canvas.layers;
+  canvasLayers.lockview = LockViewLayer;
+
+  Object.defineProperty(Canvas, 'layers', {get: function() {
+    return canvasLayers
+  }})
 }
 
-class LockViewLayer extends PlaceablesLayer {
+class LockViewLayer extends CanvasLayer {
   constructor() {
     super();
   }
-
+/*
   static get layerOptions() {
     return mergeObject(super.layerOptions, {
       canDragCreate: false,
@@ -28,7 +26,7 @@ class LockViewLayer extends PlaceablesLayer {
       sheetClass: NoteConfig
     });
   }
-
+*/
   activate() {
     CanvasLayer.prototype.activate.apply(this);
     return this;
@@ -56,7 +54,7 @@ export function pushControlButtons(controls){
     name: "LockView",
     title: "Lock View",
     icon: "fas fa-tv",
-    layer: "LockViewLayer",
+    layer: MISC.compatibleCore("0.8.2") ? "lockview" : "LockViewLayer",
     tools: [
       {
         name: "resetView",

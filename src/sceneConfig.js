@@ -373,9 +373,13 @@ function handleMouseMove(e){
         let elementX = document.getElementsByName("dataX")[0];
         let elementY = document.getElementsByName("dataY")[0];
         let elementScale = document.getElementsByName("dataScale")[0];
+        let elementGridX = document.getElementsByName("gridX")[0];
+        let elementGridY = document.getElementsByName("gridY")[0];
         elementX.value = position.x;
         elementY.value = position.y;
         elementScale.value = position.scale;
+        elementGridX.value = window.innerWidth/(position.scale*canvas.scene.data.grid);
+        elementGridY.value = window.innerHeight/(position.scale*canvas.scene.data.grid);
     }
 }
 

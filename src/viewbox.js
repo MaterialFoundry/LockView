@@ -26,6 +26,7 @@ export class Viewbox extends CanvasLayer {
     this.moveOffset = 0;
     this.scaleOffset = 0;
     this.screenWidth;
+    this.zIndex = 500;
   }
 
   init() {

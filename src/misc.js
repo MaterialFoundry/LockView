@@ -3,6 +3,16 @@ import * as CBUTTONS from "./controlButtons.js";
 
 export var controlledTokens = [];
 
+export function compatibleCore(compatibleVersion){
+  let coreVersion = game.data.version;
+  coreVersion = coreVersion.split(".");
+  compatibleVersion = compatibleVersion.split(".");
+  if (compatibleVersion[0] > coreVersion[0]) return false;
+  if (compatibleVersion[1] > coreVersion[1]) return false;
+  if (compatibleVersion[2] > coreVersion[2]) return false;
+  return true;
+}
+
 export async function setLockView(data) {
   let enable;
   if (data.panLock != undefined) {
@@ -41,7 +51,7 @@ export async function setLockView(data) {
  * Get all tokens that are controlled by the player and store them into the 'controlledTokens' array
  */
 export function getControlledTokens(){
-  if (game.user.isGM) return;
+  if (game.user.isGM || canvas == null) return;
   //Get a list of all tokens that are controlled by the user
   controlledTokens = [];
   const tokens = canvas.tokens.children[0].children;

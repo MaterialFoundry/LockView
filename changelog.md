@@ -1,11 +1,22 @@
 # Changelog
-### v1.4.6 - 15-05-2021
+### v1.4.7 - 05-05-2021
+Fixes:
+<ul>
+<li>Increased the Z-index of the viewbox, so it's rendered on top of tiles, drawings, templates, etc</li>
+</ul>
+
+Other:
+<ul>
+<li>Added support for Foundry 0.8.2</li>
+</ul>
+
+### v1.4.6 - 15-04-2021
 Fixes:
 <ul>
 <li>Sidebar collapse option didn't work for players</li>
 </ul>
 
-### v1.4.5 - 14-05-2021
+### v1.4.5 - 14-04-2021
 Fixes:
 <ul>
 <li>Fixed issue where, if 'Collapse Sidebar on Scene Load' was enabled, it would also collapse the sidebar whenever a control button was pressed</li>

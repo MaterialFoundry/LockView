@@ -9,6 +9,7 @@ import * as BLOCKS from "./blocks.js";
 export function socket(){
     game.socket.on(`module.LockView`, (payload) =>{
         //console.log(payload);
+        if (game.userId == payload.senderId) return;
         if (payload.msgType == 'update') { updatePlayerSettings(payload) }
         else if (payload.msgType == 'resetView') { resetView(payload) }
         else if (payload.msgType == 'newView'){ newView(payload) }
