@@ -32,7 +32,7 @@ export const registerSettings = function() {
     config: true,
     default: 1,
     type: Number,
-    onChange: x => MODULE.updateSettings()
+    onChange: x => MODULE.applySettings()
   });
 
   //Physical Gridsize
@@ -43,7 +43,7 @@ export const registerSettings = function() {
     config: true,
     default: 25,
     type: Number,
-    onChange: x => MODULE.updateSettings()
+    onChange: x => MODULE.applySettings()
   });
 
   

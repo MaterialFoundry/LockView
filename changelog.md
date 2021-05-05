@@ -1,4 +1,10 @@
 # Changelog
+### v1.4.8 - 05-05-2021
+Fixes:
+<ul>
+<li>Fixed issue with module settings, where 'Screen Width' and 'Gridsize' wouldn't update immediately</li>
+</ul>
+
 ### v1.4.7 - 05-05-2021
 Fixes:
 <ul>
