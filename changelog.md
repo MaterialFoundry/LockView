@@ -1,4 +1,20 @@
 # Changelog
+### v1.4.9 - 14-05-2021
+Fixes:
+<ul>
+<li>Autoscaling using Physical Gridsize was broken</li>
+<li>'Set Initial View' configuration wouldn't work if no initial view position was configured previously</li>
+<li>In the scene config, fixed the hint for 'Force Initial View'. It didn't state that it also works if autoscale is set to 'Physical Gridsize', and added description of the button</li>
+<li>If 'Hide UI on Sidebar Collapse' was on, scene navigation would still be displayed after the GM switched a Lock View function on or off</li>
+<li>Various actions, such as starting combat, would reset the view to the initial view position, if 'Force Initial View' was enabled</li>
+<li>Changes to the scene configuration would not automatically update the control button states</li>
+</ul>
+
+Additions:
+<ul>
+<li>In the 'Set Initial View' configuration, added the option to set the view to the current view of a connected player</li>
+</ul>
+
 ### v1.4.8 - 05-05-2021
 Fixes:
 <ul>

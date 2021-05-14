@@ -71,8 +71,8 @@ The settings are:
 ![moduleSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ModuleSettings.png)
 
 #### Configure Initial View Position
-By pressing the 'Congigure Initial View Position' button to the right of the 'Force Initial View' checkbox, a dialog box opens and a red square is drawn on the canvas. 
-This red square corresponds with the 'Initial View Position' as set in the 'Ambience and Atmosphere' section of the 'Scene Configuration Screen'.<br>
+By pressing the 'Congigure Initial View Position' button to the right of the 'Force Initial View' checkbox, a dialog box opens and a red box is drawn on the canvas. 
+This red box corresponds with the 'Initial View Position' as set in the 'Ambience and Atmosphere' section of the 'Scene Configuration Screen'.<br>
 Pressing the 'move' icon at the top left of the red box moves the box around while pressing the 'scale' icon at the right bottom scales the box.
 <br>
 <br>
@@ -81,9 +81,13 @@ In the dialog box, you'll find the following values and buttons:
     <li><b>Old initial view position</b> - The old initial view position as it is currently set in the scene configuration</li>
     <li><b>New initial view position</b> - The new initial view position as displayed by the red box. These values are user editable</li>
     <li><b>Size in grid spaces</b> - The size of the view expressed in grid spaces. These values are user editable</li>
-    <li><b>Set to physical gridscale</b> - Scales the 'new initial view position' to correspond with the physical gridsize as set in the module settings</li>
+    <li><b>Set to physical gridsize</b> - Scales the 'new initial view position' to correspond with the physical gridsize as set in the module settings</li>
+    <li><b>Set to player view</b> - By selecting the name of a player that's currently connected, you can set the initial view position to the view of that player by pressing 'Capture View'</li>
     <li><b>Snap to grid</b> - Snaps the 'new initial view poisition' to the grid. With the dropdown menu you can select which corner of the box should be snapped to the grid</li>
 </ul>
+<b>Note: </b>The displayed red box has the aspect ratio of the your (the GM's) screen. This does not necessary correspond to the aspect ratio of your players' view. The center of the red box
+will correspond with the center of the players' view (it ignores the sidebar).
+<br>
 By pressing the 'Cancel', 'Save', or 'Close' button, you'll return to the scene configuration. Only when the 'Save' button is pressed the initial view position on the scene configuration will be updated.<br>
 Don't forget to save the scene configuration to have the new settings take effect.
 
@@ -98,7 +102,7 @@ In the scene configuration screen, you'll find a new Lock View section with the 
 <li><b>Autoscale</b> - Automatically scales the screen</li>
 <li><b>Exclude Sidebar</b> - Exclude the area behind the sidebar from the bounding box or autoscaling. This can be enabled because the sidebar can obscure parts of the map</li>
 <li><b>Blacken Sidebar</b> - Blackens the background of the sidebar to prevent users from seeing outsie of the bounding box or canvas (only works if 'Exclude Sidebar' is enabled)</li>
-<li><b>Force Initial View</b> - Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off'</li>
+<li><b>Force Initial View</b> - Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off' or 'Physical Gridsize'</li>
 </ul>
 Autoscale can be set to the following options:<br>
 <ul>
@@ -146,7 +150,7 @@ After clicking the 'Set View' control button, a dialog box appears that gives mu
 <li><b>Ignore scale</b> - No zooming will occur</li>
 <li><b>Set scale</b> - Zooms to the scale size set in the 'Scale' box</li>
 <li><b>Reset scale</b> - Resets the zoom to the initial zoom factor, as set in the scene configuration screen</li>
-<li><b>Physical gridscale</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch), as set in the module settings </li>
+<li><b>Physical gridsize</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch), as set in the module settings </li>
 </ul>
 
 ![setViewDialog](https://github.com/CDeenen/LockView/blob/master/img/examples/SetViewDialog.png)

@@ -28,7 +28,7 @@
     "LockView.Scene.Autoscale.Grid": "Physical Gridsize",
     "LockView.Scene.Autoscale_Hint": "Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen. This is overridden by the Bounding Box setting. Panning is not disabled by default",
     "LockView.Scene.ForceInit": "Force Initial View",
-    "LockView.Scene.ForceInit_Hint": "Forces the view to the 'Initial View Position' after loading the scene. Note: only works if 'Autoscale' is set to 'Off'",
+    "LockView.Scene.ForceInit_Hint": "Forces the view to the 'Initial View Position' after loading the scene. Note: only works if 'Autoscale' is set to 'Off' or 'Physical Gridsize'. Pressing the 'Set Initial View' button opens a configuration with more options to set the initial view.",
     "LockView.Scene.boundingBox": "Bounding Box",
     "LockView.Scene.boundingBox_Hint": "Limit zoom and pan to stay within a bounding box. By default this is the whole canvas, but this can be defined by drawing a rectangle and editing the drawing configuration. This overrides autoscaling",
     "LockView.Scene.ExcludeSidebar": "Exclude Sidebar",
@@ -58,7 +58,7 @@
     "LockView.SetView.Scale0": "Ignore scale",
     "LockView.SetView.Scale1": "Set scale",
     "LockView.SetView.Scale2": "Reset scale",
-    "LockView.SetView.Scale3": "Physical Gridscale",
+    "LockView.SetView.Scale3": "Physical Gridsize",
     "LockView.SetView.LabelScale": "Scale",
     "LockView.SetView.BtnOK": "OK",
     "LockView.SetView.BtnCancel": "Cancel",
@@ -77,11 +77,14 @@
     "LockView.SetInitialView.Old": "Old initial view position",
     "LockView.SetInitialView.New": "New initial view position",
     "LockView.SetInitialView.GridSpaces": "Size in grid spaces",
-    "LockView.SetInitialView.GridScale": "Set to physical gridscale",
+    "LockView.SetInitialView.GridScale": "Set to physical gridsize",
     "LockView.SetInitialView.Snap": "Snap to grid",
     "LockView.SetInitialView.TopLeft": "Top left",
     "LockView.SetInitialView.TopRight": "Top right",
     "LockView.SetInitialView.BottomLeft": "Bottom left",
     "LockView.SetInitialView.BottomRight": "Bottom right",
+    "LockView.SetInitialView.Player": "Set to player view",
+    "LockView.SetInitialView.CaptureView": "Capture View",
     "LockView.SetInitialView.BtnSave": "Save"
+    
 }

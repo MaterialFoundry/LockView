@@ -27,6 +27,7 @@ export class Viewbox extends CanvasLayer {
     this.scaleOffset = 0;
     this.screenWidth;
     this.zIndex = 500;
+    this.currentPosition;
   }
 
   init() {
@@ -42,6 +43,7 @@ export class Viewbox extends CanvasLayer {
    * Update the viewbox
    */
   updateViewbox(data) {
+    this.currentPosition = data.currentPosition;
     const x = data.x - Math.floor(data.width / 2);
     const y = data.y - Math.floor(data.height / 2);
 
@@ -174,6 +176,8 @@ export function drawViewbox(payload){
       {
         x: payload.viewPosition.x,
         y: payload.viewPosition.y,
+        scale: payload.viewPosition.scale,
+        currentPosition: payload.currentPosition,
         width: payload.viewWidth/payload.viewPosition.scale,
         height: payload.viewHeight/payload.viewPosition.scale,
         color: parseInt(payload.senderColor.replace(/^#/, ''), 16),
@@ -262,7 +266,8 @@ export function sendViewBox(viewPosition=null){
     "sceneId": canvas.scene.data._id,
     "viewPosition": viewPositionNew,
     "viewWidth": window.innerWidth-offset,
-    "viewHeight": window.innerHeight
+    "viewHeight": window.innerHeight,
+    "currentPosition": viewPosition
   };
   game.socket.emit(`module.LockView`, payload);
 }

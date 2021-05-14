@@ -13,12 +13,14 @@ export const moduleName = "LockView";
 let windowWidthOld= -1;
 let windowHeightOld = -1;
 let newSceneLoad = true;
+let combatTrigger = false;
+let sidebarCollapsed = false;
 
 //CONFIG.debug.hooks = true;
 
 Hooks.on('ready', ()=>{ SOCKET.socket(); MISC.updatePopup() });
 Hooks.on('canvasReady',()=>{ onCanvasReady() });
-Hooks.on('renderSidebarTab',()=>{ onRenderSidebarTab() });
+Hooks.on('renderSidebarTab',()=>{ if (combatTrigger == false) onRenderSidebarTab() });
 Hooks.on("renderSceneConfig", (app, html) => { SCENECONFIG.renderSceneConfig(app,html) });
 Hooks.on("closeSceneConfig", (app, html) => { SCENECONFIG.closeSceneConfig(app,html) });
 Hooks.on("getSceneControlButtons", (controls) => { CBUTTONS.pushControlButtons(controls) });
@@ -28,9 +30,11 @@ Hooks.on("closeDrawingConfig", (app,html)=>{ DRAWING.closeDrawingConfigApp(app, 
 Hooks.on("updateDrawing",()=>{ forceConstrain() });
 Hooks.on("closeinitialViewForm", () => { SCENECONFIG.closeInitialViewForm() })
 Hooks.on("setLockView", (data) => { MISC.setLockView(data) })
-Hooks.on("sidebarCollapse", (app,collapse) => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); scaleToFit(); forceConstrain(); setUI(collapse) });
-Hooks.on("collapseSidebar", (app,collapse) => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); scaleToFit(); forceConstrain(); setUI(collapse) });
+Hooks.on("sidebarCollapse", (app,collapse) => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom,false); scaleToFit(); forceConstrain(); setUI(collapse) });
+Hooks.on("collapseSidebar", (app,collapse) => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom,false); scaleToFit(); forceConstrain(); setUI(collapse) });
+Hooks.on("renderSceneNavigation", () => { if (newSceneLoad == false) setUI(sidebarCollapsed) });
 Hooks.on("lightingRefresh", () => { BLOCKS.getFlags(); applySettings(BLOCKS.lockPan && BLOCKS.lockZoom); });
+Hooks.on("updateCombat", () => { combatTrigger = true;})
 
 Hooks.on('canvasPan',(canvas,data)=>{
   if (MISC.getEnable(game.userId)) 
@@ -69,6 +73,7 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
 });
 
 function setUI(hide) {
+  sidebarCollapsed = hide;
   if (hide && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'hideUI')) {
     $('#logo').hide();
     $('#navigation').hide();
@@ -89,6 +94,10 @@ function setUI(hide) {
  * If the scene controls are rendered, check whether editViewbox should be enabled
  */
 async function onRenderSceneControls(controls){
+  if (combatTrigger) {
+    combatTrigger = false;
+    return;
+  }
   //If no canvas is defined, or the user is not a GM, return
   if (canvas == null) return;
   
@@ -242,7 +251,7 @@ async function onRenderSidebarTab(){
 /*
  * Apply the settings
  */
-export async function applySettings(force=false) {
+export async function applySettings(force=false,forceInitial=true) {
   
   //If module isn't enabled for this client, return
   if (MISC.getEnable(game.userId) == false) return;
@@ -259,19 +268,22 @@ export async function applySettings(force=false) {
     let newPosition = {};
     
     //If 'forceInit' is enabled, set 'newPosition' to the canvas' initial position
-    if (BLOCKS.forceInit) 
+    if (BLOCKS.forceInit && forceInitial) 
       newPosition = canvas.scene.data.initial;
 
     //If 'autoScale' is set to 'physical gridsize', calculate the scale, and set it in 'newPosition'
-    if (BLOCKS.autoScale == 5)
+    if (BLOCKS.autoScale == 5) {
       newPosition.scale = getPhysicalScale();
+    }
 
     //Check if current view falls within the bounding box
     if (BLOCKS.autoScale == 0 && BLOCKS.forceInit == false && canvas?.scene != null)
       newPosition = OVERRIDES.constrainView_Override(canvas.scene._viewPosition);
 
     //Pan to the new position
-    if (canvas?.scene != null && isNaN(newPosition.x)==false) await canvas.pan( newPosition );
+    if (canvas?.scene != null && (isNaN(newPosition.x)==false || isNaN(newPosition.y)==false || isNaN(newPosition.scale)==false)) {
+      await canvas.pan( newPosition );
+    }
   }
 
   //Set sidebar background to black if 'blackenSidebar' and 'excludeSidebar' are on

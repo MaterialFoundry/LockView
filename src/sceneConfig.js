@@ -1,5 +1,6 @@
 import * as MODULE from "../lockview.js";
 import * as SOCKET from "./socket.js";
+import * as VIEWBOX from "./viewbox.js";
 
 /*
  * Push Lock View settings onto the scene configuration menu
@@ -139,7 +140,7 @@ export function renderSceneConfig(app,html){
     const setInitialViewButton = html.find("button[id = 'LockView_setInitialView']");
     setInitialViewButton.on("click",event => {
         if (app.object.id == canvas.scene.id)
-            handleInitialView(app.object);
+            handleInitialView(app.object,html);
         else
             ui.notifications.warn(game.i18n.localize("LockView.UI.NotOnScene"));
     })
@@ -182,6 +183,7 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
+        ui.controls.render();
         canvas.scene.setFlag('LockView', 'editViewbox', false);
     }
 }
@@ -189,14 +191,20 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
 let initialViewBox = {};
 let initialViewDialog;
 
-function handleInitialView(scene){
+function handleInitialView(scene,html){
     scene.sheet.close();
     initialViewBox = new InitialViewBox();
     canvas.stage.addChild(initialViewBox);
     initialViewBox.init();
-    initialViewBox.updateBox(scene.data.initial);
+    //const initalData = scene.data.initial == null ? {x:0,y:0,scale:1} : scene.data.initial;
+    const initalData = {
+        x: html.find("input[name ='initial.x']")[0].value == "" ? 0 : html.find("input[name ='initial.x']")[0].value,
+        y: html.find("input[name ='initial.y']")[0].value == "" ? 0 : html.find("input[name ='initial.y']")[0].value,
+        scale: html.find("input[name ='initial.scale']")[0].value == "" ? 1 : html.find("input[name ='initial.scale']")[0].value
+    }
+    initialViewBox.updateBox(initalData);
     let dialog = new initialViewForm();
-    dialog.pushData(scene);
+    dialog.pushData(scene,initalData);
     dialog.render(true)
     canvas.mouseInteractionManager.target.addListener("mousedown", mouseDownEvent );
     ui.controls.controls.find(c => c.name == ui.controls.activeControl).activeTool = undefined;
@@ -396,6 +404,8 @@ export class initialViewForm extends FormApplication {
         super(data, options);
         this.scene;
         this.initial = canvas.scene.data.initial;
+        this.users = [];
+        this.selectedPlayer = 0;
     }
 
     /**
@@ -410,9 +420,9 @@ export class initialViewForm extends FormApplication {
         });
     }
 
-    pushData(scene) {
+    pushData(scene,initialView) {
         this.scene = scene;
-        this.initial = scene.data.initial;
+        this.initial = initialView;
     }
 
     /**
@@ -423,9 +433,22 @@ export class initialViewForm extends FormApplication {
             x: initialViewBox.data.width/canvas.scene.data.grid,
             y: initialViewBox.data.height/canvas.scene.data.grid
         }
+        let users = [];
+        let counter = 0;
+        for (let viewbox of VIEWBOX.viewbox) {
+            if (viewbox == undefined) continue;
+            users.push({
+                name: viewbox.boxName,
+                userId: viewbox.userId,
+                iteration: counter
+            });
+            counter++;
+        }
+        this.users = users;
         return {
             initial: this.initial,
-            grid: gridSpaces
+            grid: gridSpaces,
+            users: users
         } 
     }
 
@@ -456,6 +479,8 @@ export class initialViewForm extends FormApplication {
         const gridY = html.find("input[name='gridY']");
         const physicalScale = html.find("button[name='physicalGrid']");
         const snapGrid = html.find("button[name='snapGrid']");
+        const playerList = html.find("select[name='playerList']");
+        const captureView = html.find("button[name='captureView']");
         
         dataX.on("change", event => {
             const newData = {
@@ -569,6 +594,27 @@ export class initialViewForm extends FormApplication {
             initialViewBox.updateBox(newData);
             html.find("input[name='dataX']")[0].value = newData.x;
             html.find("input[name='dataY']")[0].value = newData.y;
+        });
+
+        playerList.on("change", event => {
+            let id = event.target.value.replace('player-','');
+            this.selectedPlayer = parseInt(id);
+        });
+
+        captureView.on("click", event => {
+            let newData;
+            for (let viewbox of VIEWBOX.viewbox) {
+                if (viewbox == undefined) continue;
+                if (this.users[this.selectedPlayer].userId == viewbox.userId)
+                newData = viewbox.currentPosition;
+            }
+
+            initialViewBox.updateBox(newData);
+            html.find("input[name='dataX']")[0].value = newData.x;
+            html.find("input[name='dataY']")[0].value = newData.y;
+            html.find("input[name='dataScale']")[0].value = newData.scale;
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(newData.scale*canvas.scene.data.grid);
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(newData.scale*canvas.scene.data.grid);
         });
     }
 }
