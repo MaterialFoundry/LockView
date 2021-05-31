@@ -29,16 +29,18 @@
     "LockView.Scene.Autoscale_Hint": "Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen. This is overridden by the Bounding Box setting. Panning is not disabled by default",
     "LockView.Scene.ForceInit": "Force Initial View",
     "LockView.Scene.ForceInit_Hint": "Forces the view to the 'Initial View Position' after loading the scene. Note: only works if 'Autoscale' is set to 'Off' or 'Physical Gridsize'. Pressing the 'Set Initial View' button opens a configuration with more options to set the initial view.",
+    "LockView.Scene.SetInitialView": "Set Initial View",
     "LockView.Scene.boundingBox": "Bounding Box",
     "LockView.Scene.boundingBox_Hint": "Limit zoom and pan to stay within a bounding box. By default this is the whole canvas, but this can be defined by drawing a rectangle and editing the drawing configuration. This overrides autoscaling",
     "LockView.Scene.ExcludeSidebar": "Exclude Sidebar",
     "LockView.Scene.excludeSidebar_Hint":  "Excludes the area behind the sidebar from the bounding box or autoscaling",
     "LockView.Scene.BlackenSidebar": "Blacken Sidebar",
     "LockView.Scene.blackenSidebar_Hint": "Blackens the background of the sidebar to prevent users from seeing outside of the bounding box or canvas<br>(only works if 'Exclude Sidebar' is enabled",
-    "LockView.Scene.HideUI": "Hide UI on Sidebar Collapse",
-    "LockView.Scene.HideUI_Hint": "Hides the UI (except for the sidebar) when the sidebar is collapsed",
+    "LockView.Scene.HideUI": "Hide UI Elements on Sidebar Collapse",
+    "LockView.Scene.HideUI_Hint": "Hides selected UI elements when the sidebar is collapsed",
     "LockView.Scene.CollapseSidebar": "Collapse Sidebar on Scene Load",
     "LockView.Scene.CollapseSidebar_Hint": "Collapses the sidebar when the scene is loaded",
+    "LockView.Scene.Hint": "Configure the Lock View settings for this scene.",
 
     "LockView.ControlBtns.Label_SetView": "Set View",
     "LockView.ControlBtns.Label_PanLock": "Pan Lock",
@@ -85,6 +87,14 @@
     "LockView.SetInitialView.BottomRight": "Bottom right",
     "LockView.SetInitialView.Player": "Set to player view",
     "LockView.SetInitialView.CaptureView": "Capture View",
-    "LockView.SetInitialView.BtnSave": "Save"
-    
+    "LockView.SetInitialView.BtnSave": "Save",
+
+    "LockView.Scene.HideUIDialog.Title": "Hide UI Elements",
+    "LockView.Scene.HideUIDialog.Content": "Select UI elements to hide",
+    "LockView.Scene.HideUIDialog.Logo": "Foundry Logo",
+    "LockView.Scene.HideUIDialog.Navigation": "Scene Navigation",
+    "LockView.Scene.HideUIDialog.Controls": "Control Buttons",
+    "LockView.Scene.HideUIDialog.Players": "Player List",
+    "LockView.Scene.HideUIDialog.Hotbar": "Macro Hotbar",
+    "LockView.Scene.HideUIDialog.Sidebar": "Sidebar" 
 }

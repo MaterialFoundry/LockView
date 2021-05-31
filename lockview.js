@@ -72,14 +72,29 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
   VIEWBOX.getViewboxData();
 });
 
-function setUI(hide) {
+async function setUI(hide) {
+  console.log('test',hide,MISC.getEnable(game.userId),canvas.scene.getFlag('LockView', 'hideUI'))
   sidebarCollapsed = hide;
   if (hide && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'hideUI')) {
-    $('#logo').hide();
-    $('#navigation').hide();
-    $('#controls').hide();
-    $('#players').hide();
-    $('#hotbar').hide();
+    let hideUIelements = {};
+    if (canvas.scene.data.flags["LockView"].hideUIelements){
+      hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
+    } 
+    else hideUIelements = {
+      logo: true,
+      navigation: true,
+      controls: true,
+      players: true,
+      hotbar: true,
+      sidebar: false
+  }
+  console.log('hide',hideUIelements)
+    if (hideUIelements.logo) $('#logo').hide();
+    if (hideUIelements.navigation) $('#navigation').hide();
+    if (hideUIelements.controls) $('#controls').hide();
+    if (hideUIelements.players) $('#players').hide();
+    if (hideUIelements.hotbar) $('#hotbar').hide();
+    if (hideUIelements.sidebar) $('#sidebar').hide();
   }
   else {
     $('#logo').show();
@@ -87,6 +102,7 @@ function setUI(hide) {
     $('#controls').show();
     $('#players').show();
     $('#hotbar').show();
+    $('#sidebar').show();
   }
 }
 
@@ -98,8 +114,8 @@ async function onRenderSceneControls(controls){
     combatTrigger = false;
     return;
   }
-  //If no canvas is defined, or the user is not a GM, return
-  if (canvas == null) return;
+  //If no canvas or scene is defined/loaded, return
+  if (canvas == null || canvas.scene == null) return;
   
   if (newSceneLoad == true && MISC.getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) 
     ui.sidebar.collapse();
@@ -248,6 +264,11 @@ async function onRenderSidebarTab(){
   VIEWBOX.sendViewBox();
 }
 
+function forceInitialView() {
+  if (newSceneLoad) return canvas.scene.data.initial;
+  else return {};
+}
+
 /*
  * Apply the settings
  */
@@ -269,7 +290,7 @@ export async function applySettings(force=false,forceInitial=true) {
     
     //If 'forceInit' is enabled, set 'newPosition' to the canvas' initial position
     if (BLOCKS.forceInit && forceInitial) 
-      newPosition = canvas.scene.data.initial;
+      newPosition = forceInitialView()
 
     //If 'autoScale' is set to 'physical gridsize', calculate the scale, and set it in 'newPosition'
     if (BLOCKS.autoScale == 5) {

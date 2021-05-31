@@ -1,4 +1,21 @@
 # Changelog
+### v1.4.10 - 31-05-2021
+Fixes:
+<ul>
+<li>Removed some console errors about the canvas not being initialized</li>
+<li>The previous update didn't properly stop all unintended resets to the initial view</li>
+</ul>
+
+Additions:
+<ul>
+<li>In the scene config, you can now set what UI elements to hide by pressing the button next to the 'Hide UI Elements on Sidebar Collapse' button</li>
+</ul>
+
+Other:
+<ul>
+<li>Confirmed compatibility with Foundry 0.8.6</li>
+</ul>
+
 ### v1.4.9 - 14-05-2021
 Fixes:
 <ul>

@@ -14,6 +14,14 @@ export function renderSceneConfig(app,html){
     let excludeSidebar = false;
     let blackenSidebar = false;
     let hideUI = false;
+    let hideUIelements = {
+        logo: true,
+        navigation: true,
+        controls: true,
+        players: true,
+        hotbar: true,
+        sidebar: false
+    }
     let collapseSidebar = false;
 
     if(app.object.data.flags["LockView"]){
@@ -51,6 +59,10 @@ export function renderSceneConfig(app,html){
             hideUI = app.object.getFlag('LockView', 'hideUI');
         } else app.object.setFlag('LockView', 'hideUI', false);
 
+        if (app.object.data.flags["LockView"].hideUIelements){
+            hideUIelements = app.object.getFlag('LockView', 'hideUIelements');
+        } else app.object.setFlag('LockView', 'hideUIelements', hideUIelements);
+
         if (app.object.data.flags["LockView"].collapseSidebar){
             collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
         } else app.object.setFlag('LockView', 'collapseSidebar', false);
@@ -74,9 +86,8 @@ export function renderSceneConfig(app,html){
     autoScaleSelected[autoScale] = "selected"
 
     const fxHtml = `
-    <header class="form-header">
-        <h3><i class="fas fa-lock"/></i> Lock View</h3>
-    </header>
+        <h3 class="form-header"><i class="fas fa-lock"/></i> Lock View</h3>
+        <p class="notes">${game.i18n.localize("LockView.Scene.Hint")}</p>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.LockPan")}</label>
         <input id="LockView_lockPan" type="checkbox" name="LV_lockPan" data-dtype="Boolean" ${lockPan_Default ? 'checked' : ''}>
@@ -121,14 +132,17 @@ export function renderSceneConfig(app,html){
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.HideUI")}</label>
-        <input id="LockView_hideUI" type="checkbox" name="LV_hideUI" data-dtype="Boolean" ${hideUI ? 'checked' : ''}>
+        <div class="form-fields">
+            <input id="LockView_hideUI" type="checkbox" name="LV_hideUI" data-dtype="Boolean" ${hideUI ? 'checked' : ''}>
+            <button type="button" title="${game.i18n.localize("LockView.Scene.HideUIDialog.Title")}" id="LockView_setUIelements"><i class="fas fa-cog"></i></button>
+        </div>
         <p class="notes">${game.i18n.localize("LockView.Scene.HideUI_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.ForceInit")}</label>
         <div class="form-fields">
             <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${forceInit ? 'checked' : ''}>
-            <button class="capture-position" type="button" title="Set Initial View" id="LockView_setInitialView"><i class="fas fa-ruler-combined"></i></button>
+            <button class="capture-position" type="button" title="${game.i18n.localize("LockView.Scene.SetInitialView")}" id="LockView_setInitialView"><i class="fas fa-ruler-combined"></i></button>
         </div>
         <p class="notes">${game.i18n.localize("LockView.Scene.ForceInit_Hint")}</p>
     </div>
@@ -144,6 +158,59 @@ export function renderSceneConfig(app,html){
         else
             ui.notifications.warn(game.i18n.localize("LockView.UI.NotOnScene"));
     })
+
+    const setUIElementsButton = html.find("button[id = 'LockView_setUIelements']");
+    setUIElementsButton.on("click",event => {
+        handleUIelementsDialog(hideUIelements,app);
+    })
+}
+
+function handleUIelementsDialog(hideUIelements,app) {
+    const content = `
+        <hr>
+        <div style="display:flex">
+            <label style="width:90%">${game.i18n.localize("LockView.Scene.HideUIDialog.Logo")}</label>
+            <input style="width:10%" id="LockView_hideUI_Logo" type="checkbox" data-dtype="Boolean" ${hideUIelements.logo ? 'checked' : ''}>
+        </div>  
+        <div style="display:flex">
+            <label style="width:90%">${game.i18n.localize("LockView.Scene.HideUIDialog.Navigation")}</label>
+            <input style="width:10%" id="LockView_hideUI_Navigation" type="checkbox" data-dtype="Boolean" ${hideUIelements.navigation ? 'checked' : ''}>
+        </div>  
+        <div style="display:flex">
+            <label style="width:90%">${game.i18n.localize("LockView.Scene.HideUIDialog.Controls")}</label>
+            <input style="width:10%" id="LockView_hideUI_Controls" type="checkbox" data-dtype="Boolean" ${hideUIelements.controls ? 'checked' : ''}>
+        </div>  
+        <div style="display:flex">
+            <label style="width:90%">${game.i18n.localize("LockView.Scene.HideUIDialog.Players")}</label>
+            <input style="width:10%" id="LockView_hideUI_Players" type="checkbox" data-dtype="Boolean" ${hideUIelements.players ? 'checked' : ''}>
+        </div>  
+        <div style="display:flex">
+            <label style="width:90%">${game.i18n.localize("LockView.Scene.HideUIDialog.Hotbar")}</label>
+            <input style="width:10%" id="LockView_hideUI_Hotbar" type="checkbox" data-dtype="Boolean" ${hideUIelements.hotbar ? 'checked' : ''}>
+        </div>  
+        <div style="display:flex">
+            <label style="width:90%">${game.i18n.localize("LockView.Scene.HideUIDialog.Sidebar")}</label>
+            <input style="width:10%" id="LockView_hideUI_Sidebar" type="checkbox" data-dtype="Boolean" ${hideUIelements.sidebar ? 'checked' : ''}>
+        </div>  
+    `
+    
+    let d = new Dialog({
+        title: `Lock View: ${game.i18n.localize("LockView.Scene.HideUIDialog.Title")}`,
+        content: game.i18n.localize("LockView.Scene.HideUIDialog.Content") + content,
+        buttons: {},
+        close: html => {
+            const uiElements = {
+                logo: html.find("input[id ='LockView_hideUI_Logo']").is(":checked"),
+                navigation: html.find("input[id ='LockView_hideUI_Navigation']").is(":checked"),
+                controls: html.find("input[id ='LockView_hideUI_Controls']").is(":checked"),
+                players: html.find("input[id ='LockView_hideUI_Players']").is(":checked"),
+                hotbar: html.find("input[id ='LockView_hideUI_Hotbar']").is(":checked"),
+                sidebar: html.find("input[id ='LockView_hideUI_Sidebar']").is(":checked")
+            }
+            app.object.setFlag('LockView', 'hideUIelements', uiElements);
+        }
+       });
+       d.render(true);
 }
 
 /*
