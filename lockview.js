@@ -73,7 +73,6 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
 });
 
 async function setUI(hide) {
-  console.log('test',hide,MISC.getEnable(game.userId),canvas.scene.getFlag('LockView', 'hideUI'))
   sidebarCollapsed = hide;
   if (hide && MISC.getEnable(game.userId) && canvas.scene.getFlag('LockView', 'hideUI')) {
     let hideUIelements = {};
@@ -88,7 +87,7 @@ async function setUI(hide) {
       hotbar: true,
       sidebar: false
   }
-  console.log('hide',hideUIelements)
+  
     if (hideUIelements.logo) $('#logo').hide();
     if (hideUIelements.navigation) $('#navigation').hide();
     if (hideUIelements.controls) $('#controls').hide();
