@@ -1,4 +1,16 @@
 # Changelog
+### v1.4.11 - 21-06-2021
+Fixes:
+<ul>
+<li>If 'Control' was enabled for the GM, and the sidebar was set to autohide, the GM would be locked out of all controls, essentially bricking the world until Lock View was disabled. To fix this, the sidebar can never be hidden for the GM</li>
+<li>Canvas layers were registered incorrectly, leading to module incompatibilities. This has been fixed thanks to SWW13 on Github</li>
+</ul>
+
+Other:
+<ul>
+<li>Confirmed compatibility with Foundry 0.8.7</li>
+</ul>
+
 ### v1.4.10 - 31-05-2021
 Fixes:
 <ul>

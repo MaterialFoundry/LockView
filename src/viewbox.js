@@ -1,7 +1,5 @@
-import * as MODULE from "../lockview.js";
-import * as CBUTTONS from "./controlButtons.js";
-import * as MISC from "./misc.js";
-import * as BLOCKS from "./blocks.js";
+import { mouseMode } from "./controlButtons.js";
+import { getFlags, excludeSidebar, blackenSidebar } from "./blocks.js";
 import * as VIEWBOX from "./viewbox.js";
 
 export var viewboxStorage; 
@@ -149,7 +147,7 @@ export class Viewbox extends CanvasLayer {
  * Find the correct values for the viewbox, and update the viewbox
  */
 export function drawViewbox(payload){
-  if (game.user.isGM == false || CBUTTONS.mouseMode != null) return;
+  if (game.user.isGM == false || mouseMode != null) return;
   viewboxStorage = payload;
   if(game.settings.get("LockView","viewbox")){
     let senderNumber;
@@ -241,7 +239,7 @@ export function sendViewBox(viewPosition=null){
   if (viewPosition == null) viewPosition=canvas.scene._viewPosition;
   
   //get all flags
-  BLOCKS.getFlags();
+  getFlags();
 
   //New viewbox data
   let viewPositionNew = {
@@ -252,7 +250,7 @@ export function sendViewBox(viewPosition=null){
 
   //Sidebar offset
   let offset = 0;
-  if (ui.sidebar._collapsed == false && BLOCKS.excludeSidebar && BLOCKS.blackenSidebar){
+  if (ui.sidebar._collapsed == false && excludeSidebar && blackenSidebar){
     offset = (window.innerWidth-ui.sidebar._element[0].offsetLeft);
     viewPositionNew.x -= offset/(2*viewPosition.scale);
   }

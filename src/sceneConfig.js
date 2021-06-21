@@ -1,5 +1,5 @@
-import * as MODULE from "../lockview.js";
-import * as SOCKET from "./socket.js";
+import { applySettings, forceConstrain, getPhysicalScale } from "../lockview.js";
+import { sendUpdate } from "./socket.js";
 import * as VIEWBOX from "./viewbox.js";
 
 /*
@@ -241,11 +241,11 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
     if (app.entity.data._id == canvas.scene.data._id){
 
         //Apply the new settings
-        await MODULE.applySettings(true);
+        await applySettings(true);
 
         //Send new settings to users
-        await SOCKET.sendUpdate( {pan:lockPan, zoom:lockZoom, aScale:autoScale, fInit:forceInit, bBox:boundingBox, force:true} );
-        await MODULE.forceConstrain();
+        await sendUpdate( {pan:lockPan, zoom:lockZoom, aScale:autoScale, fInit:forceInit, bBox:boundingBox, force:true} );
+        await forceConstrain();
         //set & render ui controls
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
@@ -401,7 +401,6 @@ function handleMouseDown(e){
           }
     }
     
-    //screenWidth = VIEWBOX.viewbox[i].screenWidth;
     canvas.mouseInteractionManager.target.addListener("mouseup", mouseUpEvent );
     canvas.mouseInteractionManager.target.addListener("mousemove", mouseMoveEvent );
     
@@ -616,7 +615,7 @@ export class initialViewForm extends FormApplication {
         });
 
         physicalScale.on("click", event => {
-            let scale = MODULE.getPhysicalScale();
+            let scale = getPhysicalScale();
             if (scale > CONFIG.Canvas.maxZoom){
                 scale = CONFIG.Canvas.maxZoom;
             }

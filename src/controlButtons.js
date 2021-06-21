@@ -1,7 +1,6 @@
-import * as MODULE from "../lockview.js";
-import * as MISC from "./misc.js";
+import { compatibleCore, getEnable } from "./misc.js";
+import { getFlags, setBlocks, updatePanLock, updateZoomLock, updateBoundingBox, lockPan, lockZoom, boundingBox, _onMouseWheel_Default } from "./blocks.js";
 import * as VIEWBOX from "./viewbox.js";
-import * as BLOCKS from "./blocks.js";
 
 let oldVB_viewPosition;
 
@@ -27,15 +26,7 @@ class LockViewLayer extends CanvasLayer {
   constructor() {
     super();
   }
-/*
-  static get layerOptions() {
-    return mergeObject(super.layerOptions, {
-      canDragCreate: false,
-      objectClass: Note,
-      sheetClass: NoteConfig
-    });
-  }
-*/
+
   activate() {
     CanvasLayer.prototype.activate.apply(this);
     return this;
@@ -57,13 +48,13 @@ class LockViewLayer extends CanvasLayer {
 export function pushControlButtons(controls){
   if (game.user.isGM == false || canvas == null) return;
 
-  BLOCKS.getFlags();
+  getFlags();
 
   controls.push({
     name: "LockView",
     title: "Lock View",
     icon: "fas fa-tv",
-    layer: MISC.compatibleCore("0.8.2") ? "lockview" : "LockViewLayer",
+    layer: compatibleCore("0.8.2") ? "lockview" : "LockViewLayer",
     tools: [
       {
         name: "resetView",
@@ -84,11 +75,11 @@ export function pushControlButtons(controls){
           ui.controls.render();
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock");
           let currentState = currentTool.active;
-          BLOCKS.updatePanLock(currentState);
+          updatePanLock(currentState);
           currentTool.active = currentState;   
           },
         toggle: true,
-        active: BLOCKS.lockPan
+        active: lockPan
       },
       {
         name: "ZoomLock",
@@ -101,11 +92,11 @@ export function pushControlButtons(controls){
           ui.controls.render();
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock");
           let currentState = currentTool.active;
-          BLOCKS.updateZoomLock(currentState);
+          updateZoomLock(currentState);
           currentTool.active = currentState;
           },
         toggle: true,
-        active: BLOCKS.lockZoom
+        active: lockZoom
       },
       {
         name: "BoundingBox",
@@ -118,11 +109,11 @@ export function pushControlButtons(controls){
           ui.controls.render();
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox");
           let currentState = currentTool.active;
-          BLOCKS.updateBoundingBox(currentState);
+          updateBoundingBox(currentState);
           currentTool.active = currentState;
           },
         toggle: true,
-        active: BLOCKS.boundingBox
+        active: boundingBox
       },
       {
         name: "Viewbox",
@@ -169,8 +160,8 @@ export async function viewbox(currentState,currentTool=false){
         VIEWBOX.viewbox[i].hide();
     canvas.scene.setFlag('LockView', 'editViewbox', false);
     ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active = false;
-    BLOCKS.getFlags();
-    BLOCKS.setBlocks();
+    getFlags();
+    setBlocks();
     ui.controls.controls.find(controls => controls.name == "LockView").activeTool = undefined;
     mouseManager(false);
     ui.controls.render();
@@ -315,15 +306,15 @@ export async function editViewboxConfig(controls) {
   
   if (currentState) {
     Canvas.prototype.pan = _Override_VB_Pan;
-    Canvas.prototype._onMouseWheel = BLOCKS._onMouseWheel_Default;
+    Canvas.prototype._onMouseWheel = _onMouseWheel_Default;
     oldVB_viewPosition = canvas.scene._viewPosition;
   }
   else {
     //Canvas.prototype.pan = BLOCKS.pan_Default;
     controls.find(controls => controls.name == "LockView").activeTool = undefined;
-    await BLOCKS.getFlags();
-    if (MISC.getEnable(game.userId)) await BLOCKS.setBlocks( {pan:BLOCKS.lockPan, zoom:BLOCKS.lockZoom, bBox: BLOCKS.boundingBox} );
-    else await BLOCKS.setBlocks( {pan:false, zoom:false, bBox:false, force: true} );
+    await getFlags();
+    if (getEnable(game.userId)) await setBlocks( {pan:lockPan, zoom:lockZoom, bBox: boundingBox} );
+    else await setBlocks( {pan:false, zoom:false, bBox:false, force: true} );
   }
   ui.controls.render();
   mouseManager(currentState);

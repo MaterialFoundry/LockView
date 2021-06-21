@@ -1,6 +1,5 @@
-import * as MODULE from "../lockview.js";
-import * as BLOCKS from "./blocks.js";
-import * as MISC from "./misc.js";
+import { boundingBox, excludeSidebar } from "./blocks.js";
+import { getEnable, compatibleCore } from "./misc.js";
 
   /**
    * Modified _constrainView from foundry.js line 10117
@@ -12,20 +11,20 @@ import * as MISC from "./misc.js";
     let bound = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};      //Stores the bounding box values
     let rect = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};       //Stores the bounding rectangle values
     let scaleChange = false;                        //Checks if the scale must be changed
-    let drawings = MISC.compatibleCore("0.8.2") ? canvas.scene.data.drawings.contents : canvas.scene.data.drawings;      //The drawings on the canvas
+    let drawings = compatibleCore("0.8.2") ? canvas.scene.data.drawings.contents : canvas.scene.data.drawings;      //The drawings on the canvas
     let scaleMin;                                   //The minimum acceptable scale
     let controlledTokens = [];                      //Array or tokens that are controlled by the user
 
-    if (BLOCKS.boundingBox && MISC.getEnable(game.userId)) {
+    if (boundingBox && getEnable(game.userId)) {
       let tokensInBox = 0;                            //Number of tokens in the bounding box
       let force = false;                              //Rectangle is defined as 'Force Always'
       
       //Get the controlled tokens
-      if (game.user.isGM == false) controlledTokens = MISC.getControlledTokens(); 
+      if (game.user.isGM == false) controlledTokens = canvas.tokens.controlled; 
 
       //Check all drawings in the scene
       for (let i=0; i<drawings.length; i++){
-        const drawing = MISC.compatibleCore("0.8.2") ? drawings[i].data : drawings[i];
+        const drawing = compatibleCore("0.8.2") ? drawings[i].data : drawings[i];
 
       //If drawing isn't a rectangle, continue
       if (drawing.type != "r" || force) continue;
@@ -94,7 +93,7 @@ import * as MISC from "./misc.js";
       }
 
       //If 'excludeSidebar' is enabled and the sidebar is not collapsed, add sidebar width to rect variable
-      if (BLOCKS.excludeSidebar && ui.sidebar._collapsed == false)
+      if (excludeSidebar && ui.sidebar._collapsed == false)
         rect.Xmax += Math.ceil((window.innerWidth-ui.sidebar._element[0].offsetLeft)/canvas.scene._viewPosition.scale);
 
       //Compare ratio between window size and rect size in x and y direction to determine if the fit should be horizontal or vertical
@@ -114,7 +113,7 @@ import * as MISC from "./misc.js";
     //Calculate the min zoom
     const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
     let min = 1 / ratio;
-    if (BLOCKS.boundingBox) min = scaleMin;
+    if (boundingBox) min = scaleMin;
     
     //Get the new scale
     scale = Math.round(Math.clamped(scale, min, max) * 2000) / 2000;
@@ -128,7 +127,7 @@ import * as MISC from "./misc.js";
     //Get the new x value
     if (Number.isNumeric(x) == false) x = canvas.stage.pivot.x;
     const padw = 0.4 * (window.innerWidth / scale);
-    if (BLOCKS.boundingBox){
+    if (boundingBox){
       x = Math.clamped(x, bound.Xmin, bound.Xmax);
     }
     else x = Math.clamped(x, -padw, d.width + padw);
@@ -136,7 +135,7 @@ import * as MISC from "./misc.js";
     //Get the new y value
     if (Number.isNumeric(y) == false) y = canvas.stage.pivot.y;
     const padh = 0.4 * (window.innerHeight / scale);
-    if (BLOCKS.boundingBox){
+    if (boundingBox){
       y = Math.clamped(y, bound.Ymin, bound.Ymax);
     }
     else y = Math.clamped(y, -padh, d.height + padh);
