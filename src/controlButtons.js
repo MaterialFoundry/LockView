@@ -6,12 +6,21 @@ import * as BLOCKS from "./blocks.js";
 let oldVB_viewPosition;
 
 export function registerLayer() {
-  let canvasLayers = Canvas.layers;
-  canvasLayers.lockview = LockViewLayer;
+  CONFIG.Canvas.layers = foundry.utils.mergeObject(CONFIG.Canvas.layers, {
+    lockview: LockViewLayer
+  });
 
-  Object.defineProperty(Canvas, 'layers', {get: function() {
-    return canvasLayers
-  }})
+  // overriding other modules if needed
+  if (!Object.is(Canvas.layers, CONFIG.Canvas.layers)) {
+    console.error('Possible incomplete layer injection by other module detected!')
+
+    const layers = Canvas.layers
+    Object.defineProperty(Canvas, 'layers', {
+      get: function () {
+        return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
+      }
+    })
+  }
 }
 
 class LockViewLayer extends CanvasLayer {
