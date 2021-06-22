@@ -1,4 +1,10 @@
 # Changelog
+### v1.4.12 - 22-06-2021
+Fixes:
+<ul>
+<li>A change in the previous update made the module incompatible with Foundry 0.7, this has been fixed.</li>
+</ul>
+
 ### v1.4.11 - 21-06-2021
 Fixes:
 <ul>

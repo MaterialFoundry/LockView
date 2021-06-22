@@ -5,21 +5,31 @@ import * as VIEWBOX from "./viewbox.js";
 let oldVB_viewPosition;
 
 export function registerLayer() {
-  CONFIG.Canvas.layers = foundry.utils.mergeObject(CONFIG.Canvas.layers, {
-    lockview: LockViewLayer
-  });
-
-  // overriding other modules if needed
-  if (!Object.is(Canvas.layers, CONFIG.Canvas.layers)) {
-    console.error('Possible incomplete layer injection by other module detected!')
-
-    const layers = Canvas.layers
-    Object.defineProperty(Canvas, 'layers', {
-      get: function () {
-        return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
-      }
-    })
+  if (compatibleCore("0.8.6")) {
+    CONFIG.Canvas.layers = foundry.utils.mergeObject(CONFIG.Canvas.layers, {
+      lockview: LockViewLayer
+    });
+  
+    // overriding other modules if needed
+    if (!Object.is(Canvas.layers, CONFIG.Canvas.layers)) {
+      console.error('Possible incomplete layer injection by other module detected!')
+  
+      const layers = Canvas.layers
+      Object.defineProperty(Canvas, 'layers', {
+        get: function () {
+          return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
+        }
+      })
+    }
   }
+  else {
+    let canvasLayers = Canvas.layers;
+    canvasLayers.lockview = LockViewLayer;
+    Object.defineProperty(Canvas, 'layers', {get: function() {
+      return canvasLayers
+    }})
+  }
+  
 }
 
 class LockViewLayer extends CanvasLayer {
