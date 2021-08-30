@@ -1,4 +1,13 @@
 # Changelog
+### v1.4.13 - 30-08-2021
+Fixes:
+<ul>
+<li>If 'Hide UI Elements was enabled', control buttons would not always hide if a scene was changed</li>
+<li>UI elements will now only be unhidden if they have been previously hidden by Lock View, allowing other modules to hide/unhide UI elements without Lock View interfering</li>
+<li>Lock View would cause the view to 'bounce' when combined with 'Always Centered'. This has been fixed.</li>
+<li>When configuring the initial view, dragging the box around could place tokens or templates, depending on what tool was selected, this has been fixed by automatically selecting the Lock View control</li>
+</ul>
+
 ### v1.4.12 - 22-06-2021
 Fixes:
 <ul>

@@ -495,6 +495,10 @@ export class initialViewForm extends FormApplication {
      * Provide data to the template
      */
     getData() {
+        ui.controls.activeControl = "LockView";
+        canvas.layers.find(layer => layer.name == "LockViewLayer").activate();
+        ui.controls.render();
+
         const gridSpaces = {
             x: initialViewBox.data.width/canvas.scene.data.grid,
             y: initialViewBox.data.height/canvas.scene.data.grid
@@ -511,6 +515,7 @@ export class initialViewForm extends FormApplication {
             counter++;
         }
         this.users = users;
+        
         return {
             initial: this.initial,
             grid: gridSpaces,

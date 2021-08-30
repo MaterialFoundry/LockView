@@ -15,6 +15,14 @@ let windowHeightOld = -1;
 let newSceneLoad = true;
 let combatTrigger = false;
 let sidebarCollapsed = false;
+let hiddenUIelements = {
+  logo: false,
+  navigation: false,
+  controls: false,
+  players: false,
+  hotbar: false,
+  sidebar: false
+}
 
 //CONFIG.debug.hooks = true;
 Hooks.on('ready', ()=>{ socket(); updatePopup() });
@@ -31,7 +39,7 @@ Hooks.on("closeinitialViewForm", () => { closeInitialViewForm() })
 Hooks.on("setLockView", (data) => { setLockView(data) })
 Hooks.on("sidebarCollapse", (app,collapse) => { getFlags(); applySettings(lockPan && lockZoom,false); scaleToFit(); forceConstrain(); setUI(collapse) });
 Hooks.on("collapseSidebar", (app,collapse) => { getFlags(); applySettings(lockPan && lockZoom,false); scaleToFit(); forceConstrain(); setUI(collapse) });
-Hooks.on("renderSceneNavigation", () => { if (newSceneLoad == false) setUI(sidebarCollapsed) });
+Hooks.on("renderSceneNavigation", () => { setUI(sidebarCollapsed) });
 Hooks.on("lightingRefresh", () => { getFlags(); applySettings(lockPan && lockZoom); });
 Hooks.on("updateCombat", () => { combatTrigger = true;})
 
@@ -62,6 +70,8 @@ Hooks.on("canvasInit", (canvas) => {
 
   newSceneLoad = true;
   setTimeout(function(){newSceneLoad = false;},2000);
+
+  if (game.modules.get("stream-view") && game.modules.get("stream-view").active && game.userId == game.settings.get('stream-view', 'user-id')) streamViewEnabled = true;
 });
 
 Hooks.on("renderPlayerList", (playerlist,init,users) => {
@@ -73,7 +83,7 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
 
 async function setUI(hide) {
   sidebarCollapsed = hide;
-  if (hide && getEnable(game.userId) && canvas.scene.getFlag('LockView', 'hideUI')) {
+  if (getEnable(game.userId) && canvas.scene != undefined && canvas.scene.getFlag('LockView', 'hideUI')) {
     let hideUIelements = {};
     if (canvas.scene.data.flags["LockView"].hideUIelements){
       hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
@@ -85,22 +95,28 @@ async function setUI(hide) {
       players: true,
       hotbar: true,
       sidebar: false
-  }
-  
-    if (hideUIelements.logo) $('#logo').hide();
-    if (hideUIelements.navigation) $('#navigation').hide();
-    if (hideUIelements.controls) $('#controls').hide();
-    if (hideUIelements.players) $('#players').hide();
-    if (hideUIelements.hotbar) $('#hotbar').hide();
-    if (hideUIelements.sidebar && game.user.isGM == false) $('#sidebar').hide();
-  }
-  else {
-    $('#logo').show();
-    $('#navigation').show();
-    $('#controls').show();
-    $('#players').show();
-    $('#hotbar').show();
-    $('#sidebar').show();
+    }
+    
+    if (hide) {
+      for (let element in hideUIelements) {
+        if (hideUIelements?.[element]) {
+          $(`#${element}`).hide();
+          hiddenUIelements[element] = true;
+        }
+        else {
+          $(`#${element}`).show();
+          hiddenUIelements[element] = false;
+        }
+      }
+    }
+    else {
+      for (let element in hideUIelements) {
+        if (hideUIelements?.[element]) {
+          $(`#${element}`).show();
+          hiddenUIelements[element] = false;
+        }
+      }
+    }
   }
 }
 
@@ -115,8 +131,10 @@ async function onRenderSceneControls(controls){
   //If no canvas or scene is defined/loaded, return
   if (canvas == null || canvas.scene == null) return;
   
-  if (newSceneLoad == true && getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) 
-    ui.sidebar.collapse();
+  if (getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) {
+    if (newSceneLoad == true) ui.sidebar.collapse();
+    setUI(ui.sidebar._collapsed);
+  }
 
   if (game.user.isGM == false) return;
 
@@ -296,7 +314,7 @@ export async function applySettings(force=false,forceInitial=true) {
     }
 
     //Check if current view falls within the bounding box
-    if (autoScale == 0 && forceInit == false && canvas?.scene != null)
+    if (autoScale == 0 && boundingBox && forceInit == false && canvas?.scene != null)
       newPosition = constrainView_Override(canvas.scene._viewPosition);
 
     //Pan to the new position
@@ -319,6 +337,7 @@ export async function applySettings(force=false,forceInitial=true) {
  * Scale the canvas to fit the foundry window
  */
 export async function scaleToFit(force = 0){
+
   let horizontal;                                   //Stores whether the screen fills horizontally or vertically
   let sidebarOffset = 0;                            //Offset in pixels due to the presence of the sidebar
   const windowWidth = window.innerWidth;            //width of the foundry window
@@ -371,9 +390,6 @@ export async function scaleToFit(force = 0){
 
   //Pan to the new position
   await canvas.pan( newPosition );
-
-  //Get the flags
-  getFlags();
 
   //Set the blocks again
   setBlocks( {pan:lockPan, zoom:lockZoom, bBox: boundingBox} );
