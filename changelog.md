@@ -1,4 +1,14 @@
 # Changelog
+### v1.4.14 - 01-09-2021
+Fixes:
+<ul>
+<li>In the last update, 'Hide UI Elements on Sidebar Collapse' accedentally allowed the GM to hide the sidebar (this could lock the GM out of controlling the software), this has been fixed</li>
+</ul>
+
+<ul>
+<li>Added the 'Ctrl+u' hotkey that can be used to hide/unhide the UI elements that have been configured in the scene config</li>
+</ul>
+
 ### v1.4.13 - 30-08-2021
 Fixes:
 <ul>

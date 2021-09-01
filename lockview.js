@@ -23,6 +23,7 @@ let hiddenUIelements = {
   hotbar: false,
   sidebar: false
 }
+let uiHidden = false;
 
 //CONFIG.debug.hooks = true;
 Hooks.on('ready', ()=>{ socket(); updatePopup() });
@@ -59,6 +60,9 @@ Hooks.once('init', function(){
 
   //Register lockview layer for the control buttons (./src/misc.js)
   registerLayer();
+
+  //Check keyboard input to undo hideUI
+  checkKeys();
 });
 
 Hooks.on("canvasInit", (canvas) => {
@@ -84,6 +88,7 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
 async function setUI(hide) {
   sidebarCollapsed = hide;
   if (getEnable(game.userId) && canvas.scene != undefined && canvas.scene.getFlag('LockView', 'hideUI')) {
+    uiHidden = hide;
     let hideUIelements = {};
     if (canvas.scene.data.flags["LockView"].hideUIelements){
       hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
@@ -100,6 +105,7 @@ async function setUI(hide) {
     if (hide) {
       for (let element in hideUIelements) {
         if (hideUIelements?.[element]) {
+          if (element == 'sidebar') continue;
           $(`#${element}`).hide();
           hiddenUIelements[element] = true;
         }
@@ -118,6 +124,34 @@ async function setUI(hide) {
       }
     }
   }
+}
+
+/**
+ * Check keys for 'Ctrl' press, to show or hide elements
+ */
+
+function checkKeys() {
+  let ctrlFired = false;
+
+  window.addEventListener("keydown", async (e) => { 
+    if (e.key == "Control") {
+      ctrlFired = true;
+    }
+    else if (e.key == "u" && !uiHidden) {
+      uiHidden = true;
+      setUI(true);
+    }
+    else if (e.key == "u" && ctrlFired) {
+      uiHidden = false;
+      setUI(false);
+    }
+  });
+
+  window.addEventListener("keyup", async (e) => { 
+    if (e.key == "Control") {
+      ctrlFired = false;
+    }
+  });
 }
 
 /*
