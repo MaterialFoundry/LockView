@@ -9,6 +9,7 @@
     "LockView.Sett.LockOverride_Hint": "Enter a keybinding to allow users to override the zoom and pan lock",
 
     "LockView.EnMenu.Description": "Select which users the module can control and for what users the viewbox should be enabled.",
+    "LockView.EnMenu.Overrides": "Override the enable settings for all users of a specific user role",
     "LockView.EnMenu.Name": "Name",
     "LockView.EnMenu.Role": "Role",
     "LockView.EnMenu.Control": "Control",
@@ -26,7 +27,7 @@
     "LockView.Scene.Autoscale.Auto": "Automatic Fit (inside)",
     "LockView.Scene.Autoscale.AutoOutside": "Automatic Fit (outside)",
     "LockView.Scene.Autoscale.Grid": "Physical Gridsize",
-    "LockView.Scene.Autoscale_Hint": "Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen. This is overridden by the Bounding Box setting. Panning is not disabled by default",
+    "LockView.Scene.Autoscale_Hint": "Automatically calculates a scaling factor to either fit the scene to the screen, or so the grid is always the same physical size on the screen. This is overridden by the Bounding Box setting",
     "LockView.Scene.ForceInit": "Force Initial View",
     "LockView.Scene.ForceInit_Hint": "Forces the view to the 'Initial View Position' after loading the scene. Note: only works if 'Autoscale' is set to 'Off' or 'Physical Gridsize'. Pressing the 'Set Initial View' button opens a configuration with more options to set the initial view.",
     "LockView.Scene.SetInitialView": "Set Initial View",

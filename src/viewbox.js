@@ -58,7 +58,6 @@ export class Viewbox extends CanvasLayer {
 
     this.container.removeChildren();
     var drawing = new PIXI.Graphics();
-    //rect.cacheAsBitmap = true;
     drawing.lineStyle(2, data.color, 1);
     drawing.drawRect(0,0,data.width,data.height);
     this.container.addChild(drawing);
@@ -216,6 +215,14 @@ export function initializeViewboxes(users){
  */
 export function getViewboxEnable(userId){
   const settings = game.settings.get("LockView","userSettings");
+  const settingsOverride = game.settings.get("LockView","userSettingsOverrides");
+  const user = game.users.get(userId);
+
+  //if user is undefined, return false
+  if (user == undefined) return false;
+
+  //Check if the user's role has override enabled
+  if (settingsOverride[user.role]?.viewbox) return true;
 
   //Check if the userId matches an existing id in the settings array
   for (let i=0; i<settings.length; i++)

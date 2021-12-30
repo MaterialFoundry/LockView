@@ -5,36 +5,38 @@ import * as VIEWBOX from "./viewbox.js";
 let oldVB_viewPosition;
 
 export function registerLayer() {
-  if (compatibleCore("0.8.6")) {
-    CONFIG.Canvas.layers = foundry.utils.mergeObject(CONFIG.Canvas.layers, {
-      lockview: LockViewLayer
-    });
-  
-    // overriding other modules if needed
+  const layers =  compatibleCore("0.9") ? {
+    lockview: {
+          layerClass: LockViewLayer,
+          group: "primary"
+      }
+  }
+  : {
+    lockview: LockViewLayer
+  }
+
+  CONFIG.Canvas.layers = foundry.utils.mergeObject(Canvas.layers, layers);
+
     if (!Object.is(Canvas.layers, CONFIG.Canvas.layers)) {
-      console.error('Possible incomplete layer injection by other module detected!')
-  
-      const layers = Canvas.layers
-      Object.defineProperty(Canvas, 'layers', {
-        get: function () {
-          return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
-        }
-      })
+        const layers = Canvas.layers;
+        Object.defineProperty(Canvas, 'layers', {
+            get: function () {
+                return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
+            }
+        })
     }
-  }
-  else {
-    let canvasLayers = Canvas.layers;
-    canvasLayers.lockview = LockViewLayer;
-    Object.defineProperty(Canvas, 'layers', {get: function() {
-      return canvasLayers
-    }})
-  }
-  
 }
 
 class LockViewLayer extends CanvasLayer {
   constructor() {
     super();
+  }
+
+  static get layerOptions() {
+    return foundry.utils.mergeObject(super.layerOptions, {
+      name: "lockview",
+      zIndex: 245,
+    });
   }
 
   activate() {
@@ -64,7 +66,8 @@ export function pushControlButtons(controls){
     name: "LockView",
     title: "Lock View",
     icon: "fas fa-tv",
-    layer: compatibleCore("0.8.2") ? "lockview" : "LockViewLayer",
+    layer: "lockview",
+    activeTool: "resetView",
     tools: [
       {
         name: "resetView",
@@ -187,29 +190,47 @@ let selectedViewbox;
 var mouseDownEvent = function(e) { handleMouseDown(e) };
 var mouseUpEvent = function(e) { handleMouseUp(e) };
 var mouseMoveEvent = function(e) { handleMouseMove(e) };
+//var rightDownEvent = function(e) { handleRightDown(e) };
 
 function mouseManager(en){
   if (en) {
     canvas.mouseInteractionManager.target.addListener("mousedown", mouseDownEvent );
+    //canvas.mouseInteractionManager.target.addListener("rightdown", mouseDownEvent );
   }  
   else {
     canvas.mouseInteractionManager.target.removeListener("mousedown", mouseDownEvent );
     canvas.mouseInteractionManager.target.removeListener("mouseup", mouseUpEvent );
     canvas.mouseInteractionManager.target.removeListener("mousemove", mouseMoveEvent );
+    //canvas.mouseInteractionManager.target.removeListener("rightdown", mouseDownEvent );
+   // canvas.mouseInteractionManager.target.removeListener("rightup", mouseUpEvent );
+    //canvas.mouseInteractionManager.target.removeListener("rightmove", mouseMoveEvent );
     VIEWBOX.getViewboxData();
   }
 }
 
 function handleMouseDown(e){
+  //console.log('e',e.data.button,e)
   let position = e.data.getLocalPosition(canvas.stage);
   const d = canvas.dimensions;
   for (let i=0; i<VIEWBOX.viewbox.length; i++){
     if (VIEWBOX.viewbox[i] == undefined) continue;
     const moveLocation = VIEWBOX.viewbox[i].moveLocation;
     const scaleLocation = VIEWBOX.viewbox[i].scaleLocation;
-
-    if (Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
-    else if (Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
+    const currentPosition = {
+      x: VIEWBOX.viewbox[i].currentPosition.x - VIEWBOX.viewbox[i].boxWidth/2,
+      y: VIEWBOX.viewbox[i].currentPosition.y - VIEWBOX.viewbox[i].boxHeight/2
+    }
+    //console.log('viewbox',position,currentPosition,VIEWBOX.viewbox[i])
+    //if mouse over move button
+    if (e.data.button == 0 && Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
+    //if mouse over scale button
+    else if (e.data.button == 0 && Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
+    //if mouse within viewbox
+    //else if (e.data.button == 2 && position.x > currentPosition.x && position.x < currentPosition.x+VIEWBOX.viewbox[i].boxWidth && position.y > currentPosition.y && position.y < currentPosition.y+VIEWBOX.viewbox[i].boxHeight) {
+    //  console.log('test')
+    //  mouseMode = 'move';
+      //continue;
+    //}
     else continue;
 
     selectedViewbox = i;
@@ -219,8 +240,14 @@ function handleMouseDown(e){
     }
     viewboxId = VIEWBOX.viewbox[i].userId;
     screenWidth = VIEWBOX.viewbox[i].screenWidth;
-    canvas.mouseInteractionManager.target.addListener("mouseup", mouseUpEvent );
-    canvas.mouseInteractionManager.target.addListener("mousemove", mouseMoveEvent );
+    if (e.data.button == 0) {
+      canvas.mouseInteractionManager.target.addListener("mouseup", mouseUpEvent );
+      canvas.mouseInteractionManager.target.addListener("mousemove", mouseMoveEvent );
+    }
+    else {
+      canvas.mouseInteractionManager.target.addListener("rightup", mouseUpEvent );
+      canvas.mouseInteractionManager.target.addListener("mousemove", mouseMoveEvent );
+    }
     return;
   }
 }
@@ -233,6 +260,7 @@ function handleMouseUp(){
 
 function handleMouseMove(e){
   let position = e.data.getLocalPosition(canvas.stage);
+  //console.log('move',position)
   let width = VIEWBOX.viewbox[selectedViewbox].boxWidth;
   let height = VIEWBOX.viewbox[selectedViewbox].boxHeight;
   

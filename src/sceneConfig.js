@@ -1,4 +1,5 @@
 import { applySettings, forceConstrain, getPhysicalScale } from "../lockview.js";
+import { compatibleCore } from "./misc.js";
 import { sendUpdate } from "./socket.js";
 import * as VIEWBOX from "./viewbox.js";
 
@@ -85,9 +86,7 @@ export function renderSceneConfig(app,html){
     ];
     autoScaleSelected[autoScale] = "selected"
 
-    const fxHtml = `
-        <h3 class="form-header"><i class="fas fa-lock"/></i> Lock View</h3>
-        <p class="notes">${game.i18n.localize("LockView.Scene.Hint")}</p>
+    const sceneConfigHtml = `
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.LockPan")}</label>
         <input id="LockView_lockPan" type="checkbox" name="LV_lockPan" data-dtype="Boolean" ${lockPan_Default ? 'checked' : ''}>
@@ -148,9 +147,22 @@ export function renderSceneConfig(app,html){
     </div>
     `
     
-    const initPositionClass = html.find('div[class="form-group initial-position"]')
-    initPositionClass.after(fxHtml);
-
+    if (compatibleCore('0.9')) {
+        const tab = `<a class="item" data-tab="lockview">
+            <i class="fas fa-lock"></i> Lock View
+            </a>`;
+        const contents = `<div class="tab" data-tab="lockview">${sceneConfigHtml}</div>`
+        html.find(".tabs .item").last().after(tab);
+        html.find(".tab").last().after(contents);
+    }
+    else {
+        const contents = `<h3 class="form-header"><i class="fas fa-lock"/></i> Lock View</h3>
+            <p class="notes">${game.i18n.localize("LockView.Scene.Hint")}</p>
+            ${sceneConfigHtml}`
+        const initPositionClass = html.find('div[class="form-group initial-position"]')
+        initPositionClass.after(contents);
+    }
+    
     const setInitialViewButton = html.find("button[id = 'LockView_setInitialView']");
     setInitialViewButton.on("click",event => {
         if (app.object.id == canvas.scene.id)
@@ -237,9 +249,8 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
     await app.object.setFlag('LockView', 'blackenSidebar', blackenSidebar);
     await app.object.setFlag('LockView', 'hideUI', hideUI);
     await app.object.setFlag('LockView', 'collapseSidebar', collapseSidebar);
-
-    if (app.entity.data._id == canvas.scene.data._id){
-
+    
+    if (app.object.id == canvas.scene.data._id){
         //Apply the new settings
         await applySettings(true);
 

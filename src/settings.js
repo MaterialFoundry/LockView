@@ -31,7 +31,7 @@ export const registerSettings = function() {
     hint: "LockView.Sett.ScreenWidth_Hint",
     scope: "client",
     config: true,
-    default: 1,
+    default: 930,
     type: Number,
     onChange: x => applySettings()
   });
@@ -81,7 +81,15 @@ export const registerSettings = function() {
     type: Object,
     default: [],
     config: false
-});
+  });
+
+  game.settings.register(moduleName, 'userSettingsOverrides', {
+    name: "userSettingsOverrides",
+    scope: "world",
+    type: Object,
+    default: [],
+    config: false
+  });
 }
 
 export class enableMenu extends FormApplication {
@@ -130,8 +138,51 @@ export class enableMenu extends FormApplication {
       }
       data.push(dataNew);
     }
+
+    let overrideSettings = game.settings.get(moduleName ,'userSettingsOverrides');
+    if (overrideSettings[0] == undefined) {
+      for (let i=0; i<5; i++) {
+        const settingsNew = {
+          role: i,
+          enable: false,
+          viewbox: false
+        }
+        overrideSettings.push(settingsNew);
+      }
+    }
+
+    const overrides = [
+      {
+        role: game.i18n.localize("USER.RoleNone"),
+        roleNr: 0,
+        enable: overrideSettings[0].enable,
+        viewbox: overrideSettings[0].viewbox
+      },{
+        role: game.i18n.localize("USER.RolePlayer"),
+        roleNr: 1,
+        enable: overrideSettings[1].enable,
+        viewbox: overrideSettings[1].viewbox
+      },{
+        role: game.i18n.localize("USER.RoleTrusted"),
+        roleNr: 2,
+        enable: overrideSettings[2].enable,
+        viewbox: overrideSettings[2].viewbox
+      },{
+        role: game.i18n.localize("USER.RoleAssistant"),
+        roleNr: 3,
+        enable: overrideSettings[3].enable,
+        viewbox: overrideSettings[3].viewbox
+      },{
+        role: game.i18n.localize("USER.RoleGamemaster"),
+        roleNr: 4,
+        enable: overrideSettings[4].enable,
+        viewbox: overrideSettings[4].viewbox
+      }
+    ]
+
       return {
-          data: data
+          data: data,
+          overrides
       } 
   }
 
@@ -142,26 +193,31 @@ export class enableMenu extends FormApplication {
    */
   async _updateObject(event, formData) {
     let settings = [];
-    const idArray = formData.id;
-    if (Array.isArray(idArray)) {
-      for (let i=0; i<formData.id.length; i++){
-        let settingsNew = {
-          id: formData.id[i],
-          enable: formData.enable[i],
-          viewbox: formData.viewbox[i]
-        }
-        settings.push(settingsNew);
-      }
+    let idArray = formData.id;
+    if (Array.isArray(idArray) == false) {
+      idArray = [];
+      idArray[0] = formData.id;
     }
-    else {
-      let settingsNew = {
-        id: formData.id,
-        enable: formData.enable,
-        viewbox: formData.viewbox
+    for (let id of idArray) {
+      const settingsNew = {
+        id,
+        enable: formData?.[`enable-${id}`],
+        viewbox: formData?.[`viewbox-${id}`]
       }
       settings.push(settingsNew);
     }
     this.updateSettings(settings);
+
+    let overrides = [];
+    for (let i=0; i<5; i++) {
+      const settingsNew = {
+        role: i,
+        enable: formData?.[`enableOverride-${i}`],
+        viewbox: formData?.[`viewboxOverride-${i}`]
+      }
+      overrides.push(settingsNew);
+    }
+    game.settings.set(moduleName ,'userSettingsOverrides',overrides);
   }
 
   activateListeners(html) {

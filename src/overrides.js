@@ -1,5 +1,5 @@
 import { boundingBox, excludeSidebar } from "./blocks.js";
-import { getEnable, compatibleCore } from "./misc.js";
+import { getEnable } from "./misc.js";
 
   /**
    * Modified _constrainView from foundry.js line 10117
@@ -11,7 +11,7 @@ import { getEnable, compatibleCore } from "./misc.js";
     let bound = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};      //Stores the bounding box values
     let rect = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};       //Stores the bounding rectangle values
     let scaleChange = false;                        //Checks if the scale must be changed
-    let drawings = compatibleCore("0.8.2") ? canvas.scene.data.drawings.contents : canvas.scene.data.drawings;      //The drawings on the canvas
+    let drawings = canvas.scene.data.drawings.contents;      //The drawings on the canvas
     let scaleMin;                                   //The minimum acceptable scale
     let controlledTokens = [];                      //Array or tokens that are controlled by the user
 
@@ -24,7 +24,7 @@ import { getEnable, compatibleCore } from "./misc.js";
 
       //Check all drawings in the scene
       for (let i=0; i<drawings.length; i++){
-        const drawing = compatibleCore("0.8.2") ? drawings[i].data : drawings[i];
+        const drawing = drawings[i].data;
 
       //If drawing isn't a rectangle, continue
       if (drawing.type != "r" || force) continue;

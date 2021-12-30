@@ -29,12 +29,12 @@
                     </td>
                     <td>
                         <label>
-                            <input type="checkbox" name="enable" data-dtype="Boolean" {{#if d.enable}}checked{{/if}}>
+                            <input type="checkbox" name="enable-{{d.id}}" data-dtype="Boolean" {{#if d.enable}}checked{{/if}}>
                         </label>
                     </td>
                     <td>
                         <label>
-                            <input type="checkbox" name="viewbox" data-dtype="Boolean" {{#if d.viewbox}}checked{{/if}}>
+                            <input type="checkbox" name="viewbox-{{d.id}}" data-dtype="Boolean" {{#if d.viewbox}}checked{{/if}}>
                         </label>
                     </td>
 
@@ -44,6 +44,46 @@
         </tbody>
 
     </table>
+
+    <p class="notes" style="width:400px">
+        {{localize "LockView.EnMenu.Overrides"}}
+    </p>
+
+    <table style="width:400px">
+        <thread>
+            <tr>
+                <th scope="col" span="1" style="width:65%; text-align:left;">{{localize "LockView.EnMenu.Role"}}</th>
+                <th scope="col" span="1" style="width:17.5%; text-align:left;">{{localize "LockView.EnMenu.Control"}}</th>
+                <th scope="col" span="1" style="width:17.5%; text-align:left;">{{localize "LockView.EnMenu.Viewbox"}}</th>
+            </tr>
+        </thread>
+
+        <tbody>
+            {{#each overrides as |o|}}
+                <tr index="{{o.index}}">
+                    <td>
+                        <label style="text-align:left">
+                            {{o.role}}
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="enableOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.enable}}checked{{/if}}>
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="viewboxOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.viewbox}}checked{{/if}}>
+                        </label>
+                    </td>
+
+                </tr>
+                <input type="text" name="roleOverride" value={{o.roleNr}} style="display:none">
+            {{/each}}
+        </tbody>
+
+    </table>
+
     <button type="submit" name="submit">
         <i class="fas fa-save"></i> {{localize "LockView.EnMenu.Save"}}
     </button>

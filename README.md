@@ -57,12 +57,12 @@ but can show some padding)<br>
 
 ## Settings and Controls
 ### Module Settings
-In the module settings, as a GM you will find a button to open the player configuration screen, where you can enable the module and viewbox for each player. By default, both are enabled for non-GM users.<br>
-The module must be enabled for each player if you want to use any of the functions of this module, except for displaying the viewbox, which has its own enable setting.<br>
+In the module settings, as a GM you will find a button to open the user configuration screen, where you can enable control and viewbox for each user. By default, both are enabled for non-GM users.<br>
+Control must be enabled for each user if you want to use any of the functions of this module, except for displaying the viewbox, which has its own enable setting.<br>
+Besides enabling control and viewbox for each specific user, you can also override this and enable them based on their user role.<br>
 <br>
-All connected players will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
-<br>
-The settings are:
+All connected users will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
+These settings are:
 <ul>
 <li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
 <li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>

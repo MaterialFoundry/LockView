@@ -38,8 +38,8 @@ Hooks.on("closeDrawingConfig", (app,html)=>{ closeDrawingConfigApp(app, html) })
 Hooks.on("updateDrawing",()=>{ forceConstrain() });
 Hooks.on("closeinitialViewForm", () => { closeInitialViewForm() })
 Hooks.on("setLockView", (data) => { setLockView(data) })
-Hooks.on("sidebarCollapse", (app,collapse) => { getFlags(); applySettings(lockPan && lockZoom,false); scaleToFit(); forceConstrain(); setUI(collapse) });
-Hooks.on("collapseSidebar", (app,collapse) => { getFlags(); applySettings(lockPan && lockZoom,false); scaleToFit(); forceConstrain(); setUI(collapse) });
+Hooks.on("sidebarCollapse", (app,collapse) => { getFlags(); forceConstrain(); setUI(collapse) });
+Hooks.on("collapseSidebar", (app,collapse) => { getFlags(); forceConstrain(); setUI(collapse) });
 Hooks.on("renderSceneNavigation", () => { setUI(sidebarCollapsed) });
 Hooks.on("lightingRefresh", () => { getFlags(); applySettings(lockPan && lockZoom); });
 Hooks.on("updateCombat", () => { combatTrigger = true;})
@@ -75,7 +75,6 @@ Hooks.on("canvasInit", (canvas) => {
   newSceneLoad = true;
   setTimeout(function(){newSceneLoad = false;},2000);
 
-  if (game.modules.get("stream-view") && game.modules.get("stream-view").active && game.userId == game.settings.get('stream-view', 'user-id')) streamViewEnabled = true;
 });
 
 Hooks.on("renderPlayerList", (playerlist,init,users) => {
@@ -282,7 +281,7 @@ async function onRenderSidebarTab(){
     getViewboxData();
     
     //Initialize the LockView flags for this canvas
-    await initializeFlags();
+    //await initializeFlags();
 
      //Get the flags
     await getFlags();
@@ -295,7 +294,7 @@ async function onRenderSidebarTab(){
       lockViewControls.tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
       ui.controls.render();
     }
-    
+    /*
     //Send updated values to clients
     sendUpdate( {
       pan:lockPan, 
@@ -305,10 +304,11 @@ async function onRenderSidebarTab(){
       bBox:boundingBox
       }
     );
+    */
   }
 
   //Apply the settings
-  if (game.system.id != "pf2e") await applySettings(true);
+  //if (game.system.id != "pf2e") await applySettings(true);
 
   //forceCanvasPan();
   sendViewBox();

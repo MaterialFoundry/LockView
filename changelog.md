@@ -1,4 +1,22 @@
 # Changelog
+### v1.5.0 - 30-12-2021
+Fixes:
+<ul>
+<li>View no longer resets to the 'Autoscale' setting after interacting with the sidebar</li>
+<li>Fixed console error when the Stream View module was enabled</li>
+</ul>
+
+Additions:
+<ul>
+<li>User Configuration now has a user role specific override. To, for example, enable control for all Trusted Players</li>
+</ul>
+
+Other:
+<ul>
+<li>Made compatible with Foundry v9</li>
+<li>Dropped compatibility with Foundry v0.7</li>
+</ul>
+
 ### v1.4.14 - 01-09-2021
 Fixes:
 <ul>

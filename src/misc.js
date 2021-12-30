@@ -2,11 +2,13 @@ import { updatePanLock, updateZoomLock, updateBoundingBox } from "./blocks.js";
 import { viewbox, editViewboxConfig } from "./controlButtons.js";
 
 export function compatibleCore(compatibleVersion){
-  let coreVersion = game.data.version;
+  let coreVersion = game.version == undefined ? game.data.version : `0.${game.version}`;
   coreVersion = coreVersion.split(".");
   compatibleVersion = compatibleVersion.split(".");
   if (compatibleVersion[0] > coreVersion[0]) return false;
+  if (compatibleVersion[0] < coreVersion[0]) return true;
   if (compatibleVersion[1] > coreVersion[1]) return false;
+  if (compatibleVersion[1] < coreVersion[1]) return true;
   if (compatibleVersion[2] > coreVersion[2]) return false;
   return true;
 }
@@ -50,6 +52,14 @@ export async function setLockView(data) {
  */
 export function getEnable(userId){
   const settings = game.settings.get("LockView","userSettings");
+  const settingsOverride = game.settings.get("LockView","userSettingsOverrides");
+  const user = game.users.get(userId);
+
+  //if user is undefined, return false
+  if (user == undefined) return false;
+
+  //Check if the user's role has override enabled
+  if (settingsOverride[user.role]?.enable) return true;
 
   //Check if the userId matches an existing id in the settings array
   for (let i=0; i<settings.length; i++)
