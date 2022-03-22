@@ -145,8 +145,8 @@ export class enableMenu extends FormApplication {
         role: role,
         color: userData.color,
         id: userData._id,
-        enable: userSettings.enable,
-        viewbox: userSettings.viewbox
+        enable: userSettings?.enable ? userSettings.enable : false,
+        viewbox: userSettings?.viewbox ? userSettings.viewbox : false
 
       }
       data.push(dataNew);

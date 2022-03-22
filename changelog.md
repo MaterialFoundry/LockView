@@ -1,4 +1,10 @@
 # Changelog
+### v1.5.2 - 22-03-2022
+Fixes:
+<ul>
+<li>Previous update broke the User Configuration if a user had not been configured before</li>
+</ul>
+
 ### v1.5.1 - 22-03-2022
 Fixes:
 <ul>
