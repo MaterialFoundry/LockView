@@ -25,6 +25,17 @@ export const registerSettings = function() {
     restricted: true
   });
 
+  //Hide the control button
+  game.settings.register(moduleName, "hideControlButton", {
+    name: "LockView.Sett.HideControlBtn",
+    hint: "LockView.Sett.HideControlBtn_Hint",
+    scope: "world",
+    config: true,
+    default: false,
+    type: Boolean,
+    onChange: x => window.location.reload()
+  });
+
   //Screen width of TV
   game.settings.register(moduleName, "ScreenWidth", {
     name: "LockView.Sett.ScreenWidth",
@@ -114,7 +125,7 @@ export class enableMenu extends FormApplication {
    */
   getData() {
     const users = game.users._source;
-    //const settings = game.settings.get(moduleName,'userSettings');
+    const settings = game.settings.get(moduleName,'userSettings');
     let data = [];
 
     for (let i=0; i<users.length; i++){
@@ -126,14 +137,16 @@ export class enableMenu extends FormApplication {
       else if (userData.role == 3) role = game.i18n.localize("USER.RoleAssistant");
       else if (userData.role == 4) role = game.i18n.localize("USER.RoleGamemaster");
 
+      const userSettings = settings.filter(u => u.id == userData._id)[0];
+
       const dataNew = {
         index: i,
         name: userData.name,
         role: role,
         color: userData.color,
         id: userData._id,
-        enable: getEnable(userData._id),
-        viewbox: getViewboxEnable(userData._id)
+        enable: userSettings.enable,
+        viewbox: userSettings.viewbox
 
       }
       data.push(dataNew);
@@ -192,6 +205,7 @@ export class enableMenu extends FormApplication {
    * @param {*} formData 
    */
   async _updateObject(event, formData) {
+
     let settings = [];
     let idArray = formData.id;
     if (Array.isArray(idArray) == false) {

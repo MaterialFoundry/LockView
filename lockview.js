@@ -86,21 +86,36 @@ Hooks.on("renderPlayerList", (playerlist,init,users) => {
 
 async function setUI(hide) {
   sidebarCollapsed = hide;
-  if (getEnable(game.userId) && canvas.scene != undefined && canvas.scene.getFlag('LockView', 'hideUI')) {
+  if (!getEnable(game.userId) || canvas.scene == undefined) return;
+  
+
+  
     uiHidden = hide;
     let hideUIelements = {};
-    if (canvas.scene.data.flags["LockView"].hideUIelements){
-      hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
-    } 
-    else hideUIelements = {
-      logo: true,
-      navigation: true,
-      controls: true,
-      players: true,
-      hotbar: true,
-      sidebar: false
+    if (canvas.scene.getFlag('LockView', 'hideUI')) {
+      if (canvas.scene.data.flags["LockView"].hideUIelements){
+        hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
+      } 
+      else hideUIelements = {
+        logo: true,
+        navigation: true,
+        controls: true,
+        players: true,
+        hotbar: true,
+        sidebar: false
+      }
     }
-    
+    else {
+      hideUIelements = {
+        logo: false,
+        navigation: false,
+        controls: false,
+        players: false,
+        hotbar: false,
+        sidebar: false
+      }
+    }
+
     if (hide) {
       for (let element in hideUIelements) {
         if (hideUIelements?.[element]) {
@@ -122,7 +137,7 @@ async function setUI(hide) {
         }
       }
     }
-  }
+  
 }
 
 /**
@@ -371,7 +386,8 @@ export async function applySettings(force=false,forceInitial=true) {
  * Scale the canvas to fit the foundry window
  */
 export async function scaleToFit(force = 0){
-
+  //Get the flags for this scene
+  await getFlags();
   let horizontal;                                   //Stores whether the screen fills horizontally or vertically
   let sidebarOffset = 0;                            //Offset in pixels due to the presence of the sidebar
   const windowWidth = window.innerWidth;            //width of the foundry window

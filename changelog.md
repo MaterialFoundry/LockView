@@ -1,4 +1,17 @@
 # Changelog
+### v1.5.1 - 22-03-2022
+Fixes:
+<ul>
+<li>Fixed issue where zoom and pan lock would sometimes not be applied on scene load</li>
+<li>Fixed issue where switching from a scene with UI elements hidden to a scene with 'Hide UI Elements on Sidebar Collapse' disabled would not always show all UI elements</li>
+<li>Fixed issue where in the User Configuration, if an override was enabled, it also showed the setting as enabled for individual users</li>
+</li>
+
+Additions:
+<ul>
+<li>Added 'Hide Control Button' setting in the module settings</li>
+</ul>
+
 ### v1.5.0 - 30-12-2021
 Fixes:
 <ul>

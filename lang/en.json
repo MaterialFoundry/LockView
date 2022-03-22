@@ -7,6 +7,8 @@
     "LockView.Sett.Gridsize_Hint": "The real world grid size in mm or inch (e.g. 25 mm or 1 inch). Unit has to be the same as 'Screen Width'. Must be set on the local (TV's) client",
     "LockView.Sett.LockOverride": "Lock Override",
     "LockView.Sett.LockOverride_Hint": "Enter a keybinding to allow users to override the zoom and pan lock",
+    "LockView.Sett.HideControlBtn": "Hide Control Button",
+    "LockView.Sett.HideControlBtn_Hint": "Hides the control button in the left side of the screen",
 
     "LockView.EnMenu.Description": "Select which users the module can control and for what users the viewbox should be enabled.",
     "LockView.EnMenu.Overrides": "Override the enable settings for all users of a specific user role",

@@ -1,3 +1,4 @@
+import { moduleName } from "../lockview.js";
 import { compatibleCore, getEnable } from "./misc.js";
 import { getFlags, setBlocks, updatePanLock, updateZoomLock, updateBoundingBox, lockPan, lockZoom, boundingBox, _onMouseWheel_Default } from "./blocks.js";
 import * as VIEWBOX from "./viewbox.js";
@@ -58,7 +59,7 @@ class LockViewLayer extends CanvasLayer {
  * Push the Lock View control buttons
  */
 export function pushControlButtons(controls){
-  if (game.user.isGM == false || canvas == null) return;
+  if (game.user.isGM == false || canvas == null || game.settings.get(moduleName,'hideControlButton')) return;
 
   getFlags();
 

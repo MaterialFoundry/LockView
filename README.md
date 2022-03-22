@@ -60,12 +60,14 @@ but can show some padding)<br>
 In the module settings, as a GM you will find a button to open the user configuration screen, where you can enable control and viewbox for each user. By default, both are enabled for non-GM users.<br>
 Control must be enabled for each user if you want to use any of the functions of this module, except for displaying the viewbox, which has its own enable setting.<br>
 Besides enabling control and viewbox for each specific user, you can also override this and enable them based on their user role.<br>
-<br>
+<ul>
+  <li><b>Hide Control Button</b> - Enabling this will hide the control button (on the left side of the screen). This can be useful if this control button is never used, and will prevent it from cluttering the screen.</li>
+</ul>
 All connected users will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
 These settings are:
 <ul>
-<li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
-<li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
+  <li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
+  <li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
 </ul>
 
 ![moduleSettings](https://github.com/CDeenen/LockView/blob/master/img/examples/ModuleSettings.png)
