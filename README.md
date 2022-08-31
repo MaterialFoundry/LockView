@@ -1,7 +1,7 @@
 # Lock View
 ## Introduction
 
-Lock View is a [Foundry VTT](https://foundryvtt.com/) module that gives the GM control over the zoom and pan capabilities of players, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting.
+Lock View is a [Foundry VTT](https://foundryvtt.com/) module that gives the GM (or a designated player) control over the zoom and pan capabilities of players, such as locking the zoom or pan, moving the canvas, or setting the view to a specified setting.
 The module was originally made as a companion app for the [Material Plane](https://github.com/CDeenen/MaterialPlane) module, and to make in-person play using a horizontally mounted TV easier.
 Over time, however, the module's features have expanded greatly, including many functions that can be useful for online play.
 
@@ -14,12 +14,7 @@ The module has 6 main functions:
 * **Viewbox**: Allows the GM to see what's shown on players screens, and allows the GM to control the pan and zoom of those players
 
 ## Instructions
-* [Usage Examples](https://github.com/CDeenen/LockView/wiki/Usage)
-* [Module Settings](https://github.com/CDeenen/LockView/wiki/Module-Settings)
-* [Scene Configuration](https://github.com/CDeenen/LockView/wiki/Scene-Configuration)
->* [Bounding Box](https://github.com/CDeenen/LockView/wiki/Bounding-Box)
->* [Viewbox](https://github.com/CDeenen/LockView/wiki/Viewbox)
-* [Control Buttons](https://github.com/CDeenen/LockView/wiki/Control-Buttons)
+* [Wiki](https://github.com/CDeenen/LockView/wiki)
 
 ## Module Compatibility
 When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work. <br>
@@ -29,7 +24,7 @@ Right now, there appear to be compatibility issues with the following modules:
 * Zoom/Pan Options
 
 ## Foundry Compatibility
-This module has been tested to work with Foundry V8 and V9.
+This module has been tested to work with Foundry V9 and V10.
 
 ## Feedback
 Feel free [report an issue/suggestion](https://github.com/CDeenen/LockView/issues), contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.
