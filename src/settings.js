@@ -1,4 +1,4 @@
-import { moduleName, applySettings, forceConstrain } from "../lockview.js";
+import { moduleName, applySettings, forceConstrain, onKeyPress } from "../lockview.js";
 import { getEnable } from "./misc.js";
 import { getViewboxEnable } from "./viewbox.js";
 import * as VIEWBOX from "./viewbox.js";
@@ -101,6 +101,16 @@ export const registerSettings = function() {
     default: [],
     config: false
   });
+
+  const {SHIFT, CONTROL, ALT} = KeyboardManager.MODIFIER_KEYS;
+  game.keybindings.register("LockView", "(Un)hide UI Elements", {
+    name: "LockView.Keybindings.HideUi",
+    editable: [
+      {key: "KeyU", modifiers: [ALT]}
+    ],
+    onDown: onKeyPress,
+    precedence: CONST.KEYBINDING_PRECEDENCE.DEFERRED
+  });
 }
 
 export class enableMenu extends FormApplication {
@@ -146,7 +156,8 @@ export class enableMenu extends FormApplication {
         color: userData.color,
         id: userData._id,
         enable: userSettings?.enable ? userSettings.enable : false,
-        viewbox: userSettings?.viewbox ? userSettings.viewbox : false
+        viewbox: userSettings?.viewbox ? userSettings.viewbox : false,
+        control: userSettings?.control ? userSettings.control : false
 
       }
       data.push(dataNew);
@@ -158,7 +169,8 @@ export class enableMenu extends FormApplication {
         const settingsNew = {
           role: i,
           enable: false,
-          viewbox: false
+          viewbox: false,
+          control: false
         }
         overrideSettings.push(settingsNew);
       }
@@ -169,27 +181,32 @@ export class enableMenu extends FormApplication {
         role: game.i18n.localize("USER.RoleNone"),
         roleNr: 0,
         enable: overrideSettings[0].enable,
-        viewbox: overrideSettings[0].viewbox
+        viewbox: overrideSettings[0].viewbox,
+        control: overrideSettings[0].control
       },{
         role: game.i18n.localize("USER.RolePlayer"),
         roleNr: 1,
         enable: overrideSettings[1].enable,
-        viewbox: overrideSettings[1].viewbox
+        viewbox: overrideSettings[1].viewbox,
+        control: overrideSettings[1].control
       },{
         role: game.i18n.localize("USER.RoleTrusted"),
         roleNr: 2,
         enable: overrideSettings[2].enable,
-        viewbox: overrideSettings[2].viewbox
+        viewbox: overrideSettings[2].viewbox,
+        control: overrideSettings[2].control
       },{
         role: game.i18n.localize("USER.RoleAssistant"),
         roleNr: 3,
         enable: overrideSettings[3].enable,
-        viewbox: overrideSettings[3].viewbox
+        viewbox: overrideSettings[3].viewbox,
+        control: overrideSettings[3].control
       },{
         role: game.i18n.localize("USER.RoleGamemaster"),
         roleNr: 4,
         enable: overrideSettings[4].enable,
-        viewbox: overrideSettings[4].viewbox
+        viewbox: overrideSettings[4].viewbox,
+        control: true
       }
     ]
 
@@ -216,7 +233,8 @@ export class enableMenu extends FormApplication {
       const settingsNew = {
         id,
         enable: formData?.[`enable-${id}`],
-        viewbox: formData?.[`viewbox-${id}`]
+        viewbox: formData?.[`viewbox-${id}`],
+        control: formData?.[`control-${id}`]
       }
       settings.push(settingsNew);
     }
@@ -227,7 +245,8 @@ export class enableMenu extends FormApplication {
       const settingsNew = {
         role: i,
         enable: formData?.[`enableOverride-${i}`],
-        viewbox: formData?.[`viewboxOverride-${i}`]
+        viewbox: formData?.[`viewboxOverride-${i}`],
+        control: formData?.[`controlOverride-${i}`]
       }
       overrides.push(settingsNew);
     }
@@ -241,10 +260,9 @@ export class enableMenu extends FormApplication {
 
   async updateSettings(settings){
     await game.settings.set(moduleName,'userSettings',settings);
-    //if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
-      for (let i=0; i< VIEWBOX.viewbox.length; i++)
-        if (VIEWBOX.viewbox[i] != undefined)
-          VIEWBOX.viewbox[i].hide();
+    for (let i=0; i< VIEWBOX.viewbox.length; i++)
+      if (VIEWBOX.viewbox[i] != undefined)
+        VIEWBOX.viewbox[i].hide();
 
     await sendUpdate( {
       zoom:lockZoom,

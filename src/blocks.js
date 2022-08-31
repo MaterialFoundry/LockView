@@ -1,5 +1,5 @@
 import { forceConstrain } from "../lockview.js";
-import { getEnable } from "./misc.js";
+import { getEnable, updateFlag, compatibleCore } from "./misc.js";
 import { _Override, pan_Override, pan_OverrideHigherRes, onDragCanvasPan_Override, animatePan_Override } from "./overrides.js";
 import { sendUpdate } from "./socket.js";
 
@@ -88,10 +88,9 @@ export function setBlocks( {pan=null,zoom=null,bBox=null,force=false}={} ){
  * Update the pan lock setting
  */
 export async function updatePanLock(panLock){
-  await canvas.scene.setFlag('LockView', 'lockPan', panLock);
+  await updateFlag('lockPan', panLock);
   if (getEnable(game.userId))
     await setBlocks( {pan:panLock} );
-  //else
   await sendUpdate( {pan:panLock} );
 }
 
@@ -99,7 +98,7 @@ export async function updatePanLock(panLock){
  * Update the zoom lock setting
  */
 export async function updateZoomLock(zoomLock){
-  await canvas.scene.setFlag('LockView', 'lockZoom', zoomLock);
+  await updateFlag('lockZoom', zoomLock);
   if (getEnable(game.userId))
     await setBlocks( {zoom:zoomLock} );
   await sendUpdate( {zoom:zoomLock} );
@@ -109,7 +108,7 @@ export async function updateZoomLock(zoomLock){
  * Update the bounding box setting
  */
 export async function updateBoundingBox(boundingBox){
-  await canvas.scene.setFlag('LockView', 'boundingBox', boundingBox);
+  await updateFlag('boundingBox', boundingBox);
   if (getEnable(game.userId))
     await setBlocks( {bBox:boundingBox} );
   await sendUpdate( {bBox:boundingBox} );

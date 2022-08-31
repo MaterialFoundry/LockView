@@ -1,6 +1,8 @@
 import { mouseMode } from "./controlButtons.js";
 import { getFlags, excludeSidebar, blackenSidebar } from "./blocks.js";
 import * as VIEWBOX from "./viewbox.js";
+import { moduleName } from "../lockview.js";
+import { compatibleCore } from "./misc.js";
 
 export var viewboxStorage; 
 export var viewbox = [];
@@ -146,17 +148,20 @@ export class Viewbox extends CanvasLayer {
  * Find the correct values for the viewbox, and update the viewbox
  */
 export function drawViewbox(payload){
-  if (game.user.isGM == false || mouseMode != null) return;
+  let overrideSetting = game.settings.get(moduleName ,'userSettingsOverrides')[game.user.role].control;
+  let userSetting = game.settings.get(moduleName,'userSettings').filter(u => u.id == game.user.id)[0].control;
+  if ((overrideSetting == false || overrideSetting == undefined) && (userSetting == false || userSetting == undefined) && (game.user.isGM == false || mouseMode != null)) return;
+
   viewboxStorage = payload;
   if(game.settings.get("LockView","viewbox")){
     let senderNumber;
     let senderNumbers = Array.from(game.users);
     //get index of the sending user
     for (let i=0; i<senderNumbers.length; i++)
-      if (senderNumbers[i].data._id == payload.senderId)
+      if ((compatibleCore('10.0') && senderNumbers[i]._id == payload.senderId) || (!compatibleCore('10.0') && senderNumbers[i].data._id == payload.senderId))
         senderNumber = i;
     //check if sending user is in same scene, if not, hide viewbox and return
-    if (payload.sceneId != canvas.scene.data._id) {
+    if ((compatibleCore('10.0') && payload.sceneId != canvas.scene.id) || (!compatibleCore('10.0') && payload.sceneId != canvas.scene.data._id)) {
       if(viewbox[senderNumber] != undefined)
         viewbox[senderNumber].hide();
       return;
@@ -258,7 +263,7 @@ export function sendViewBox(viewPosition=null){
   //Sidebar offset
   let offset = 0;
   if (ui.sidebar._collapsed == false && excludeSidebar && blackenSidebar){
-    offset = (window.innerWidth-ui.sidebar._element[0].offsetLeft);
+    offset = compatibleCore('10.0') ? ui.sidebar.position.width : window.innerWidth-ui.sidebar._element[0].offsetLeft;
     viewPositionNew.x -= offset/(2*viewPosition.scale);
   }
 
@@ -268,7 +273,7 @@ export function sendViewBox(viewPosition=null){
     "senderName": game.user.name,
     "senderColor": game.user.color,
     "receiverId": game.data.users.find(users => users.role == 4)._id, 
-    "sceneId": canvas.scene.data._id,
+    "sceneId": compatibleCore('10.0') ? canvas.scene.id : canvas.scene.data._id,
     "viewPosition": viewPositionNew,
     "viewWidth": window.innerWidth-offset,
     "viewHeight": window.innerHeight,

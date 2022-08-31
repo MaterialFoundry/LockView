@@ -1,5 +1,5 @@
 import { boundingBox, excludeSidebar } from "./blocks.js";
-import { getEnable } from "./misc.js";
+import { getEnable, compatibleCore } from "./misc.js";
 
   /**
    * Modified _constrainView from foundry.js line 10117
@@ -11,7 +11,7 @@ import { getEnable } from "./misc.js";
     let bound = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};      //Stores the bounding box values
     let rect = {Xmin:0,Xmax:0,Ymin:0,Ymax:0};       //Stores the bounding rectangle values
     let scaleChange = false;                        //Checks if the scale must be changed
-    let drawings = canvas.scene.data.drawings.contents;      //The drawings on the canvas
+    let drawings = compatibleCore('10.0') ? canvas.scene.drawings.contents : canvas.scene.data.drawings.contents;      //The drawings on the canvas
     let scaleMin;                                   //The minimum acceptable scale
     let controlledTokens = [];                      //Array or tokens that are controlled by the user
 
@@ -24,24 +24,26 @@ import { getEnable } from "./misc.js";
 
       //Check all drawings in the scene
       for (let i=0; i<drawings.length; i++){
-        const drawing = drawings[i].data;
+        const drawing = drawings[i];
 
-      //If drawing isn't a rectangle, continue
-      if (drawing.type != "r" || force) continue;
+        //If drawing isn't a rectangle, continue
+        if ((compatibleCore('10.0') && drawing.shape.type != "r") || force) continue;
+        else if ((!compatibleCore('10.0') && drawing.type != "r") || force) continue;
+      
         //Check boundingbox mode of the rectangle
         if (drawing.flags.LockView == undefined) continue;
         if (drawing.flags.LockView.boundingBox_mode == 0) continue;
         const mode = drawing.flags.LockView.boundingBox_mode;
-
+        
         //Get the line width of the rectangle
         const lineWidth = drawing.strokeWidth;
 
         //Store rectangle location
         let rectTemp = {
           Xmin : drawing.x+lineWidth,
-          Xmax : drawing.x+drawing.width-2*lineWidth,
+          Xmax : compatibleCore('10.0') ? drawing.x+drawing.shape.width-2*lineWidth : drawing.x+drawing.width-2*lineWidth,
           Ymin : drawing.y+lineWidth,
-          Ymax : drawing.y+drawing.height-2*lineWidth
+          Ymax : compatibleCore('10.0') ? drawing.y+drawing.shape.height-2*lineWidth : drawing.y+drawing.height-2*lineWidth
         }
 
         //If 'mode' is 'Always', set the rect variable and break the 'for statement'
@@ -93,8 +95,10 @@ import { getEnable } from "./misc.js";
       }
 
       //If 'excludeSidebar' is enabled and the sidebar is not collapsed, add sidebar width to rect variable
-      if (excludeSidebar && ui.sidebar._collapsed == false)
-        rect.Xmax += Math.ceil((window.innerWidth-ui.sidebar._element[0].offsetLeft)/canvas.scene._viewPosition.scale);
+      if (compatibleCore('10.0') && excludeSidebar && ui.sidebar._collapsed == false)
+        rect.Xmax += Math.ceil(ui.sidebar.position.width/canvas.scene._viewPosition.scale);
+      else if (!compatibleCore('10.0') && excludeSidebar && ui.sidebar._collapsed == false)
+      rect.Xmax += Math.ceil((window.innerWidth-ui.sidebar._element[0].offsetLeft)/canvas.scene._viewPosition.scale);
 
       //Compare ratio between window size and rect size in x and y direction to determine if the fit should be horizontal or vertical
       const horizontal = ((window.innerWidth / (rect.Xmax-rect.Xmin)) > (window.innerHeight / (rect.Ymax-rect.Ymin))) ? true : false;
@@ -144,15 +148,15 @@ import { getEnable } from "./misc.js";
   }
 
   /**
- * Modified pan from foundry.js line 10034
+ * Modified pan from foundry.js
  * redirects _constrainView to _constrainView_Override for higher scaling resolution
  */
   export function pan_OverrideHigherRes({x=null, y=null, scale=null}={}) {
-    
     const constrained = constrainView_Override({x, y, scale});
     this.stage.pivot.set(constrained.x, constrained.y);
     this.stage.scale.set(constrained.scale, constrained.scale);
-    this.sight.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
+    if (compatibleCore('10.0')) this.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
+    else this.sight.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
     canvas.scene._viewPosition = constrained;
     Hooks.callAll("canvasPan", this, constrained);
     this.hud.align();
@@ -164,20 +168,52 @@ import { getEnable } from "./misc.js";
 export function _Override(event) {}
 
 /**
- * Modified pan from foundry.js line 10034
+ * Modified pan from foundry.js
  * Removes the x and y arguents from _constrainView to prevent panning
  */
 export function pan_Override({x=null, y=null, scale=null}={}) {
+  if (compatibleCore('10.0')) {
+    // Constrain the resulting canvas view
+    let constrained;
+    if (canvas.scene.getFlag('LockView', 'boundingBox') && canvas.scene.getFlag('LockView', 'lockPan')) constrained = constrainView_Override({scale});
+    else if (canvas.scene.getFlag('LockView', 'boundingBox') && canvas.scene.getFlag('LockView', 'lockPan') == false) constrained = constrainView_Override({x, y, scale});
+    else constrained = constrainView({scale});
+    const scaleChange = constrained.scale !== this.stage.scale.x;
+
+    // Set the pivot point
+    this.stage.pivot.set(constrained.x, constrained.y);
+
+    // Set the zoom level
+    if ( scaleChange ) {
+      this.stage.scale.set(constrained.scale, constrained.scale);
+      this.updateBlur(constrained.scale);
+    }
+
+    // Update the scene tracked position
+    canvas.scene._viewPosition = constrained;
+
+    // Call hooks
+    Hooks.callAll("canvasPan", this, constrained);
+
+    // Update controls
+    this.controls._onCanvasPan();
+
+    // Align the HUD
+    this.hud.align();
+  }
+  else {
     let constrained;
     if (canvas.scene.getFlag('LockView', 'boundingBox') && canvas.scene.getFlag('LockView', 'lockPan')) constrained = constrainView_Override({scale});
     else if (canvas.scene.getFlag('LockView', 'boundingBox') && canvas.scene.getFlag('LockView', 'lockPan') == false) constrained = constrainView_Override({x, y, scale});
     else constrained = this._constrainView({scale});
+    //else constrained = this.#constrainView({x, y, scale});
     this.stage.pivot.set(constrained.x, constrained.y);
     this.stage.scale.set(constrained.scale, constrained.scale);
     this.sight.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
     canvas.scene._viewPosition = constrained;
     Hooks.callAll("canvasPan", this, constrained);
     this.hud.align();
+  }
 }
 
 let panTime = 0;
@@ -240,4 +276,36 @@ export async function animatePan_Override({x, y, scale, duration=250, speed}) {
 
   // Update the scene tracked position
   canvas.scene._viewPosition = constrained;
+}
+
+/*
+ * Original constrainView from Foundry.js
+ */
+function constrainView({x, y, scale}) {
+  const d = canvas.dimensions;
+
+  // Constrain the maximum zoom level
+  if ( Number.isNumeric(scale) && (scale !== canvas.stage.scale.x) ) {
+    const max = CONFIG.Canvas.maxZoom;
+    const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
+    scale = Math.clamped(scale, 1 / ratio, max);
+  } else {
+    scale = canvas.stage.scale.x;
+  }
+ 
+
+  // Constrain the pivot point using the new scale
+  if ( Number.isNumeric(x) && x !== canvas.stage.pivot.x ) {
+    const padw = 0.4 * (window.innerWidth / scale);
+    x = Math.clamped(x, -padw, d.width + padw);
+  }
+  else x = canvas.stage.pivot.x;
+  if ( Number.isNumeric(y) && y !== canvas.stage.pivot.y ) {
+    const padh = 0.4 * (window.innerHeight / scale);
+    y = Math.clamped(y, -padh, d.height + padh);
+  }
+  else y = canvas.stage.pivot.y;
+
+  // Return the constrained view dimensions
+  return {x, y, scale};
 }

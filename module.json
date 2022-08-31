@@ -1,21 +1,30 @@
 {
-    "name": "LockView",
-    "title": "Lock View",
-    "description": "Locks the view of players by enabling the GM to block zooming and panning. The module also gives control over the player view, allowing the GM to zoom and pan. Developed for the purpose of play on a digital playmat, such as a horizontally mounted TV, and for that purpose the module can scale the scene so the gridsize is always displayed corresponding to a real-world size.",
-    "version": "1.5.2",
-    "author": "CDeenen",
-    "esmodules": ["./lockview.js"],
-    "socket": true,
-    "minimumCoreVersion": "0.8.0",
-    "compatibleCoreVersion": "9",
-    "languages": [
-      {
-        "lang": "en",
-        "name": "English",
-        "path": "lang/en.json"
-      }
-    ],
-    "url": "https://github.com/CDeenen/LockView",
-    "manifest": "https://raw.githubusercontent.com/CDeenen/LockView/master/module.json",
-    "download": "https://github.com/CDeenen/LockView/archive/master.zip"
-  }
+  "name": "LockView",
+  "title": "Lock View",
+  "description": "Locks the view of players by enabling the GM to block zooming and panning. The module also gives control over the player view, allowing the GM to zoom and pan. Developed for the purpose of play on a digital playmat, such as a horizontally mounted TV, and for that purpose the module can scale the scene so the gridsize is always displayed corresponding to a real-world size.",
+  "version": "1.5.3",
+  "author": "CDeenen",
+  "authors": [
+    {
+      "name":"CDeenen"
+    }
+  ],
+  "esmodules": ["./lockview.js"],
+  "socket": true,
+  "minimumCoreVersion": "9",
+  "compatibleCoreVersion": "10",
+  "compatibility": {
+    "minimum": "9",
+    "verified": "10"
+  },
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "url": "https://github.com/CDeenen/LockView",
+  "manifest": "https://raw.githubusercontent.com/CDeenen/LockView/master/module.json",
+  "download": "https://github.com/CDeenen/LockView/archive/master.zip"
+}

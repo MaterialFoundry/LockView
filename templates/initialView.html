@@ -45,7 +45,7 @@
         <div class="form-group initial-position">
             <label>{{localize "LockView.SetInitialView.Player"}}</label>
             <div class="flex-container" style="align:right">
-                <select name="playerList" class="select" id="playerList" default="" style="width:50%;">
+                <select name="playerList" class="select" default="" style="width:50%;">
                     {{#each users}}
                     <option value="player-{{this.iteration}}">{{this.name}}</option>
                     {{/each}}
@@ -58,7 +58,7 @@
         <div class="form-group initial-position">
             <label>{{localize "LockView.SetInitialView.Snap"}}</label>
             <div class="flex-container" style="align:right">
-                <select name="snapDir" class="select" id="snapDir" default="" style="width:50%;">
+                <select name="snapDir" class="select" default="" style="width:50%;">
                     <option value="topLeft">{{localize "LockView.SetInitialView.TopLeft"}}</option>
                     <option value="topRight">{{localize "LockView.SetInitialView.TopRight"}}</option>
                     <option value="downLeft">{{localize "LockView.SetInitialView.BottomLeft"}}</option>

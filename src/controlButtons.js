@@ -1,37 +1,36 @@
 import { moduleName } from "../lockview.js";
-import { compatibleCore, getEnable } from "./misc.js";
+import { compareVersions, compatibleCore, getEnable, updateFlag, updateSettings } from "./misc.js";
 import { getFlags, setBlocks, updatePanLock, updateZoomLock, updateBoundingBox, lockPan, lockZoom, boundingBox, _onMouseWheel_Default } from "./blocks.js";
 import * as VIEWBOX from "./viewbox.js";
 
 let oldVB_viewPosition;
+let cursorPosition;
 
 export function registerLayer() {
-  const layers =  compatibleCore("0.9") ? {
+  const layers =  {
     lockview: {
-          layerClass: LockViewLayer,
-          group: "primary"
+      layerClass: LockViewLayer,
+      group: "primary"
       }
-  }
-  : {
-    lockview: LockViewLayer
   }
 
   CONFIG.Canvas.layers = foundry.utils.mergeObject(Canvas.layers, layers);
-
-    if (!Object.is(Canvas.layers, CONFIG.Canvas.layers)) {
-        const layers = Canvas.layers;
-        Object.defineProperty(Canvas, 'layers', {
-            get: function () {
-                return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
-            }
-        })
-    }
+  if (!Object.is(Canvas.layers, CONFIG.Canvas.layers)) {
+    const layers = Canvas.layers;
+    Object.defineProperty(Canvas, 'layers', {
+      get: function () {
+        return foundry.utils.mergeObject(layers, CONFIG.Canvas.layers)
+      }
+    })
+  }
 }
 
 class LockViewLayer extends CanvasLayer {
   constructor() {
     super();
   }
+
+  active = false;
 
   static get layerOptions() {
     return foundry.utils.mergeObject(super.layerOptions, {
@@ -41,13 +40,52 @@ class LockViewLayer extends CanvasLayer {
   }
 
   activate() {
-    CanvasLayer.prototype.activate.apply(this);
+    if (!compatibleCore('10.0'))
+      CanvasLayer.prototype.activate.apply(this);
+    else {
+      // Set this layer as active
+      const wasActive = this.active;
+      this.active = true;
+
+      // Deactivate other layers
+      for (let name of Object.keys(Canvas.layers) ) {
+        const layer = canvas[name];
+        if ( (layer !== this) && (layer instanceof InteractionLayer) ) layer.deactivate();
+      }
+      if ( wasActive ) return this;
+
+      // Assign interactivity for the active layer
+      this.interactive = false;
+      this.interactiveChildren = true;
+
+      // Re-render Scene controls
+      if ( ui.controls ) ui.controls.initialize({layer: this.constructor.layerOptions.name, tool:"resetView"});
+
+      // Call layer-specific activation procedures
+      this._activate();
+      Hooks.callAll(`activate${this.constructor.name}`, this);
+    }
     return this;
   }
 
+  _activate() {}
+
   deactivate() {
-    CanvasLayer.prototype.deactivate.apply(this);
+    if (!compatibleCore('10.0')) CanvasLayer.prototype.deactivate.apply(this);
+    else {
+      this.active = false;
+      this.interactive = false;
+      this.interactiveChildren = false;
+      this._deactivate();
+      Hooks.callAll(`deactivate${this.constructor.name}`, this);
+    }
     return this;
+  }
+
+  _deactivate() {}
+
+  async _draw() {
+  
   }
 
   async draw() {
@@ -55,11 +93,29 @@ class LockViewLayer extends CanvasLayer {
   }
 }
 
+export function updateControlButtons() {
+  const overrideSettings = game.settings.get(moduleName ,'userSettingsOverrides')[game.user.role];
+  const overrideSetting = overrideSettings?.control == undefined ? false : overrideSettings.control;
+  const userSettings = game.settings.get(moduleName,'userSettings').filter(u => u.id == game.user.id)[0];
+  const userSetting = userSettings?.control == undefined ? false : userSettings.control;
+  if ((overrideSetting == false || overrideSetting == undefined) && (userSetting == false || userSetting == undefined) && (game.user.isGM == false || canvas == null || game.settings.get(moduleName,'hideControlButton'))) return;
+
+  getFlags();
+  ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
+  ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
+  ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
+  ui.controls.render();
+}
+
 /*
  * Push the Lock View control buttons
  */
 export function pushControlButtons(controls){
-  if (game.user.isGM == false || canvas == null || game.settings.get(moduleName,'hideControlButton')) return;
+  const overrideSettings = game.settings.get(moduleName ,'userSettingsOverrides')[game.user.role];
+  const overrideSetting = overrideSettings?.control == undefined ? false : overrideSettings.control;
+  const userSettings = game.settings.get(moduleName,'userSettings').filter(u => u.id == game.user.id)[0];
+  const userSetting = userSettings?.control == undefined ? false : userSettings.control;
+  if ((overrideSetting == false || overrideSetting == undefined) && (userSetting == false || userSetting == undefined) && (game.user.isGM == false || canvas == null || game.settings.get(moduleName,'hideControlButton'))) return;
 
   getFlags();
 
@@ -156,9 +212,10 @@ export function pushControlButtons(controls){
 }
 
 export async function viewbox(currentState,currentTool=false){
-  await game.settings.set("LockView","viewbox",currentState);
+  await updateSettings("viewbox",currentState);
+  
   if (currentState) {
-    if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
+    if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || (compatibleCore('10.0') && VIEWBOX.viewboxStorage.sceneId != canvas.scene.id) || (!compatibleCore('10.0') && VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id)) {
       for (let i=0; i< VIEWBOX.viewbox.length; i++)
         if (VIEWBOX.viewbox[i] != undefined)
           VIEWBOX.viewbox[i].hide();
@@ -172,7 +229,7 @@ export async function viewbox(currentState,currentTool=false){
     for (let i=0; i< VIEWBOX.viewbox.length; i++)
       if (VIEWBOX.viewbox[i] != undefined)
         VIEWBOX.viewbox[i].hide();
-    canvas.scene.setFlag('LockView', 'editViewbox', false);
+    await updateFlag('editViewbox', false);
     ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active = false;
     getFlags();
     setBlocks();
@@ -191,20 +248,18 @@ let selectedViewbox;
 var mouseDownEvent = function(e) { handleMouseDown(e) };
 var mouseUpEvent = function(e) { handleMouseUp(e) };
 var mouseMoveEvent = function(e) { handleMouseMove(e) };
-//var rightDownEvent = function(e) { handleRightDown(e) };
+var getCursorPosition = function(e) { handleGetCursorPosition(e) };
 
 function mouseManager(en){
   if (en) {
     canvas.mouseInteractionManager.target.addListener("mousedown", mouseDownEvent );
-    //canvas.mouseInteractionManager.target.addListener("rightdown", mouseDownEvent );
+    canvas.mouseInteractionManager.target.addListener("mousemove", getCursorPosition );
   }  
   else {
     canvas.mouseInteractionManager.target.removeListener("mousedown", mouseDownEvent );
     canvas.mouseInteractionManager.target.removeListener("mouseup", mouseUpEvent );
     canvas.mouseInteractionManager.target.removeListener("mousemove", mouseMoveEvent );
-    //canvas.mouseInteractionManager.target.removeListener("rightdown", mouseDownEvent );
-   // canvas.mouseInteractionManager.target.removeListener("rightup", mouseUpEvent );
-    //canvas.mouseInteractionManager.target.removeListener("rightmove", mouseMoveEvent );
+    canvas.mouseInteractionManager.target.removeListener("mousemove", getCursorPosition );
     VIEWBOX.getViewboxData();
   }
 }
@@ -221,17 +276,11 @@ function handleMouseDown(e){
       x: VIEWBOX.viewbox[i].currentPosition.x - VIEWBOX.viewbox[i].boxWidth/2,
       y: VIEWBOX.viewbox[i].currentPosition.y - VIEWBOX.viewbox[i].boxHeight/2
     }
-    //console.log('viewbox',position,currentPosition,VIEWBOX.viewbox[i])
+  
     //if mouse over move button
     if (e.data.button == 0 && Math.abs(position.x - moveLocation.x) <= 20 && Math.abs(position.y - moveLocation.y) <= 20) mouseMode = 'move';
     //if mouse over scale button
     else if (e.data.button == 0 && Math.abs(position.x - scaleLocation.x) <= 20 && Math.abs(position.y - scaleLocation.y) <= 20) mouseMode = 'scale';
-    //if mouse within viewbox
-    //else if (e.data.button == 2 && position.x > currentPosition.x && position.x < currentPosition.x+VIEWBOX.viewbox[i].boxWidth && position.y > currentPosition.y && position.y < currentPosition.y+VIEWBOX.viewbox[i].boxHeight) {
-    //  console.log('test')
-    //  mouseMode = 'move';
-      //continue;
-    //}
     else continue;
 
     selectedViewbox = i;
@@ -259,9 +308,12 @@ function handleMouseUp(){
   VIEWBOX.getViewboxData();
 }
 
+function handleGetCursorPosition(e) {
+  cursorPosition = e.data.getLocalPosition(canvas.stage);
+}
+
 function handleMouseMove(e){
   let position = e.data.getLocalPosition(canvas.stage);
-  //console.log('move',position)
   let width = VIEWBOX.viewbox[selectedViewbox].boxWidth;
   let height = VIEWBOX.viewbox[selectedViewbox].boxHeight;
   
@@ -272,12 +324,12 @@ function handleMouseMove(e){
     let payload = {
       "msgType": "newView",
       "senderId": game.userId, 
+      "users": [viewboxId],
       "shiftX": position.x,
       "shiftY": position.y,
       "scaleChange": null,
       "scaleSett": 0,
-      "type": "coordsAbs",
-      "receiverId": viewboxId
+      "type": "coordsAbs"
     };
     game.socket.emit(`module.LockView`, payload);
   }
@@ -296,12 +348,12 @@ function handleMouseMove(e){
     let payload = {
       "msgType": "newView",
       "senderId": game.userId, 
+      "users": [viewboxId],
       "shiftX": position.x,
       "shiftY": position.y,
       "scaleChange": width,
       "scaleSett": 0,
-      "type": "coordsAbs",
-      "receiverId": viewboxId
+      "type": "coordsAbs"
     };
     game.socket.emit(`module.LockView`, payload);
   }
@@ -323,25 +375,25 @@ function handleMouseMove(e){
 export async function editViewboxConfig(controls) {
   let currentState = !canvas.scene.getFlag('LockView', 'editViewbox');
 
-  if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
+  if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || (compatibleCore('10.0') && VIEWBOX.viewboxStorage.sceneId != canvas.scene.id) || (!compatibleCore('10.0') && VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id)) {
     for (let i=0; i< VIEWBOX.viewbox.length; i++)
       if (VIEWBOX.viewbox[i] != undefined)
         VIEWBOX.viewbox[i].hide();
     ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
-    canvas.scene.setFlag('LockView', 'editViewbox', false);
+    await updateFlag('editViewbox', false);
     controls.find(controls => controls.name == "LockView").activeTool = undefined;
     ui.controls.render();
     return;
   }
   if (controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox").active == false){
     ui.notifications.warn(game.i18n.localize("LockView.UI.ViewboxDisabled"));
-    canvas.scene.setFlag('LockView', 'editViewbox', false);
+    await updateFlag('editViewbox', false);
     controls.find(controls => controls.name == "LockView").activeTool = undefined;
     ui.controls.render();
     return;
   }
 
-  await canvas.scene.setFlag('LockView', 'editViewbox', currentState);
+  await updateFlag('editViewbox', currentState);
   
   if (currentState) {
     Canvas.prototype.pan = _Override_VB_Pan;
@@ -371,14 +423,19 @@ function _Override_VB_Pan({x=null, y=null, scale=null}={}) {
   if (scale == null) scaleChange = 0;
   else scaleChange = scale/oldVB_viewPosition.scale;
 
+  let users = [];
+  for (let i=0; i< VIEWBOX.viewbox.length; i++)
+    if (VIEWBOX.viewbox[i] != undefined && cursorPosition.x >= VIEWBOX.viewbox[i].xStorage && cursorPosition.x <= VIEWBOX.viewbox[i].xStorage + VIEWBOX.viewbox[i].boxWidth && cursorPosition.y >= VIEWBOX.viewbox[i].yStorage && cursorPosition.y <= VIEWBOX.viewbox[i].yStorage + VIEWBOX.viewbox[i].boxHeight)
+      users.push(VIEWBOX.viewbox[i].userId)
+
   let payload = {
     "msgType": "newView",
     "senderId": game.userId, 
+    "users": users,
     "shiftX": diffX,
     "shiftY": diffY,
     "scaleChange": scaleChange,
-    "type": "shift",
-    "receiverId": 'all'
+    "type": "shift"
   };
   game.socket.emit(`module.LockView`, payload);
 }
@@ -390,7 +447,7 @@ function setViewDialog(controls) {
   controls.find(controls => controls.name == "LockView").activeTool = undefined;
   mouseManager(false);
   ui.controls.render();
-  if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id) {
+  if (VIEWBOX.viewboxStorage == undefined || VIEWBOX.viewboxStorage.sceneId == undefined || (compatibleCore('10.0') && VIEWBOX.viewboxStorage.sceneId != canvas.scene.id) || (!compatibleCore('10.0') && VIEWBOX.viewboxStorage.sceneId != canvas.scene.data._id)) {
     ui.notifications.warn(game.i18n.localize("LockView.UI.NoConnect"));
     return;
   }
@@ -479,24 +536,24 @@ function setViewDialog(controls) {
             payload = {
               "msgType": "newView",
               "senderId": game.userId, 
+              "users": "all",
               "shiftX": x,
               "shiftY": y,
               "scaleSett": scaleSett, 
               "scale": scale,
               "type": "grid",
-              "receiverId": 'all'
             };
           }
           else if (option == 6){
             payload = {
               "msgType": "newView",
               "senderId": game.userId, 
+              "users": "all",
               "shiftX": x,
               "shiftY": y,
               "scaleSett": scaleSett, 
               "scale": scale,
-              "type": "coords",
-              "receiverId": 'all'
+              "type": "coords"
             };
           }
           game.socket.emit(`module.LockView`, payload);

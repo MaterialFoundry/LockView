@@ -1,7 +1,8 @@
 import { forceConstrain, getPhysicalScale, scaleToFit, applySettings } from "../lockview.js";
 import { drawViewbox, sendViewBox, getViewboxEnable } from "./viewbox.js";
-import { getEnable } from "./misc.js";
+import { getEnable, compatibleCore } from "./misc.js";
 import { setBlocks, getFlags, autoScale, lockPan, lockZoom, boundingBox, excludeSidebar, blackenSidebar } from "./blocks.js";
+import { updateControlButtons } from "./controlButtons.js";
 
 /*
  * Set up the socket used to communicate between GM and player clients
@@ -16,6 +17,8 @@ export function socket(){
         else if (payload.msgType == 'forceConstrain') { forceConstrain() }
         else if (payload.msgType == 'viewbox') { drawViewbox(payload) }
         else if (payload.msgType == "getViewboxData"){ sendViewBox() }
+        else if (payload.msgType == "flagUpdate") { onUpdateFlag(payload) }
+        else if (payload.msgType == "settingUpdate") { onUpdateSetting(payload) }
     });  
 }
 
@@ -25,7 +28,8 @@ export function socket(){
 async function resetView(payload){
     if (getEnable(game.userId) == false) return;
     getFlags();
-    let newPosition = canvas.scene.data.initial;
+    let newPosition = compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
+    if (newPosition == null) newPosition = canvas.scene._viewPosition;
     
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
@@ -69,6 +73,8 @@ export async function updatePlayerSettings(payload){
       zoom:payload.lockZoom,
       bBox:payload.boundingBox
     });
+
+    updateControlButtons();
 }
 
 /*
@@ -89,11 +95,48 @@ export function sendUpdate({pan=null,zoom=null,bBox=null,aScale=null,fInit=null,
 }
 
 /*
+ * Send flag update to GM
+ */
+export function sendFlagUpdate(flag, value) {
+  let payload = {
+    "msgType": "flagUpdate",
+    "senderId": game.userId,
+    "flag": flag,
+    "value": value
+  }
+  game.socket.emit(`module.LockView`, payload);
+  return new Promise(resolve => setTimeout(resolve, 100));
+}
+
+function onUpdateFlag(payload) {
+  if (!game.user.isGM) return;
+  canvas.scene.setFlag('LockView', payload.flag, payload.value);
+}
+
+export function sendSettingUpdate(setting, value) {
+  let payload = {
+    "msgType": "settingUpdate",
+    "senderId": game.userId,
+    "setting": setting,
+    "value": value
+  }
+  game.socket.emit(`module.LockView`, payload);
+  return new Promise(resolve => setTimeout(resolve, 100));
+}
+
+function onUpdateSetting(payload) {
+  if (!game.user.isGM) return;
+  game.settings.set("LockView", payload.setting, payload.value);
+}
+
+/*
  * Set a new view for the user
  */
 async function newView(payload){
     if (getViewboxEnable(game.userId)==false) return;
-    if (payload.receiverId != 'all' && payload.receiverId != game.userId) return;
+    const users = payload.users;
+    if (users == undefined) return;
+    if (users != "all" && users.find(id => id == game.user.id) == undefined) return;
   
     getFlags();
     let scale;

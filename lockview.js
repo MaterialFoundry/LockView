@@ -5,7 +5,7 @@ import { getFlags, setBlocks, lockPan, lockZoom, autoScale, forceInit, blackenSi
 import { drawingConfigApp, closeDrawingConfigApp } from "./src/drawingConfig.js";
 import { renderSceneConfig, closeSceneConfig, closeInitialViewForm } from "./src/sceneConfig.js";
 import {socket, sendUpdate} from "./src/socket.js";
-import { updatePopup, setLockView, getEnable,blackSidebar } from "./src/misc.js";
+import { updatePopup, setLockView, getEnable,blackSidebar, compatibleCore } from "./src/misc.js";
 import { constrainView_Override, pan_OverrideHigherRes } from "./src/overrides.js";
 
 export const moduleName = "LockView";
@@ -60,9 +60,6 @@ Hooks.once('init', function(){
 
   //Register lockview layer for the control buttons (./src/misc.js)
   registerLayer();
-
-  //Check keyboard input to undo hideUI
-  checkKeys();
 });
 
 Hooks.on("canvasInit", (canvas) => {
@@ -88,12 +85,10 @@ async function setUI(hide) {
   sidebarCollapsed = hide;
   if (!getEnable(game.userId) || canvas.scene == undefined) return;
   
-
-  
     uiHidden = hide;
     let hideUIelements = {};
     if (canvas.scene.getFlag('LockView', 'hideUI')) {
-      if (canvas.scene.data.flags["LockView"].hideUIelements){
+      if (compatibleCore('10.0') ? canvas.scene.flags["LockView"].hideUIelements : canvas.scene.data.flags["LockView"].hideUIelements){
         hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
       } 
       else hideUIelements = {
@@ -119,7 +114,7 @@ async function setUI(hide) {
     if (hide) {
       for (let element in hideUIelements) {
         if (hideUIelements?.[element]) {
-          if (element == 'sidebar') continue;
+          if (game.user.isGM && element == 'sidebar') continue;
           $(`#${element}`).hide();
           hiddenUIelements[element] = true;
         }
@@ -140,38 +135,18 @@ async function setUI(hide) {
   
 }
 
-/**
- * Check keys for 'Ctrl' press, to show or hide elements
- */
-
-function checkKeys() {
-  let ctrlFired = false;
-
-  window.addEventListener("keydown", async (e) => { 
-    if (e.key == "Control") {
-      ctrlFired = true;
-    }
-    else if (e.key == "u" && !uiHidden) {
-      uiHidden = true;
-      setUI(true);
-    }
-    else if (e.key == "u" && ctrlFired) {
-      uiHidden = false;
-      setUI(false);
-    }
-  });
-
-  window.addEventListener("keyup", async (e) => { 
-    if (e.key == "Control") {
-      ctrlFired = false;
-    }
-  });
+export function onKeyPress() {
+    uiHidden = !uiHidden;
+    setUI(uiHidden);
 }
 
 /*
  * If the scene controls are rendered, check whether editViewbox should be enabled
  */
 async function onRenderSceneControls(controls){
+  if (compatibleCore('10.0') && controls.activeControls != 'LockView') 
+      canvas['lockview'].deactivate();
+      
   if (combatTrigger) {
     combatTrigger = false;
     return;
@@ -294,11 +269,8 @@ async function onRenderSidebarTab(){
 
     //If the user is the GM, request viewbox data from connected players
     getViewboxData();
-    
-    //Initialize the LockView flags for this canvas
-    //await initializeFlags();
 
-     //Get the flags
+    //Get the flags
     await getFlags();
 
     const lockViewControls = ui.controls.controls.find(controls => controls.name == "LockView");
@@ -309,28 +281,13 @@ async function onRenderSidebarTab(){
       lockViewControls.tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
       ui.controls.render();
     }
-    /*
-    //Send updated values to clients
-    sendUpdate( {
-      pan:lockPan, 
-      zoom:lockZoom, 
-      aScale:autoScale, 
-      fInit:forceInit, 
-      bBox:boundingBox
-      }
-    );
-    */
   }
 
-  //Apply the settings
-  //if (game.system.id != "pf2e") await applySettings(true);
-
-  //forceCanvasPan();
   sendViewBox();
 }
 
 function forceInitialView() {
-  if (newSceneLoad) return canvas.scene.data.initial;
+  if (newSceneLoad) return compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
   else return {};
 }
 
@@ -398,9 +355,9 @@ export async function scaleToFit(force = 0){
   
   //If exclude sidebar is on, and the sidebar is not collapsed, store the sidebar width to 'sidebarOffset'
   if (excludeSidebar && ui.sidebar._collapsed == false) 
-    sidebarOffset = window.innerWidth-ui.sidebar._element[0].offsetLeft;
-  
-    //Horizontal fit
+    sidebarOffset = compatibleCore('10.0') ? ui.sidebar.position.width : window.innerWidth-ui.sidebar._element[0].offsetLeft;
+
+  //Horizontal fit
   if (autoScaleTemp == 1) horizontal = true;
   //Vertical fit
   else if (autoScaleTemp == 2) horizontal = false;
@@ -422,9 +379,10 @@ export async function scaleToFit(force = 0){
 
   //Calculate the new values
   const scale = horizontal ? (windowWidth-sidebarOffset)/sceneWidth : windowHeight/sceneHeight;
+
   let newPosition = {
-    x : canvas.dimensions.paddingX + (sceneWidth+sidebarOffset/scale)/2,
-    y : canvas.dimensions.paddingY + sceneHeight/2,
+    x : compatibleCore('10.0') ? canvas.dimensions.sceneX + (sceneWidth+sidebarOffset/scale)/2 : canvas.dimensions.paddingX + (sceneWidth+sidebarOffset/scale)/2,
+    y : compatibleCore('10.0') ? canvas.dimensions.sceneY + sceneHeight/2 : canvas.dimensions.paddingY + sceneHeight/2,
     scale : Math.round(scale* 2000) / 2000
   }
 
@@ -458,7 +416,7 @@ export function getPhysicalScale(){
   //Get the number of pixels/gridsquare to get the desired grid size
   let grid = res/horSq;
   //Get the scale factor
-  let scale = grid/canvas.scene.data.grid;
+  let scale = compatibleCore('10.0') ? grid/canvas.scene.grid.size : grid/canvas.scene.data.grid;
   return scale;
 }
 

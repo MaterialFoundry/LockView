@@ -1,12 +1,13 @@
 import { applySettings, forceConstrain, getPhysicalScale } from "../lockview.js";
-import { compatibleCore } from "./misc.js";
 import { sendUpdate } from "./socket.js";
-import * as VIEWBOX from "./viewbox.js";
+import { viewbox, getViewboxData } from "./viewbox.js";
+import { compatibleCore } from "./misc.js";
 
 /*
  * Push Lock View settings onto the scene configuration menu
  */
 export function renderSceneConfig(app,html){ 
+    getViewboxData();
     let lockPan_Default = false;
     let lockZoom_Default = false;
     let autoScale = 0;
@@ -24,49 +25,70 @@ export function renderSceneConfig(app,html){
         sidebar: false
     }
     let collapseSidebar = false;
+    
+    if(compatibleCore('10.0')) {
+        if (app.object.flags["LockView"]){
+            if (app.object.flags["LockView"].lockPanInit)       lockPan_Default = app.object.getFlag('LockView', 'lockPanInit');
+            else                                                app.object.setFlag('LockView', 'lockPanInit', false);
 
-    if(app.object.data.flags["LockView"]){
-        if (app.object.data.flags["LockView"].lockPanInit){
-        lockPan_Default = app.object.getFlag('LockView', 'lockPanInit');
-        } 
-        else app.object.setFlag('LockView', 'lockPanInit', false);
+            if (app.object.flags["LockView"].lockZoomInit)      lockZoom_Default = app.object.getFlag('LockView', 'lockZoomInit');
+            else                                                app.object.setFlag('LockView', 'lockZoomInit', false);
 
-        if (app.object.data.flags["LockView"].lockZoomInit){
-        lockZoom_Default = app.object.getFlag('LockView', 'lockZoomInit');
-        } 
-        else app.object.setFlag('LockView', 'lockZoomInit', false);
+            if (app.object.flags["LockView"].autoScale)         autoScale = app.object.getFlag('LockView', 'autoScale');
+            else                                                app.object.setFlag('LockView', 'autoScale', 0);
 
-        if (app.object.data.flags["LockView"].autoScale){
-        autoScale = app.object.getFlag('LockView', 'autoScale');
-        } else app.object.setFlag('LockView', 'autoScale', 0);
+            if (app.object.flags["LockView"].forceInit)         forceInit = app.object.getFlag('LockView', 'forceInit');
+            else                                                app.object.setFlag('LockView', 'forceInit', false);
 
-        if (app.object.data.flags["LockView"].forceInit){
-        forceInit = app.object.getFlag('LockView', 'forceInit');
-        } else app.object.setFlag('LockView', 'forceInit', false);
+            if (app.object.flags["LockView"].boundingBoxInit)   boundingBox = app.object.getFlag('LockView', 'boundingBoxInit');
+            else                                                app.object.setFlag('LockView', 'boundingBoxInit', false);
 
-        if (app.object.data.flags["LockView"].boundingBoxInit){
-            boundingBox = app.object.getFlag('LockView', 'boundingBoxInit');
-        } else app.object.setFlag('LockView', 'boundingBoxInit', false);
+            if (app.object.flags["LockView"].excludeSidebar)    excludeSidebar = app.object.getFlag('LockView', 'excludeSidebar');
+            else                                                app.object.setFlag('LockView', 'excludeSidebar', false);
 
-        if (app.object.data.flags["LockView"].excludeSidebar){
-            excludeSidebar = app.object.getFlag('LockView', 'excludeSidebar');
-        } else app.object.setFlag('LockView', 'excludeSidebar', false);
+            if (app.object.flags["LockView"].blackenSidebar)    blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
+            else                                                app.object.setFlag('LockView', 'blackenSidebar', false);
 
-        if (app.object.data.flags["LockView"].blackenSidebar){
-            blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
-        } else app.object.setFlag('LockView', 'blackenSidebar', false);
+            if (app.object.flags["LockView"].hideUI)            hideUI = app.object.getFlag('LockView', 'hideUI');
+            else                                                app.object.setFlag('LockView', 'hideUI', false);
 
-        if (app.object.data.flags["LockView"].hideUI){
-            hideUI = app.object.getFlag('LockView', 'hideUI');
-        } else app.object.setFlag('LockView', 'hideUI', false);
+            if (app.object.flags["LockView"].hideUIelements)    hideUIelements = app.object.getFlag('LockView', 'hideUIelements');
+            else                                                app.object.setFlag('LockView', 'hideUIelements', hideUIelements);
 
-        if (app.object.data.flags["LockView"].hideUIelements){
-            hideUIelements = app.object.getFlag('LockView', 'hideUIelements');
-        } else app.object.setFlag('LockView', 'hideUIelements', hideUIelements);
+            if (app.object.flags["LockView"].collapseSidebar)   collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
+            else                                                app.object.setFlag('LockView', 'collapseSidebar', false);
+        }
+    }  
+    else if(app.object.data.flags["LockView"]){
+        if (app.object.data.flags["LockView"].lockPanInit)      lockPan_Default = app.object.getFlag('LockView', 'lockPanInit');
+        else                                                    app.object.setFlag('LockView', 'lockPanInit', false);
 
-        if (app.object.data.flags["LockView"].collapseSidebar){
-            collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
-        } else app.object.setFlag('LockView', 'collapseSidebar', false);
+        if (app.object.data.flags["LockView"].lockZoomInit)     lockZoom_Default = app.object.getFlag('LockView', 'lockZoomInit');
+        else                                                    app.object.setFlag('LockView', 'lockZoomInit', false);
+
+        if (app.object.data.flags["LockView"].autoScale)        autoScale = app.object.getFlag('LockView', 'autoScale');
+        else                                                    app.object.setFlag('LockView', 'autoScale', 0);
+
+        if (app.object.data.flags["LockView"].forceInit)        forceInit = app.object.getFlag('LockView', 'forceInit');
+        else                                                    app.object.setFlag('LockView', 'forceInit', false);
+
+        if (app.object.data.flags["LockView"].boundingBoxInit)  boundingBox = app.object.getFlag('LockView', 'boundingBoxInit');
+        else                                                    app.object.setFlag('LockView', 'boundingBoxInit', false);
+
+        if (app.object.data.flags["LockView"].excludeSidebar)   excludeSidebar = app.object.getFlag('LockView', 'excludeSidebar');
+        else                                                    app.object.setFlag('LockView', 'excludeSidebar', false);
+
+        if (app.object.data.flags["LockView"].blackenSidebar)   blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
+        else                                                    app.object.setFlag('LockView', 'blackenSidebar', false);
+
+        if (app.object.data.flags["LockView"].hideUI)           hideUI = app.object.getFlag('LockView', 'hideUI');
+        else                                                    app.object.setFlag('LockView', 'hideUI', false);
+
+        if (app.object.data.flags["LockView"].hideUIelements)   hideUIelements = app.object.getFlag('LockView', 'hideUIelements');
+        else                                                    app.object.setFlag('LockView', 'hideUIelements', hideUIelements);
+
+        if (app.object.data.flags["LockView"].collapseSidebar)  collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
+        else                                                    app.object.setFlag('LockView', 'collapseSidebar', false);
     } 
     
     let autoScaleOptions = [
@@ -147,21 +169,13 @@ export function renderSceneConfig(app,html){
     </div>
     `
     
-    if (compatibleCore('0.9')) {
-        const tab = `<a class="item" data-tab="lockview">
-            <i class="fas fa-lock"></i> Lock View
-            </a>`;
-        const contents = `<div class="tab" data-tab="lockview">${sceneConfigHtml}</div>`
-        html.find(".tabs .item").last().after(tab);
-        html.find(".tab").last().after(contents);
-    }
-    else {
-        const contents = `<h3 class="form-header"><i class="fas fa-lock"/></i> Lock View</h3>
-            <p class="notes">${game.i18n.localize("LockView.Scene.Hint")}</p>
-            ${sceneConfigHtml}`
-        const initPositionClass = html.find('div[class="form-group initial-position"]')
-        initPositionClass.after(contents);
-    }
+    const tab = `<a class="item" data-tab="lockview">
+        <i class="fas fa-lock"></i> Lock View
+        </a>`;
+    const contents = `<div class="tab" data-tab="lockview">${sceneConfigHtml}</div>`
+    html.find(".tabs .item").last().after(tab);
+    html.find(".tab").last().after(contents);
+
     
     const setInitialViewButton = html.find("button[id = 'LockView_setInitialView']");
     setInitialViewButton.on("click",event => {
@@ -250,7 +264,7 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
     await app.object.setFlag('LockView', 'hideUI', hideUI);
     await app.object.setFlag('LockView', 'collapseSidebar', collapseSidebar);
     
-    if (app.object.id == canvas.scene.data._id){
+    if ((compatibleCore('10.0') && app.object.id == canvas.scene.id) || (!compatibleCore('10.0') && app.object.id == canvas.scene.data._id)){
         //Apply the new settings
         await applySettings(true);
 
@@ -274,7 +288,6 @@ function handleInitialView(scene,html){
     initialViewBox = new InitialViewBox();
     canvas.stage.addChild(initialViewBox);
     initialViewBox.init();
-    //const initalData = scene.data.initial == null ? {x:0,y:0,scale:1} : scene.data.initial;
     const initalData = {
         x: html.find("input[name ='initial.x']")[0].value == "" ? 0 : html.find("input[name ='initial.x']")[0].value,
         y: html.find("input[name ='initial.y']")[0].value == "" ? 0 : html.find("input[name ='initial.y']")[0].value,
@@ -382,7 +395,6 @@ class InitialViewBox extends CanvasLayer {
 
 let mouseMode = null;
 let startOffset = {};
-//let screenWidth;
 var mouseDownEvent = function(e) { handleMouseDown(e) };
 var mouseUpEvent = function(e) { handleMouseUp(e) };
 var mouseMoveEvent = function(e) { handleMouseMove(e) };
@@ -454,7 +466,7 @@ function handleMouseMove(e){
 
   position.scale = Math.round(position.scale*100)/100;
 
-    if (document.getElementById("initialViewForm") != null) {
+    if (document.getElementById("lockView_initialViewForm") != null) {
         let elementX = document.getElementsByName("dataX")[0];
         let elementY = document.getElementsByName("dataY")[0];
         let elementScale = document.getElementsByName("dataScale")[0];
@@ -463,8 +475,8 @@ function handleMouseMove(e){
         elementX.value = position.x;
         elementY.value = position.y;
         elementScale.value = position.scale;
-        elementGridX.value = window.innerWidth/(position.scale*canvas.scene.data.grid);
-        elementGridY.value = window.innerHeight/(position.scale*canvas.scene.data.grid);
+        elementGridX.value = compatibleCore('10.0') ? window.innerWidth/(position.scale*canvas.scene.grid.size) : window.innerWidth/(position.scale*canvas.scene.data.grid);
+        elementGridY.value = compatibleCore('10.0') ? window.innerHeight/(position.scale*canvas.scene.grid.size) : window.innerHeight/(position.scale*canvas.scene.data.grid);
     }
 }
 
@@ -480,7 +492,7 @@ export class initialViewForm extends FormApplication {
     constructor(data, options) {
         super(data, options);
         this.scene;
-        this.initial = canvas.scene.data.initial;
+        this.initial = compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
         this.users = [];
         this.selectedPlayer = 0;
     }
@@ -490,7 +502,7 @@ export class initialViewForm extends FormApplication {
      */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            id: "initialViewForm",
+            id: "lockView_initialViewForm",
             title: game.i18n.localize("LockView.SetInitialView.Title"),
             template: "./modules/LockView/templates/initialView.html",
             classes: ["sheet"]
@@ -506,21 +518,24 @@ export class initialViewForm extends FormApplication {
      * Provide data to the template
      */
     getData() {
-        ui.controls.activeControl = "LockView";
-        canvas.layers.find(layer => layer.name == "LockViewLayer").activate();
-        ui.controls.render();
-
+        if (compatibleCore('10.0')) ui.controls.initialize({control:'LockView'});
+        else {
+            ui.controls.activeControl = "LockView";
+            canvas.layers.find(layer => layer.name == "LockViewLayer").activate();
+            ui.controls.render();
+        }
+        
         const gridSpaces = {
-            x: initialViewBox.data.width/canvas.scene.data.grid,
-            y: initialViewBox.data.height/canvas.scene.data.grid
+            x: compatibleCore('10.0') ? initialViewBox.data.width/canvas.scene.grid.size : initialViewBox.data.width/canvas.scene.data.grid,
+            y: compatibleCore('10.0') ? initialViewBox.data.height/canvas.scene.grid.size : initialViewBox.data.height/canvas.scene.data.grid
         }
         let users = [];
         let counter = 0;
-        for (let viewbox of VIEWBOX.viewbox) {
-            if (viewbox == undefined) continue;
+        for (let vb of viewbox) {
+            if (vb == undefined) continue;
             users.push({
-                name: viewbox.boxName,
-                userId: viewbox.userId,
+                name: vb.boxName,
+                userId: vb.userId,
                 iteration: counter
             });
             counter++;
@@ -656,7 +671,7 @@ export class initialViewForm extends FormApplication {
             else if (snapDir == 'downRight') position = {x: initialViewBox.data.x + initialViewBox.data.width, y: initialViewBox.data.y + initialViewBox.data.height};
 
             const center = canvas.grid.getCenter(position.x,position.y);
-            const gridSize = this.scene.data.grid;
+            const gridSize = compatibleCore('10.0') ? this.scene.grid.size : this.scene.data.grid;
             let offset = {
                 x:gridSize/2, 
                 y:gridSize/2
@@ -685,18 +700,18 @@ export class initialViewForm extends FormApplication {
 
         captureView.on("click", event => {
             let newData;
-            for (let viewbox of VIEWBOX.viewbox) {
-                if (viewbox == undefined) continue;
-                if (this.users[this.selectedPlayer].userId == viewbox.userId)
-                newData = viewbox.currentPosition;
+            for (let vb of viewbox) {
+                if (vb == undefined) continue;
+                if (this.users[this.selectedPlayer].userId == vb.userId)
+                newData = vb.currentPosition;
             }
 
             initialViewBox.updateBox(newData);
             html.find("input[name='dataX']")[0].value = newData.x;
             html.find("input[name='dataY']")[0].value = newData.y;
             html.find("input[name='dataScale']")[0].value = newData.scale;
-            html.find("input[name='gridX']")[0].value = window.innerWidth/(newData.scale*canvas.scene.data.grid);
-            html.find("input[name='gridY']")[0].value = window.innerHeight/(newData.scale*canvas.scene.data.grid);
+            html.find("input[name='gridX']")[0].value = compatibleCore('10.0') ? window.innerWidth/(newData.scale*canvas.scene.grid.size) : window.innerWidth/(newData.scale*canvas.scene.data.grid);
+            html.find("input[name='gridY']")[0].value = compatibleCore('10.0') ? window.innerHeight/(newData.scale*canvas.scene.grid.size) : window.innerHeight/(newData.scale*canvas.scene.data.grid);
         });
     }
 }
