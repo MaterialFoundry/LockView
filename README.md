@@ -25,6 +25,7 @@ Right now, there appear to be compatibility issues with the following modules:
 
 ## Foundry Compatibility
 This module has been tested to work with Foundry V9 and V10.
+The last v8 compatible version is v1.5.2, manifest url: https://github.com/CDeenen/LockView/releases/download/v1.5.2/module.json
 
 ## Feedback
 Feel free [report an issue/suggestion](https://github.com/CDeenen/LockView/issues), contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.
