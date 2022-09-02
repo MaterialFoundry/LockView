@@ -144,6 +144,9 @@ export function onKeyPress() {
  * If the scene controls are rendered, check whether editViewbox should be enabled
  */
 async function onRenderSceneControls(controls){
+  //If no canvas or scene is defined/loaded, return
+  if (canvas == null || canvas.scene == null) return;
+
   if (compatibleCore('10.0') && controls.activeControls != 'LockView') 
       canvas['lockview'].deactivate();
       
@@ -151,8 +154,6 @@ async function onRenderSceneControls(controls){
     combatTrigger = false;
     return;
   }
-  //If no canvas or scene is defined/loaded, return
-  if (canvas == null || canvas.scene == null) return;
   
   if (getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) {
     if (newSceneLoad == true) ui.sidebar.collapse();
