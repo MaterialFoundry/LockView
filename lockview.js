@@ -145,7 +145,7 @@ export function onKeyPress() {
  */
 async function onRenderSceneControls(controls){
   //If no canvas or scene is defined/loaded, return
-  if (canvas == null || canvas.scene == null) return;
+  if (canvas?.scene == null) return;
 
   if (compatibleCore('10.0') && controls.activeControls != 'LockView') 
       canvas['lockview'].deactivate();
