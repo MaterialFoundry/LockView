@@ -181,7 +181,7 @@ async function onRenderSceneControls(controls) {
       return;
 
     // Disable the editViewbox control button
-    ui.controls.controls.find(controls => controls.name == "LockView").activeTool = undefined;
+    lockViewControls.activeTool = undefined;
     
     getViewboxData();
   }
