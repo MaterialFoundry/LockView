@@ -1,6 +1,12 @@
 # Changelog
-### v1.5.3 - 31-08-2022
+### v1.5.4 - 07-09-2022
+Fixes:
+<ul>
+    <li>Errors would be printed when loading the game, because Lock View tried to access the canvas before the canvas was initialized. Has been fixed by placing it behind a canvas==null check. (Thanks to wickermoon for noticing and fixing it)</li>
+    <li>Added the 'id' field in manifest.json to comply with the new V10 standards</li>
+</ul>
 
+### v1.5.3 - 31-08-2022
 Additions:
 <ul>
     <li>Added the option for players to control the module through control buttons. This can be enabled in the user configuration with the 'control' setting</li>
