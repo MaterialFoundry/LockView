@@ -143,9 +143,9 @@ export function onKeyPress() {
 /*
  * If the scene controls are rendered, check whether editViewbox should be enabled
  */
-async function onRenderSceneControls(controls){
-  //If no canvas or scene is defined/loaded, return
-  if (canvas?.scene == null) return;
+async function onRenderSceneControls(controls) {
+  if (canvas?.scene == null)
+    return;
 
   if (compatibleCore('10.0') && controls.activeControls != 'LockView') 
       canvas['lockview'].deactivate();
@@ -156,42 +156,33 @@ async function onRenderSceneControls(controls){
   }
   
   if (getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) {
-    if (newSceneLoad == true) ui.sidebar.collapse();
+    if (newSceneLoad == true)
+      ui.sidebar.collapse();
+
     setUI(ui.sidebar._collapsed);
   }
 
   if (game.user.isGM == false) return;
 
-  //Get all flags
   await getFlags();
 
-  let editEnable;
-  //If the editViewBox flag doesn't exist, set it to false
-  if (canvas.scene.getFlag('LockView', 'editViewbox') == undefined){ 
+  let editEnable = canvas.scene.getFlag('LockView', 'editViewbox');
+  if (editEnable == undefined) { 
     await canvas.scene.setFlag('LockView', 'editViewbox', false);
     editEnable = false;
   }
-  //Else set the editEnable variable to the current state of the flag
-  else {
-    editEnable = canvas.scene.getFlag('LockView', 'editViewbox') ? true : false;
-  }
 
-  //If editEnable is true, but 'EditViewbox' is not the active tool
-  if (editEnable && controls.activeTool != "EditViewbox"){
-    //Set the editViewbox flag to false
+  if (editEnable && controls.activeTool != "EditViewbox") {
     await canvas.scene.setFlag('LockView', 'editViewbox', false);
-
-    //Set the blocks
     await setBlocks();
 
-    //Get the LockView controls
     const lockViewControls = ui.controls.controls.find(controls => controls.name == "LockView");
-    if (lockViewControls == undefined) return;
+    if (lockViewControls == undefined)
+      return;
 
-    //Set the active control to undefined, to disable the editViewbox control button
+    // Disable the editViewbox control button
     ui.controls.controls.find(controls => controls.name == "LockView").activeTool = undefined;
     
-    //Get the viewbox data from connected clients
     getViewboxData();
   }
 }
