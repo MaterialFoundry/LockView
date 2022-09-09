@@ -155,8 +155,13 @@ import { getEnable, compatibleCore } from "./misc.js";
     const constrained = constrainView_Override({x, y, scale});
     this.stage.pivot.set(constrained.x, constrained.y);
     this.stage.scale.set(constrained.scale, constrained.scale);
-    if (compatibleCore('10.0')) this.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
-    else this.sight.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
+
+    let blurStrength = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
+    if (compatibleCore('10.0'))
+      this.blur.strength = blurStrength;
+    else
+      this.sight.blur.strength = blurStrength;
+
     canvas.scene._viewPosition = constrained;
     Hooks.callAll("canvasPan", this, constrained);
     this.hud.align();
@@ -209,7 +214,7 @@ export function pan_Override({x=null, y=null, scale=null}={}) {
     //else constrained = this.#constrainView({x, y, scale});
     this.stage.pivot.set(constrained.x, constrained.y);
     this.stage.scale.set(constrained.scale, constrained.scale);
-    this.sight.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
+    this.sight.blur.strength = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
     canvas.scene._viewPosition = constrained;
     Hooks.callAll("canvasPan", this, constrained);
     this.hud.align();
