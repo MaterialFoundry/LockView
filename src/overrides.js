@@ -155,7 +155,8 @@ import { getEnable, compatibleCore } from "./misc.js";
     const constrained = constrainView_Override({x, y, scale});
     this.stage.pivot.set(constrained.x, constrained.y);
     this.stage.scale.set(constrained.scale, constrained.scale);
-    if (compatibleCore('10.0')) this.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
+    if (compatibleCore('10.285')) this.updateBlur();
+    else if (compatibleCore('10.0')) this.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
     else this.sight.blurDistance = 20 / (CONFIG.Canvas.maxZoom - Math.round(constrained.scale) + 1);
     canvas.scene._viewPosition = constrained;
     Hooks.callAll("canvasPan", this, constrained);
@@ -261,18 +262,33 @@ export async function animatePan_Override({x, y, scale, duration=250, speed}) {
   ].filter(a => a.to !== undefined);
 
   // Trigger the animation function
-  await CanvasAnimation.animateLinear(attributes, {
-    name: "canvas.animatePan",
-    duration: duration,
-    ontick: (dt, attributes) => {
-      this.hud.align();
-      const stage = this.stage;
-      Hooks.callAll("canvasPan", this, {x: stage.pivot.x, y: stage.pivot.y, scale: stage.scale.x});
-    }
-  });
-
-  // Decrease blur as we zoom
+  if (compatibleCore('10.285')) {
+    await CanvasAnimation.animate(attributes, {
+      name: "canvas.animatePan",
+      duration: duration,
+      easing: CanvasAnimation.easeInOutCosine,
+      ontick: () => {
+        this.hud.align();
+        const stage = this.stage;
+        Hooks.callAll("canvasPan", this, {x: stage.pivot.x, y: stage.pivot.y, scale: stage.scale.x});
+      }
+    });
+    // Record final values
+    this.updateBlur();
+  }
+  else {
+    await CanvasAnimation.animateLinear(attributes, {
+      name: "canvas.animatePan",
+      duration: duration,
+      ontick: (dt, attributes) => {
+        this.hud.align();
+        const stage = this.stage;
+        Hooks.callAll("canvasPan", this, {x: stage.pivot.x, y: stage.pivot.y, scale: stage.scale.x});
+      }
+    });
+    // Decrease blur as we zoom
   this._updateBlur(constrained.scale);
+  }
 
   // Update the scene tracked position
   canvas.scene._viewPosition = constrained;
