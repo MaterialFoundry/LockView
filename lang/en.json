@@ -73,6 +73,11 @@
     "LockView.SetView.Scale2": "Reset scale",
     "LockView.SetView.Scale3": "Physical Gridsize",
     "LockView.SetView.LabelScale": "Scale",
+    "LockView.SetView.Rotate0": "Don't change rotation",
+    "LockView.SetView.Rotate1": "Landscape (0°, default)",
+    "LockView.SetView.Rotate2": "Portrait (90°)",
+    "LockView.SetView.Rotate3": "Flipped Landscape (180°)",
+    "LockView.SetView.Rotate4": "Flipped Portrait (270°)",
     "LockView.SetView.BtnOK": "OK",
     "LockView.SetView.BtnCancel": "Cancel",
 

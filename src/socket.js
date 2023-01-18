@@ -37,6 +37,9 @@ async function resetView(payload){
       if (autoScale == 5) newPosition.scale = getPhysicalScale();
       else newPosition.scale = canvas.scene._viewPosition.scale;
     } 
+    if (payload.rotateSett > 0){
+      canvas.stage.rotation = (payload.rotateSett - 1) * (Math.PI / 2)
+    }
   
     //Disable all blocks
     await setBlocks( {pan:false,zoom:false,bBox:false} );
@@ -149,6 +152,10 @@ async function newView(payload){
       else if (payload.scaleSett == 1) position.scale = payload.scale;
       else if (payload.type == "shift") position.scale = scale = canvas.scene._viewPosition.scale;
       else position.scale = canvas.scene.data.initial.scale;
+    }
+
+    if (payload.rotateSett > 0){
+      canvas.stage.rotation = (payload.rotateSett - 1) * (Math.PI / 2)
     }
   
     if (payload.type == "grid"){
