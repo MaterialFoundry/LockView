@@ -466,6 +466,13 @@ function setViewDialog(controls) {
     <option value=2>${game.i18n.localize("LockView.SetView.Scale2")}</option>
     <option value=3>${game.i18n.localize("LockView.SetView.Scale3")}</option>
   `;
+  let optionsRotate = `
+    <option value=0>${game.i18n.localize("LockView.SetView.Rotate0")}</option>
+    <option value=1>${game.i18n.localize("LockView.SetView.Rotate1")}</option>
+    <option value=2>${game.i18n.localize("LockView.SetView.Rotate2")}</option>
+    <option value=3>${game.i18n.localize("LockView.SetView.Rotate3")}</option>
+    <option value=4>${game.i18n.localize("LockView.SetView.Rotate4")}</option>
+  `;
   let dialogTemplate = 
   `
   <div class="form-group">
@@ -481,6 +488,14 @@ function setViewDialog(controls) {
       <div  style="flex:1"></div>
       <span style="flex:1;">
         <select style="width:200px" id="scaleOption">${optionsScale}</select>
+      </span>
+      <div  style="flex:1"></div>
+    </div>
+    <p style="margin-bottom:10px;">
+    <div style="display:flex"> 
+      <div  style="flex:1"></div>
+      <span style="flex:1;">
+        <select style="width:200px" id="rotateOption">${optionsRotate}</select>
       </span>
       <div  style="flex:1"></div>
     </div>
@@ -516,6 +531,7 @@ function setViewDialog(controls) {
         callback: (html) => {
           let option = html.find("#selectOption")[0].value;
           let scaleSett = html.find("#scaleOption")[0].value;
+          let rotateSett = html.find("#rotateOption")[0].value;
           let payload;
 
           let x = html.find("#val1")[0].value;
@@ -527,6 +543,7 @@ function setViewDialog(controls) {
               "msgType": "resetView",
               "senderId": game.userId,
               "scaleSett": scaleSett, 
+              "rotateSett": rotateSett,
               "autoScale": option,
               "scale": scale,
               "receiverId": 'all'
@@ -540,6 +557,7 @@ function setViewDialog(controls) {
               "shiftX": x,
               "shiftY": y,
               "scaleSett": scaleSett, 
+              "rotateSett": rotateSett,
               "scale": scale,
               "type": "grid",
             };
@@ -552,6 +570,7 @@ function setViewDialog(controls) {
               "shiftX": x,
               "shiftY": y,
               "scaleSett": scaleSett, 
+              "rotateSett": rotateSett,
               "scale": scale,
               "type": "coords"
             };
