@@ -11,6 +11,7 @@ export function renderSceneConfig(app,html){
     let lockPan_Default = false;
     let lockZoom_Default = false;
     let autoScale = 0;
+    let rotation = 0;
     let forceInit = false;
     let boundingBox = false;
     let excludeSidebar = false;
@@ -36,6 +37,9 @@ export function renderSceneConfig(app,html){
 
             if (app.object.flags["LockView"].autoScale)         autoScale = app.object.getFlag('LockView', 'autoScale');
             else                                                app.object.setFlag('LockView', 'autoScale', 0);
+
+            if (app.object.flags["LockView"].rotation)         rotation = app.object.getFlag('LockView', 'rotation');
+            else                                                app.object.setFlag('LockView', 'rotation', 0);
 
             if (app.object.flags["LockView"].forceInit)         forceInit = app.object.getFlag('LockView', 'forceInit');
             else                                                app.object.setFlag('LockView', 'forceInit', false);
@@ -68,6 +72,9 @@ export function renderSceneConfig(app,html){
 
         if (app.object.data.flags["LockView"].autoScale)        autoScale = app.object.getFlag('LockView', 'autoScale');
         else                                                    app.object.setFlag('LockView', 'autoScale', 0);
+
+        if (app.object.data.flags["LockView"].rotation)        rotation = app.object.getFlag('LockView', 'rotation');
+        else                                                    app.object.setFlag('LockView', 'rotation', 0);
 
         if (app.object.data.flags["LockView"].forceInit)        forceInit = app.object.getFlag('LockView', 'forceInit');
         else                                                    app.object.setFlag('LockView', 'forceInit', false);
@@ -107,6 +114,22 @@ export function renderSceneConfig(app,html){
         ""
     ];
     autoScaleSelected[autoScale] = "selected"
+    
+    let rotationOptions = [
+        null,
+        game.i18n.localize("LockView.Scene.Rotation.Landscape"),
+        game.i18n.localize("LockView.Scene.Rotation.Portrait"),
+        game.i18n.localize("LockView.Scene.Rotation.FlippedLandscape"),
+        game.i18n.localize("LockView.Scene.Rotation.FlippedPortrait"),
+    ];
+    
+    let rotationSelected = [
+        "",
+        "",
+        "",
+        ""
+    ];
+    rotationSelected[rotation] = "selected"
 
     const sceneConfigHtml = `
     <div class="form-group">
@@ -135,6 +158,16 @@ export function renderSceneConfig(app,html){
             <option value="5" ${autoScaleSelected[5]}>${autoScaleOptions[5]}</option>
             </select>
         <p class="notes">${game.i18n.localize("LockView.Scene.Autoscale_Hint")}</p>
+    </div>
+    <div class="form-group">
+        <label>${game.i18n.localize("LockView.Scene.Rotation.Label")}</label>
+            <select name="LV_rotation" id="action" value=${rotation}>
+            <option value="1" ${rotationSelected[1]}>${rotationOptions[1]}</option>
+            <option value="2" ${rotationSelected[2]}>${rotationOptions[2]}</option>
+            <option value="3" ${rotationSelected[3]}>${rotationOptions[3]}</option>
+            <option value="4" ${rotationSelected[4]}>${rotationOptions[4]}</option>
+            </select>
+        <p class="notes">${game.i18n.localize("LockView.Scene.Rotation_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.ExcludeSidebar")}</label>
@@ -245,6 +278,7 @@ function handleUIelementsDialog(hideUIelements,app) {
 export async function closeSceneConfig(app,html){let lockPan = html.find("input[name ='LV_lockPan']").is(":checked");
     let lockZoom = html.find("input[name ='LV_lockZoom']").is(":checked");
     let autoScale = html.find("select[name='LV_autoScale']")[0].value;
+    let rotation = html.find("select[name='LV_rotation']")[0].value;
     let forceInit = html.find("input[name ='LV_forceInit']").is(":checked");
     let boundingBox = html.find("input[name ='LV_boundingBox']").is(":checked");
     let excludeSidebar = html.find("input[name ='LV_excludeSidebar']").is(":checked");
@@ -256,6 +290,7 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
     await app.object.setFlag('LockView', 'lockZoom',lockZoom);
     await app.object.setFlag('LockView', 'lockZoomInit',lockZoom);
     await app.object.setFlag('LockView', 'autoScale',autoScale);
+    await app.object.setFlag('LockView', 'rotation',rotation);
     await app.object.setFlag('LockView', 'forceInit', forceInit);
     await app.object.setFlag('LockView', 'boundingBox', boundingBox);
     await app.object.setFlag('LockView', 'boundingBoxInit', boundingBox);
@@ -269,7 +304,7 @@ export async function closeSceneConfig(app,html){let lockPan = html.find("input[
         await applySettings(true);
 
         //Send new settings to users
-        await sendUpdate( {pan:lockPan, zoom:lockZoom, aScale:autoScale, fInit:forceInit, bBox:boundingBox, force:true} );
+        await sendUpdate( {pan:lockPan, zoom:lockZoom, aScale:autoScale, rotation:rotation, fInit:forceInit, bBox:boundingBox, force:true} );
         await forceConstrain();
         //set & render ui controls
         ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
