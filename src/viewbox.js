@@ -118,7 +118,7 @@ export class Viewbox extends CanvasLayer {
     label.position.set(data.width / 2,-15)
     this.container.addChild(label);
     
-    this.container.setTransform(x, y);
+    this.container.setTransform(x+(data.width/2), y+(data.height/2), 1, 1, data.rotation, 0, 0, (data.width/2), (data.height/2));
     this.container.visible = true;
   }
   
@@ -182,6 +182,7 @@ export function drawViewbox(payload){
         currentPosition: payload.currentPosition,
         width: payload.viewWidth/payload.viewPosition.scale,
         height: payload.viewHeight/payload.viewPosition.scale,
+        rotation: payload.viewRotation,
         color: parseInt(payload.senderColor.replace(/^#/, ''), 16),
         name: payload.senderName,
         id: payload.senderId,
@@ -277,6 +278,7 @@ export function sendViewBox(viewPosition=null){
     "viewPosition": viewPositionNew,
     "viewWidth": window.innerWidth-offset,
     "viewHeight": window.innerHeight,
+    "viewRotation": canvas.stage.rotation,
     "currentPosition": viewPosition
   };
   game.socket.emit(`module.LockView`, payload);

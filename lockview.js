@@ -1,7 +1,7 @@
 import { registerSettings } from "./src/settings.js";
 import { sendViewBox, hideAllViewboxes, initializeViewboxes, getViewboxData } from "./src/viewbox.js";
 import { pushControlButtons, registerLayer } from "./src/controlButtons.js";
-import { getFlags, setBlocks, lockPan, lockZoom, autoScale, forceInit, blackenSidebar, excludeSidebar, storeDefaultPrototypes, boundingBox } from "./src/blocks.js";
+import { getFlags, setBlocks, lockPan, lockZoom, autoScale, rotation, forceInit, blackenSidebar, excludeSidebar, storeDefaultPrototypes, boundingBox } from "./src/blocks.js";
 import { drawingConfigApp, closeDrawingConfigApp } from "./src/drawingConfig.js";
 import { renderSceneConfig, closeSceneConfig, closeInitialViewForm } from "./src/sceneConfig.js";
 import {socket, sendUpdate} from "./src/socket.js";
@@ -46,7 +46,7 @@ Hooks.on("updateCombat", () => { combatTrigger = true;})
 
 Hooks.on('canvasPan',(canvas,data)=>{
   if (getEnable(game.userId)) 
-    scaleToFit();
+    scaleToFit(rotation);
   
   sendViewBox();
 });
@@ -200,6 +200,7 @@ async function initializeFlags(){
     canvas.scene.setFlag('LockView', 'lockZoom', false);
     canvas.scene.setFlag('LockView', 'lockZoomInit', false);
     canvas.scene.setFlag('LockView', 'autoScale', 0);
+    canvas.scene.setFlag('LockView', 'rotation', 0);
     canvas.scene.setFlag('LockView', 'forceInit', false);
     canvas.scene.setFlag('LockView', 'boundingBox', false);
     canvas.scene.setFlag('LockView', 'boundingBoxInit', false);
@@ -224,6 +225,9 @@ async function initializeFlags(){
 
     if (canvas.scene.data.flags["LockView"].autoScale){}
     else canvas.scene.setFlag('LockView', 'autoScale', 0);
+
+    if (canvas.scene.data.flags["LockView"].rotation){}
+    else canvas.scene.setFlag('LockView', 'rotation', 0);
 
     if (canvas.scene.data.flags["LockView"].forceInit){}
     else canvas.scene.setFlag('LockView', 'forceInit', false);
@@ -294,11 +298,15 @@ export async function applySettings(force=false,forceInitial=true) {
   //Get the flags for this scene
   await getFlags();
 
+  if (rotation > 0){
+    canvas.stage.rotation = (rotation - 1) * (Math.PI / 2)
+  }
+
   //If 'autoScale' if 'horizontal fit', 'vertical fit' or 'automatic fit'
   if (autoScale > 0 && autoScale < 5 && force) 
-    scaleToFit(autoScale);
+    scaleToFit(rotation, autoScale);
   else if (autoScale > 0 && autoScale < 5) 
-    scaleToFit();
+    scaleToFit(rotation);
   else {
     let newPosition = {};
     
@@ -334,14 +342,14 @@ export async function applySettings(force=false,forceInitial=true) {
 /*
  * Scale the canvas to fit the foundry window
  */
-export async function scaleToFit(force = 0){
+export async function scaleToFit(rotation, force = 0){
   //Get the flags for this scene
   await getFlags();
   let horizontal;                                   //Stores whether the screen fills horizontally or vertically
   let sidebarOffset = 0;                            //Offset in pixels due to the presence of the sidebar
-  const windowWidth = window.innerWidth;            //width of the foundry window
+  let windowWidth = window.innerWidth;              //width of the foundry window
   const sceneWidth = canvas.dimensions.sceneWidth;  //width of the current scene
-  const windowHeight = window.innerHeight;          //height of the foundry window
+  let windowHeight = window.innerHeight;            //height of the foundry window
   const sceneHeight = canvas.dimensions.sceneHeight;//height of the current scene
   let autoScaleTemp = (force > 0) ? force : autoScale;  //Stores the autoscale for local usage
   
@@ -362,6 +370,15 @@ export async function scaleToFit(force = 0){
     horizontal = (((windowWidth-sidebarOffset) / sceneWidth) > (windowHeight / sceneHeight)) ? false : true;
   
   else return;
+
+  if ((rotation-1) % 2 == 1){
+    // If the canvas is rotated, swap the window width and height
+    // This is necessary because window.innerWidth/window.innerHeight are not affected by rotating the canvas
+    let swap = windowWidth;
+    windowWidth = windowHeight;
+    windowHeight = swap;
+  }
+
   //If the windowWidth or windowHeight is the same as last time this function ran, and if the function is not forced to run, return
   if (windowWidth == windowWidthOld && windowHeight == windowHeightOld && force == 0) return;
 

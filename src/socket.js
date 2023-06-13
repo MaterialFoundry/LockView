@@ -31,6 +31,10 @@ async function resetView(payload){
     let newPosition = compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
     if (newPosition == null) newPosition = canvas.scene._viewPosition;
     
+    if (payload.rotateSett > 0){
+      canvas.stage.rotation = (payload.rotateSett - 1) * (Math.PI / 2)
+    }
+
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
     else if (payload.scaleSett == 3){
@@ -42,7 +46,7 @@ async function resetView(payload){
     await setBlocks( {pan:false,zoom:false,bBox:false} );
   
     //Pan to the new position
-    if (payload.autoScale > 0 && payload.autoScale < 5) await scaleToFit(payload.autoScale);
+    if (payload.autoScale > 0 && payload.autoScale < 5) await scaleToFit(payload.rotateSett, payload.autoScale);
     else await canvas.pan( newPosition );
   
     //Set blocks
@@ -65,7 +69,7 @@ export async function updatePlayerSettings(payload){
     getFlags();
   
     //Apply new settings
-    if (payload.forceInit || payload.autoScale) applySettings(payload.force);
+    if (payload.forceInit || payload.autoScale || payload.rotation) applySettings(payload.force);
   
     //Set blocks
     setBlocks( {
@@ -80,13 +84,14 @@ export async function updatePlayerSettings(payload){
 /*
  * Send updated settings to connected clients
  */
-export function sendUpdate({pan=null,zoom=null,bBox=null,aScale=null,fInit=null,force=false}){
+export function sendUpdate({pan=null,zoom=null,bBox=null,aScale=null,rotation=null,fInit=null,force=false}){
     let payload = {
       "msgType": "update",
       "senderId": game.userId, 
       "lockPan": pan,
       "lockZoom": zoom,
       "autoScale": aScale,
+      "rotation": rotation,
       "forceInit": fInit,
       "boundingBox": bBox,
       "force": force
@@ -141,6 +146,10 @@ async function newView(payload){
     getFlags();
     let scale;
     let position = canvas.scene._viewPosition;
+
+    if (payload.rotateSett > 0){
+      canvas.stage.rotation = (payload.rotateSett - 1) * (Math.PI / 2)
+    }
   
     if (payload.scaleSett == 0) position.scale = canvas.scene._viewPosition.scale;
     else {

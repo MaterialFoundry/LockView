@@ -8,6 +8,7 @@ export let lockZoom = false;
 export let boundingBox = false;
 export let forceInit = false;
 export let autoScale = 0;
+export let rotation = 0;
 export let excludeSidebar = false;
 export let blackenSidebar = false;
 
@@ -41,6 +42,7 @@ export function getFlags(){
     boundingBox = canvas.scene.getFlag('LockView', 'boundingBox');
     forceInit = canvas.scene.getFlag('LockView', 'forceInit');
     autoScale = canvas.scene.getFlag('LockView', 'autoScale');
+    rotation = canvas.scene.getFlag('LockView', 'rotation');
     excludeSidebar = canvas.scene.getFlag('LockView', 'excludeSidebar');
     blackenSidebar = canvas.scene.getFlag('LockView', 'blackenSidebar');
   }

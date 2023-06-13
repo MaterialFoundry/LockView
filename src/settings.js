@@ -3,7 +3,7 @@ import { getEnable } from "./misc.js";
 import { getViewboxEnable } from "./viewbox.js";
 import * as VIEWBOX from "./viewbox.js";
 import { sendUpdate } from "./socket.js";
-import { lockPan, lockZoom, boundingBox, autoScale, forceInit } from "./blocks.js";
+import { lockPan, lockZoom, boundingBox, autoScale, rotation, forceInit } from "./blocks.js";
 
 /*
  * Initialize all settings
@@ -269,6 +269,7 @@ export class enableMenu extends FormApplication {
       pan:lockPan,
       bBox:boundingBox, 
       aScale:autoScale, 
+      rotation:rotation, 
       fInit:forceInit
       } 
     );
