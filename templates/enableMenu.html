@@ -1,8 +1,8 @@
-<form autocomplete="off" onsubmit="event.preventDefault()">
+<form autocomplete="off" onsubmit="event.preventDefault()" style="width:400px">
 
-    <p class="notes" style="width:400px">
+    <p class="notes">
         {{localize "LockView.EnMenu.Description"}}
-        <ul style="width:400px">
+        <ul>
             <li class="notes"><b>{{localize "LockView.EnMenu.Enable"}}</b>: {{localize "LockView.EnMenu.Enable_Hint"}}</li>
             <li class="notes"><b>{{localize "LockView.EnMenu.Viewbox"}}</b>: {{localize "LockView.EnMenu.Viewbox_Hint"}}</li>
             <li class="notes"><b>{{localize "LockView.EnMenu.Control"}}</b>: {{localize "LockView.EnMenu.Control_Hint"}}</li>
@@ -13,98 +13,70 @@
 
     <h3><b>{{localize "LockView.EnMenu.UserSettings"}}</b></h3>
 
-    <p class="notes" style="width:400px">
+    <p class="notes">
         {{localize "LockView.EnMenu.UserSettings_Note"}}
     </p>
 
-    <table style="width:400px">
+    <table>
         <thread>
             <tr>
-                <th scope="col" span="1" style="width:30%; text-align:left;">{{localize "LockView.EnMenu.Name"}}</th>
-                <th scope="col" span="1" style="width:25%; text-align:left;">{{localize "LockView.EnMenu.Role"}}</th>
-                <th scope="col" span="1" style="width:15%; text-align:left;">{{localize "LockView.EnMenu.Enable"}}</th>
-                <th scope="col" span="1" style="width:15%; text-align:left;">{{localize "LockView.EnMenu.Viewbox"}}</th>
-                <th scope="col" span="1" style="width:15%; text-align:left;">{{localize "LockView.EnMenu.Control"}}</th>
+                <th class="lockView_userConfig_table_name">{{localize "LockView.EnMenu.Name"}}</th>
+                <th class="lockView_userConfig_table_role">{{localize "LockView.EnMenu.Role"}}</th>
+                <th class="lockView_userConfig_table_checkbox">{{localize "LockView.EnMenu.Enable"}}</th>
+                <th class="lockView_userConfig_table_checkbox">{{localize "LockView.EnMenu.Viewbox"}}</th>
+                <th class="lockView_userConfig_table_checkbox">{{localize "LockView.EnMenu.Control"}}</th>
             </tr>
         </thread>
 
         <tbody>
             {{#each data as |d|}}
                 <tr index="{{d.index}}">
-                    <td>
-                        <label style="text-align:left">
-                            <b>{{d.name}}</b>
-                        </label>
-                    </td>
-                    <td>
-                        <label style="text-align:left">
-                            {{d.role}}
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="enable-{{d.id}}" data-dtype="Boolean" {{#if d.enable}}checked{{/if}}>
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="viewbox-{{d.id}}" data-dtype="Boolean" {{#if d.viewbox}}checked{{/if}}>
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="control-{{d.id}}" data-dtype="Boolean" {{#if d.control}}checked{{/if}}>
-                        </label>
-                    </td>
-
+                    <td class="lockView_userConfig_table_name">{{d.name}}</td>
+                    <td class="lockView_userConfig_table_role">{{d.role}}</td>
+                    <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="enable-{{d.id}}" data-dtype="Boolean" {{#if d.enable}}checked{{/if}}></td>
+                    <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="viewbox-{{d.id}}" data-dtype="Boolean" {{#if d.viewbox}}checked{{/if}}></td>
+                    <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="control-{{d.id}}" data-dtype="Boolean" {{#if d.control}}checked{{/if}}></td>
                 </tr>
                 <input type="text" name="id" value={{d.id}} style="display:none">
             {{/each}}
+            <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <td class="lockView_userConfig_table_name"><i>{{localize "LockView.EnMenu.Default"}}</i></td>
+                <td class="lockView_userConfig_table_role"></td>
+                <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="enable-defaultUserSettings" data-dtype="Boolean" {{#if defaultUserSettings.enable}}checked{{/if}}></td>
+                <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="viewbox-defaultUserSettings" data-dtype="Boolean" {{#if defaultUserSettings.viewbox}}checked{{/if}}></td>
+                <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="control-defaultUserSettings" data-dtype="Boolean" {{#if defaultUserSettings.control}}checked{{/if}}></td>
+            </tr>
         </tbody>
-
     </table>
 
     <br>
 
     <h3><b>{{localize "LockView.EnMenu.Overrides"}}</b></h3>
 
-    <p class="notes" style="width:400px">
+    <p class="notes">
         {{localize "LockView.EnMenu.Overrides_Note"}}
     </p>
 
-    <table style="width:400px">
+    <table>
         <thread>
             <tr>
-                <th scope="col" span="1" style="width:55%; text-align:left;">{{localize "LockView.EnMenu.Role"}}</th>
-                <th scope="col" span="1" style="width:15%; text-align:left;">{{localize "LockView.EnMenu.Enable"}}</th>
-                <th scope="col" span="1" style="width:15%; text-align:left;">{{localize "LockView.EnMenu.Viewbox"}}</th>
-                <th scope="col" span="1" style="width:15%; text-align:left;">{{localize "LockView.EnMenu.Control"}}</th>
+                <th class="lockView_userConfig_table_name">{{localize "LockView.EnMenu.Role"}}</th>
+                <td class="lockView_userConfig_table_role"></td>
+                <th class="lockView_userConfig_table_checkbox">{{localize "LockView.EnMenu.Enable"}}</th>
+                <th class="lockView_userConfig_table_checkbox">{{localize "LockView.EnMenu.Viewbox"}}</th>
+                <th class="lockView_userConfig_table_checkbox">{{localize "LockView.EnMenu.Control"}}</th>
             </tr>
         </thread>
 
         <tbody>
             {{#each overrides as |o|}}
                 <tr index="{{o.index}}">
-                    <td>
-                        <label style="text-align:left">
-                            {{o.role}}
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="enableOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.enable}}checked{{/if}}>
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="viewboxOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.viewbox}}checked{{/if}}>
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input type="checkbox" name="controlOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.control}}checked{{/if}}>
-                        </label>
-                    </td>
+                    <td class="lockView_userConfig_table_name">{{o.role}}</td>
+                    <td class="lockView_userConfig_table_role"></td>
+                    <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="enableOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.enable}}checked{{/if}}></td>
+                    <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="viewboxOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.viewbox}}checked{{/if}}></td>
+                    <td class="lockView_userConfig_table_checkbox"><input type="checkbox" name="controlOverride-{{o.roleNr}}" data-dtype="Boolean" {{#if o.control}}checked{{/if}}></td>
 
                 </tr>
                 <input type="text" name="roleOverride" value={{o.roleNr}} style="display:none">

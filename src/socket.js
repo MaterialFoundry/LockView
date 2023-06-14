@@ -1,6 +1,6 @@
 import { forceConstrain, getPhysicalScale, scaleToFit, applySettings } from "../lockview.js";
 import { drawViewbox, sendViewBox, getViewboxEnable } from "./viewbox.js";
-import { getEnable, compatibleCore } from "./misc.js";
+import { getEnable } from "./misc.js";
 import { setBlocks, getFlags, autoScale, lockPan, lockZoom, boundingBox, excludeSidebar, blackenSidebar } from "./blocks.js";
 import { updateControlButtons } from "./controlButtons.js";
 
@@ -8,18 +8,18 @@ import { updateControlButtons } from "./controlButtons.js";
  * Set up the socket used to communicate between GM and player clients
  */
 export function socket(){
-    game.socket.on(`module.LockView`, (payload) =>{
-        //console.log(payload);
-        if (game.userId == payload.senderId) return;
-        if (payload.msgType == 'update') { updatePlayerSettings(payload) }
-        else if (payload.msgType == 'resetView') { resetView(payload) }
-        else if (payload.msgType == 'newView'){ newView(payload) }
-        else if (payload.msgType == 'forceConstrain') { forceConstrain() }
-        else if (payload.msgType == 'viewbox') { drawViewbox(payload) }
-        else if (payload.msgType == "getViewboxData"){ sendViewBox() }
-        else if (payload.msgType == "flagUpdate") { onUpdateFlag(payload) }
-        else if (payload.msgType == "settingUpdate") { onUpdateSetting(payload) }
-    });  
+  game.socket.on(`module.LockView`, (payload) =>{
+    if (game.userId == payload.senderId) return;
+    console.log('pl',payload)
+    if (payload.msgType == 'update') { updatePlayerSettings(payload) }
+    else if (payload.msgType == 'resetView') { resetView(payload) }
+    else if (payload.msgType == 'newView'){ newView(payload) }
+    else if (payload.msgType == 'forceConstrain') { forceConstrain() }
+    else if (payload.msgType == 'viewbox') { drawViewbox(payload) }
+    else if (payload.msgType == "getViewboxData"){ sendViewBox() }
+    else if (payload.msgType == "flagUpdate") { onUpdateFlag(payload) }
+    else if (payload.msgType == "settingUpdate") { onUpdateSetting(payload) }
+  });  
 }
 
 /*
@@ -28,13 +28,10 @@ export function socket(){
 async function resetView(payload){
     if (getEnable(game.userId) == false) return;
     getFlags();
-    let newPosition = compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
+    let newPosition = canvas.scene.initial;
     if (newPosition == null) newPosition = canvas.scene._viewPosition;
     
-    if (payload.rotateSett > 0){
-      canvas.stage.rotation = (payload.rotateSett - 1) * (Math.PI / 2)
-    }
-
+    if (payload.rotateSett != "null") canvas.stage.rotation = payload.rotateSett*Math.PI/180;
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
     else if (payload.scaleSett == 3){
@@ -147,22 +144,20 @@ async function newView(payload){
     let scale;
     let position = canvas.scene._viewPosition;
 
-    if (payload.rotateSett > 0){
-      canvas.stage.rotation = (payload.rotateSett - 1) * (Math.PI / 2)
-    }
-  
+    if (payload.rotateSett > 0) canvas.stage.rotation = payload.rotateSett*Math.PI/180;
+
     if (payload.scaleSett == 0) position.scale = canvas.scene._viewPosition.scale;
     else {
       if (autoScale && payload.scaleSett == 3) position.scale = getPhysicalScale();
       else if (autoScale == false && payload.scaleSett == 3) position.scale = canvas.scene._viewPosition.scale;
       else if (payload.scaleSett == 1) position.scale = payload.scale;
       else if (payload.type == "shift") position.scale = scale = canvas.scene._viewPosition.scale;
-      else position.scale = canvas.scene.data.initial.scale;
+      else position.scale = canvas.scene.initial.scale;
     }
   
     if (payload.type == "grid"){
-      position.x += payload.shiftX*canvas.scene.data.grid;
-      position.y += payload.shiftY*canvas.scene.data.grid;
+      position.x += payload.shiftX*canvas.scene.grid.size;
+      position.y += payload.shiftY*canvas.scene.grid.size;
     }
     else if (payload.type == "coords"){
       position.x = payload.shiftX;

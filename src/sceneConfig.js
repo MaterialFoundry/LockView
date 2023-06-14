@@ -1,102 +1,15 @@
-import { applySettings, forceConstrain, getPhysicalScale } from "../lockview.js";
+import { applySettings, forceConstrain, getPhysicalScale, moduleName } from "../lockview.js";
 import { sendUpdate } from "./socket.js";
 import { viewbox, getViewboxData } from "./viewbox.js";
-import { compatibleCore } from "./misc.js";
+import { SceneConfigurator } from "./settings.js";
 
 /*
  * Push Lock View settings onto the scene configuration menu
  */
 export function renderSceneConfig(app,html){ 
     getViewboxData();
-    let lockPan_Default = false;
-    let lockZoom_Default = false;
-    let autoScale = 0;
-    let rotation = 0;
-    let forceInit = false;
-    let boundingBox = false;
-    let excludeSidebar = false;
-    let blackenSidebar = false;
-    let hideUI = false;
-    let hideUIelements = {
-        logo: true,
-        navigation: true,
-        controls: true,
-        players: true,
-        hotbar: true,
-        sidebar: false
-    }
-    let collapseSidebar = false;
-    
-    if(compatibleCore('10.0')) {
-        if (app.object.flags["LockView"]){
-            if (app.object.flags["LockView"].lockPanInit)       lockPan_Default = app.object.getFlag('LockView', 'lockPanInit');
-            else                                                app.object.setFlag('LockView', 'lockPanInit', false);
 
-            if (app.object.flags["LockView"].lockZoomInit)      lockZoom_Default = app.object.getFlag('LockView', 'lockZoomInit');
-            else                                                app.object.setFlag('LockView', 'lockZoomInit', false);
-
-            if (app.object.flags["LockView"].autoScale)         autoScale = app.object.getFlag('LockView', 'autoScale');
-            else                                                app.object.setFlag('LockView', 'autoScale', 0);
-
-            if (app.object.flags["LockView"].rotation)         rotation = app.object.getFlag('LockView', 'rotation');
-            else                                                app.object.setFlag('LockView', 'rotation', 0);
-
-            if (app.object.flags["LockView"].forceInit)         forceInit = app.object.getFlag('LockView', 'forceInit');
-            else                                                app.object.setFlag('LockView', 'forceInit', false);
-
-            if (app.object.flags["LockView"].boundingBoxInit)   boundingBox = app.object.getFlag('LockView', 'boundingBoxInit');
-            else                                                app.object.setFlag('LockView', 'boundingBoxInit', false);
-
-            if (app.object.flags["LockView"].excludeSidebar)    excludeSidebar = app.object.getFlag('LockView', 'excludeSidebar');
-            else                                                app.object.setFlag('LockView', 'excludeSidebar', false);
-
-            if (app.object.flags["LockView"].blackenSidebar)    blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
-            else                                                app.object.setFlag('LockView', 'blackenSidebar', false);
-
-            if (app.object.flags["LockView"].hideUI)            hideUI = app.object.getFlag('LockView', 'hideUI');
-            else                                                app.object.setFlag('LockView', 'hideUI', false);
-
-            if (app.object.flags["LockView"].hideUIelements)    hideUIelements = app.object.getFlag('LockView', 'hideUIelements');
-            else                                                app.object.setFlag('LockView', 'hideUIelements', hideUIelements);
-
-            if (app.object.flags["LockView"].collapseSidebar)   collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
-            else                                                app.object.setFlag('LockView', 'collapseSidebar', false);
-        }
-    }  
-    else if(app.object.data.flags["LockView"]){
-        if (app.object.data.flags["LockView"].lockPanInit)      lockPan_Default = app.object.getFlag('LockView', 'lockPanInit');
-        else                                                    app.object.setFlag('LockView', 'lockPanInit', false);
-
-        if (app.object.data.flags["LockView"].lockZoomInit)     lockZoom_Default = app.object.getFlag('LockView', 'lockZoomInit');
-        else                                                    app.object.setFlag('LockView', 'lockZoomInit', false);
-
-        if (app.object.data.flags["LockView"].autoScale)        autoScale = app.object.getFlag('LockView', 'autoScale');
-        else                                                    app.object.setFlag('LockView', 'autoScale', 0);
-
-        if (app.object.data.flags["LockView"].rotation)        rotation = app.object.getFlag('LockView', 'rotation');
-        else                                                    app.object.setFlag('LockView', 'rotation', 0);
-
-        if (app.object.data.flags["LockView"].forceInit)        forceInit = app.object.getFlag('LockView', 'forceInit');
-        else                                                    app.object.setFlag('LockView', 'forceInit', false);
-
-        if (app.object.data.flags["LockView"].boundingBoxInit)  boundingBox = app.object.getFlag('LockView', 'boundingBoxInit');
-        else                                                    app.object.setFlag('LockView', 'boundingBoxInit', false);
-
-        if (app.object.data.flags["LockView"].excludeSidebar)   excludeSidebar = app.object.getFlag('LockView', 'excludeSidebar');
-        else                                                    app.object.setFlag('LockView', 'excludeSidebar', false);
-
-        if (app.object.data.flags["LockView"].blackenSidebar)   blackenSidebar = app.object.getFlag('LockView', 'blackenSidebar');
-        else                                                    app.object.setFlag('LockView', 'blackenSidebar', false);
-
-        if (app.object.data.flags["LockView"].hideUI)           hideUI = app.object.getFlag('LockView', 'hideUI');
-        else                                                    app.object.setFlag('LockView', 'hideUI', false);
-
-        if (app.object.data.flags["LockView"].hideUIelements)   hideUIelements = app.object.getFlag('LockView', 'hideUIelements');
-        else                                                    app.object.setFlag('LockView', 'hideUIelements', hideUIelements);
-
-        if (app.object.data.flags["LockView"].collapseSidebar)  collapseSidebar = app.object.getFlag('LockView', 'collapseSidebar');
-        else                                                    app.object.setFlag('LockView', 'collapseSidebar', false);
-    } 
+    const flags = app.object.flags.LockView;
     
     let autoScaleOptions = [
         game.i18n.localize("LockView.Scene.Autoscale.Off"),
@@ -107,49 +20,41 @@ export function renderSceneConfig(app,html){
         game.i18n.localize("LockView.Scene.Autoscale.Grid")
     ];
     
-    let autoScaleSelected = [
-        "",
-        "",
-        "",
-        ""
-    ];
-    autoScaleSelected[autoScale] = "selected"
-    
+    let autoScaleSelected = [];
+    autoScaleSelected[flags.autoScale] = "selected";
+
+    let sidebarOptions = [
+        game.i18n.localize("LockView.Scene.Sidebar_NoChange"),
+        game.i18n.localize("LockView.Scene.Sidebar_Collapse"),
+        game.i18n.localize("LockView.Scene.Sidebar_Expand"),
+    ]
+
     let rotationOptions = [
-        null,
         game.i18n.localize("LockView.Scene.Rotation.Landscape"),
         game.i18n.localize("LockView.Scene.Rotation.Portrait"),
         game.i18n.localize("LockView.Scene.Rotation.FlippedLandscape"),
         game.i18n.localize("LockView.Scene.Rotation.FlippedPortrait"),
     ];
-    
-    let rotationSelected = [
-        "",
-        "",
-        "",
-        ""
-    ];
-    rotationSelected[rotation] = "selected"
 
     const sceneConfigHtml = `
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.LockPan")}</label>
-        <input id="LockView_lockPan" type="checkbox" name="LV_lockPan" data-dtype="Boolean" ${lockPan_Default ? 'checked' : ''}>
+        <input id="LockView_lockPan" type="checkbox" name="LV_lockPan" data-dtype="Boolean" ${flags.lockPanInit ? 'checked' : ''}>
         <p class="notes">${game.i18n.localize("LockView.Scene.LockPan_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.LockZoom")}</label>
-        <input id="LockView_lockZoom" type="checkbox" name="LV_lockZoom" data-dtype="Boolean" ${lockZoom_Default ? 'checked' : ''}>
+        <input id="LockView_lockZoom" type="checkbox" name="LV_lockZoom" data-dtype="Boolean" ${flags.lockZoomInit ? 'checked' : ''}>
         <p class="notes">${game.i18n.localize("LockView.Scene.LockZoom_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.boundingBox")}</label>
-        <input id="LockView_boundingBox" type="checkbox" name="LV_boundingBox" data-dtype="Boolean" ${boundingBox ? 'checked' : ''}>
+        <input id="LockView_boundingBox" type="checkbox" name="LV_boundingBox" data-dtype="Boolean" ${flags.boundingBoxInit ? 'checked' : ''}>
         <p class="notes">${game.i18n.localize("LockView.Scene.boundingBox_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.Autoscale.Label")}</label>
-            <select name="LV_autoScale" id="action" value=${autoScale}>
+            <select name="LV_autoScale" id="action" value=${flags.autoScale}>
             <option value="0" ${autoScaleSelected[0]}>${autoScaleOptions[0]}</option>
             <option value="1" ${autoScaleSelected[1]}>${autoScaleOptions[1]}</option>
             <option value="2" ${autoScaleSelected[2]}>${autoScaleOptions[2]}</option>
@@ -161,33 +66,37 @@ export function renderSceneConfig(app,html){
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.Rotation.Label")}</label>
-            <select name="LV_rotation" id="action" value=${rotation}>
-            <option value="1" ${rotationSelected[1]}>${rotationOptions[1]}</option>
-            <option value="2" ${rotationSelected[2]}>${rotationOptions[2]}</option>
-            <option value="3" ${rotationSelected[3]}>${rotationOptions[3]}</option>
-            <option value="4" ${rotationSelected[4]}>${rotationOptions[4]}</option>
+            <select name="LV_rotation" id="action" value=${flags.rotation}>
+            <option value=0 ${flags.rotation==0 ? "selected" : ""}>${rotationOptions[0]}</option>
+            <option value=90 ${flags.rotation==90 ? "selected" : ""}>${rotationOptions[1]}</option>
+            <option value=180 ${flags.rotation==180 ? "selected" : ""}>${rotationOptions[2]}</option>
+            <option value=270 ${flags.rotation==270 ? "selected" : ""}>${rotationOptions[3]}</option>
             </select>
         <p class="notes">${game.i18n.localize("LockView.Scene.Rotation_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.ExcludeSidebar")}</label>
-        <input id="LockView_excludeSidebar" type="checkbox" name="LV_excludeSidebar" data-dtype="Boolean" ${excludeSidebar ? 'checked' : ''}>
+        <input id="LockView_excludeSidebar" type="checkbox" name="LV_excludeSidebar" data-dtype="Boolean" ${flags.excludeSidebar ? 'checked' : ''}>
         <p class="notes">${game.i18n.localize("LockView.Scene.excludeSidebar_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.BlackenSidebar")}</label>
-        <input id="LockView_blackenSidebar" type="checkbox" name="LV_blackenSidebar" data-dtype="Boolean" ${blackenSidebar ? 'checked' : ''}>
+        <input id="LockView_blackenSidebar" type="checkbox" name="LV_blackenSidebar" data-dtype="Boolean" ${flags.blackenSidebar ? 'checked' : ''}>
         <p class="notes">${game.i18n.localize("LockView.Scene.blackenSidebar_Hint")}</p>
     </div>
     <div class="form-group">
-        <label>${game.i18n.localize("LockView.Scene.CollapseSidebar")}</label>
-        <input id="LockView_collapseSidebar" type="checkbox" name="LV_collapseSidebar" data-dtype="Boolean" ${collapseSidebar ? 'checked' : ''}>
-        <p class="notes">${game.i18n.localize("LockView.Scene.CollapseSidebar_Hint")}</p>
+        <label>${game.i18n.localize("LockView.Scene.Sidebar")}</label>
+            <select name="LV_sidebar" id="action" value=${flags.sidebar}>
+                <option value="noChange" ${flags.sidebar=="noChange" ? "selected" : ""}>${sidebarOptions[0]}</option>
+                <option value="collapse" ${flags.sidebar=="collapse" ? "selected" : ""}>${sidebarOptions[1]}</option>
+                <option value="expand" ${flags.sidebar=="expand" ? "selected" : ""}>${sidebarOptions[2]}</option>
+            </select>
+        <p class="notes">${game.i18n.localize("LockView.Scene.Sidebar_Hint")}</p>
     </div>
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.HideUI")}</label>
         <div class="form-fields">
-            <input id="LockView_hideUI" type="checkbox" name="LV_hideUI" data-dtype="Boolean" ${hideUI ? 'checked' : ''}>
+            <input id="LockView_hideUI" type="checkbox" name="LV_hideUI" data-dtype="Boolean" ${flags.hideUI ? 'checked' : ''}>
             <button type="button" title="${game.i18n.localize("LockView.Scene.HideUIDialog.Title")}" id="LockView_setUIelements"><i class="fas fa-cog"></i></button>
         </div>
         <p class="notes">${game.i18n.localize("LockView.Scene.HideUI_Hint")}</p>
@@ -195,10 +104,17 @@ export function renderSceneConfig(app,html){
     <div class="form-group">
         <label>${game.i18n.localize("LockView.Scene.ForceInit")}</label>
         <div class="form-fields">
-            <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${forceInit ? 'checked' : ''}>
+            <input id="LockView_forceInit" type="checkbox" name="LV_forceInit" data-dtype="Boolean" ${flags.forceInit ? 'checked' : ''}>
             <button class="capture-position" type="button" title="${game.i18n.localize("LockView.Scene.SetInitialView")}" id="LockView_setInitialView"><i class="fas fa-ruler-combined"></i></button>
         </div>
         <p class="notes">${game.i18n.localize("LockView.Scene.ForceInit_Hint")}</p>
+    </div>
+    <div class="form-group">
+        <label>${game.i18n.localize("LockView.Sett.SceneConfigurator.Title")}</label>
+        <div class="form-fields">
+            <button type="button" style="min-width:150px" title="${game.i18n.localize("LockView.Sett.SceneConfigurator.Title")}" id="LockView_sceneConfigurator">${game.i18n.localize("LockView.Sett.SceneConfigurator.Title")}</button>
+        </div>
+        <p class="notes">${game.i18n.localize("LockView.Sett.SceneConfigurator.Hint")}</p>
     </div>
     `
     
@@ -220,8 +136,13 @@ export function renderSceneConfig(app,html){
 
     const setUIElementsButton = html.find("button[id = 'LockView_setUIelements']");
     setUIElementsButton.on("click",event => {
-        handleUIelementsDialog(hideUIelements,app);
+        handleUIelementsDialog(flags.hideUIelements,app);
     })
+
+    const openSceneConfigurator = html.find("button[id='LockView_sceneConfigurator']");
+    openSceneConfigurator.on("click", () => {
+        new SceneConfigurator().render(true);
+    });
 }
 
 function handleUIelementsDialog(hideUIelements,app) {
@@ -275,42 +196,42 @@ function handleUIelementsDialog(hideUIelements,app) {
 /*
  * On closing the scene configuration menu, save the settings and update the view of all users
  */
-export async function closeSceneConfig(app,html){let lockPan = html.find("input[name ='LV_lockPan']").is(":checked");
-    let lockZoom = html.find("input[name ='LV_lockZoom']").is(":checked");
-    let autoScale = html.find("select[name='LV_autoScale']")[0].value;
-    let rotation = html.find("select[name='LV_rotation']")[0].value;
-    let forceInit = html.find("input[name ='LV_forceInit']").is(":checked");
-    let boundingBox = html.find("input[name ='LV_boundingBox']").is(":checked");
-    let excludeSidebar = html.find("input[name ='LV_excludeSidebar']").is(":checked");
-    let blackenSidebar = html.find("input[name ='LV_blackenSidebar']").is(":checked");
-    let hideUI = html.find("input[name ='LV_hideUI']").is(":checked");
-    let collapseSidebar = html.find("input[name ='LV_collapseSidebar']").is(":checked");
-    await app.object.setFlag('LockView', 'lockPan',lockPan);
-    await app.object.setFlag('LockView', 'lockPanInit',lockPan);
-    await app.object.setFlag('LockView', 'lockZoom',lockZoom);
-    await app.object.setFlag('LockView', 'lockZoomInit',lockZoom);
-    await app.object.setFlag('LockView', 'autoScale',autoScale);
-    await app.object.setFlag('LockView', 'rotation',rotation);
-    await app.object.setFlag('LockView', 'forceInit', forceInit);
-    await app.object.setFlag('LockView', 'boundingBox', boundingBox);
-    await app.object.setFlag('LockView', 'boundingBoxInit', boundingBox);
-    await app.object.setFlag('LockView', 'excludeSidebar', excludeSidebar);
-    await app.object.setFlag('LockView', 'blackenSidebar', blackenSidebar);
-    await app.object.setFlag('LockView', 'hideUI', hideUI);
-    await app.object.setFlag('LockView', 'collapseSidebar', collapseSidebar);
+export async function closeSceneConfig(app,html){
     
-    if ((compatibleCore('10.0') && app.object.id == canvas.scene.id) || (!compatibleCore('10.0') && app.object.id == canvas.scene.data._id)){
+    const config = {
+        lockPan: html.find("input[name ='LV_lockPan']").is(":checked"),
+        lockPanInit: html.find("input[name ='LV_lockPan']").is(":checked"),
+        lockZoom: html.find("input[name ='LV_lockZoom']").is(":checked"),
+        lockZoomInit: html.find("input[name ='LV_lockZoom']").is(":checked"),
+        boundingBox: html.find("input[name ='LV_boundingBox']").is(":checked"),
+        boundingBoxInit: html.find("input[name ='LV_boundingBox']").is(":checked"),
+        autoScale: html.find("select[name='LV_autoScale']")[0].value,
+        rotation: html.find("select[name='LV_rotation']")[0].value,
+        sidebar: html.find("select[name='LV_sidebar']")[0].value,
+        blackenSidebar: html.find("input[name ='LV_blackenSidebar']").is(":checked"),
+        excludeSidebar: html.find("input[name ='LV_excludeSidebar']").is(":checked"),
+        hideUI: html.find("input[name ='LV_hideUI']").is(":checked"),
+        forceInit: html.find("input[name ='LV_forceInit']").is(":checked"),
+        hideUIelements: app.object.flags.LockView.hideUIelements
+    };
+    for (let flag of Object.entries(config)) {
+        await app.object.setFlag('LockView',flag[0],flag[1]);
+    }
+    
+    if (app.object.id == canvas.scene.id){
         //Apply the new settings
         await applySettings(true);
 
         //Send new settings to users
-        await sendUpdate( {pan:lockPan, zoom:lockZoom, aScale:autoScale, rotation:rotation, fInit:forceInit, bBox:boundingBox, force:true} );
+        await sendUpdate( {pan:config.lockPan, zoom:config.lockZoom, aScale:config.autoScale, rotation:config.rotation, fInit:config.forceInit, bBox:config.boundingBox, force:true} );
         await forceConstrain();
         //set & render ui controls
-        ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
-        ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
-        ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
-        ui.controls.render();
+        if (!game.settings.get(moduleName,'hideControlButton')) {
+            ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = config.lockPan;
+            ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = config.lockZoom;
+            ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = config.boundingBox;
+            ui.controls.render();
+        }
         canvas.scene.setFlag('LockView', 'editViewbox', false);
     }
 }
@@ -510,8 +431,8 @@ function handleMouseMove(e){
         elementX.value = position.x;
         elementY.value = position.y;
         elementScale.value = position.scale;
-        elementGridX.value = compatibleCore('10.0') ? window.innerWidth/(position.scale*canvas.scene.grid.size) : window.innerWidth/(position.scale*canvas.scene.data.grid);
-        elementGridY.value = compatibleCore('10.0') ? window.innerHeight/(position.scale*canvas.scene.grid.size) : window.innerHeight/(position.scale*canvas.scene.data.grid);
+        elementGridX.value = window.innerWidth/(position.scale*canvas.scene.grid.size);
+        elementGridY.value = window.innerHeight/(position.scale*canvas.scene.grid.size);
     }
 }
 
@@ -527,7 +448,7 @@ export class initialViewForm extends FormApplication {
     constructor(data, options) {
         super(data, options);
         this.scene;
-        this.initial = compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
+        this.initial = canvas.scene.initial;
         this.users = [];
         this.selectedPlayer = 0;
     }
@@ -553,16 +474,11 @@ export class initialViewForm extends FormApplication {
      * Provide data to the template
      */
     getData() {
-        if (compatibleCore('10.0')) ui.controls.initialize({control:'LockView'});
-        else {
-            ui.controls.activeControl = "LockView";
-            canvas.layers.find(layer => layer.name == "LockViewLayer").activate();
-            ui.controls.render();
-        }
+        ui.controls.initialize({control:'LockView'});
         
         const gridSpaces = {
-            x: compatibleCore('10.0') ? initialViewBox.data.width/canvas.scene.grid.size : initialViewBox.data.width/canvas.scene.data.grid,
-            y: compatibleCore('10.0') ? initialViewBox.data.height/canvas.scene.grid.size : initialViewBox.data.height/canvas.scene.data.grid
+            x: initialViewBox.data.width/canvas.scene.grid.size,
+            y: initialViewBox.data.height/canvas.scene.grid.size
         }
         let users = [];
         let counter = 0;
@@ -706,7 +622,7 @@ export class initialViewForm extends FormApplication {
             else if (snapDir == 'downRight') position = {x: initialViewBox.data.x + initialViewBox.data.width, y: initialViewBox.data.y + initialViewBox.data.height};
 
             const center = canvas.grid.getCenter(position.x,position.y);
-            const gridSize = compatibleCore('10.0') ? this.scene.grid.size : this.scene.data.grid;
+            const gridSize = this.scene.grid.size;
             let offset = {
                 x:gridSize/2, 
                 y:gridSize/2
@@ -745,8 +661,8 @@ export class initialViewForm extends FormApplication {
             html.find("input[name='dataX']")[0].value = newData.x;
             html.find("input[name='dataY']")[0].value = newData.y;
             html.find("input[name='dataScale']")[0].value = newData.scale;
-            html.find("input[name='gridX']")[0].value = compatibleCore('10.0') ? window.innerWidth/(newData.scale*canvas.scene.grid.size) : window.innerWidth/(newData.scale*canvas.scene.data.grid);
-            html.find("input[name='gridY']")[0].value = compatibleCore('10.0') ? window.innerHeight/(newData.scale*canvas.scene.grid.size) : window.innerHeight/(newData.scale*canvas.scene.data.grid);
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(newData.scale*canvas.scene.grid.size);
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(newData.scale*canvas.scene.grid.size);
         });
     }
 }

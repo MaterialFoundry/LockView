@@ -1,29 +1,16 @@
-import { compatibleCore } from "./misc.js";
-
 /*
  * Add a lockview tab to the drawing configuration dialog
  */
 export function drawingConfigApp(app, html, data){
   let boundingBox_mode = 0;
-    if (compatibleCore('10.0')) {
-      if (data.object.shape.type != 'r') return;
-      if (app.object.flags["LockView"]){
-        if (app.object.flags["LockView"].boundingBox_mode)
-          boundingBox_mode = app.object.getFlag('LockView', 'boundingBox_mode');
-        else 
-          app.object.setFlag('LockView', 'boundingBox_mode', 0);
-      }
+    if (data.object.shape.type != 'r') return;
+    if (app.object.flags["LockView"]){
+      if (app.object.flags["LockView"].boundingBox_mode)
+        boundingBox_mode = app.object.getFlag('LockView', 'boundingBox_mode');
+      else 
+        app.object.setFlag('LockView', 'boundingBox_mode', 0);
     }
-    else {
-      if (data.object.type != 'r') return;
-      if (app.object.data.flags["LockView"]){
-        if (app.object.data.flags["LockView"].boundingBox_mode)
-          boundingBox_mode = app.object.getFlag('LockView', 'boundingBox_mode');
-        else 
-          app.object.setFlag('LockView', 'boundingBox_mode', 0);
-      }
-    }
-    
+
     const options = [
       game.i18n.localize("LockView.boundingBox.Mode0"),
       game.i18n.localize("LockView.boundingBox.Mode1"),
@@ -60,8 +47,7 @@ export function drawingConfigApp(app, html, data){
  * On closing the drawing configuration dialog, set a flag to the drawing
  */
 export function closeDrawingConfigApp(app,html){
-  if (compatibleCore('10.0') && app.object.shape.type != 'r') return;
-  if (!compatibleCore('10.0') && app.object.data.type != 'r') return;
+  if (app.object.shape.type != 'r') return;
   const boundingBox = html.find("select[name='LV_boundingBox']")[0].value;
   app.object.setFlag('LockView', 'boundingBox_mode', boundingBox);
 }

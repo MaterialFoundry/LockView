@@ -1,0 +1,197 @@
+<form autocomplete="off" onsubmit="event.preventDefault()">
+    <div style="max-width:840px">
+        {{localize "LockView.Sett.SceneConfigurator.Explanation1"}}<br>
+        {{localize "LockView.Sett.SceneConfigurator.Explanation2"}}<br>
+        <ul>
+            <li><b>{{localize "LockView.Sett.SceneConfigurator.Copy.Label"}}: </b>{{localize "LockView.Sett.SceneConfigurator.Copy.Note"}}</li>
+            <li><b>{{localize "LockView.Sett.SceneConfigurator.Paste.Label"}}: </b>{{localize "LockView.Sett.SceneConfigurator.Paste.Note"}}</li>
+            <li><b>{{localize "LockView.Sett.SceneConfigurator.Reset.Label"}}: </b>{{localize "LockView.Sett.SceneConfigurator.Reset.Note"}}</li>
+        </ul>
+        {{localize "LockView.Sett.SceneConfigurator.Explanation3"}}
+    </div>
+
+    <table class="lockView_sceneConfigTable" style="width:100%">
+        <tr>
+            <th class="lockView_sceneConfigName"><div class="lockView_sceneConfigColumn__inner">{{localize "LockView.Sett.SceneConfigurator.Scene"}}</div></th>
+
+            {{#each dataTypes as |s|}}
+                {{#ifCondLV s.type 'checkbox'}}
+                    <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">{{s.label}}</div></th>
+                {{/ifCondLV}}
+
+                {{#ifCondLV s.type 'hideUIcheckbox'}}
+                    <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">{{s.label}}</div></th>
+                {{/ifCondLV}}
+
+                {{#ifCondLV s.type 'select'}}
+                    <th class="lockView_sceneConfigSelect"><div class="lockView_sceneConfigColumn__inner">{{s.label}}</div></th>
+                {{/ifCondLV}}
+            {{/each}}
+
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner"></div></th>
+            <th class="lockView_sceneConfigButton"><div class="lockView_sceneConfigColumn__inner">{{localize "LockView.Sett.SceneConfigurator.Copy.Label"}}</div></th>
+            <th class="lockView_sceneConfigButton"><div class="lockView_sceneConfigColumn__inner">{{localize "LockView.Sett.SceneConfigurator.Paste.Label"}}</div></th>
+            <th class="lockView_sceneConfigButton"><div class="lockView_sceneConfigColumn__inner">{{localize "LockView.Sett.SceneConfigurator.Reset.Label"}}</div></th>
+        </tr>
+
+        {{#each sceneData as |s|}}
+            {{#if s.default}}<tr><td></td></tr>{{/if}}
+            <tr>
+                <td class="lockView_sceneConfigTableVal">
+                    <label style="text-align:left;{{#if s.default}}font-style:italic;{{/if}}">
+                        <b>{{s.name}}</b><i name="nameCopy" id="nameCopy-{{s.id}}"></i>
+                    </label>
+                </td>
+
+                {{#each s.settings as |c|}}
+                <td class="lockView_sceneConfigTableVal {{#ifCondLV c.type 'hideUIcheckbox'}}lockView_sub{{/ifCondLV}}">
+                    {{#ifCondLV c.type 'checkbox'}}
+                        <input type="checkbox" name={{c.name}} id="{{c.name}}-{{s.id}}" data-dtype="Boolean" {{#if c.value}}checked{{/if}}>
+                    {{/ifCondLV}}
+                    {{#ifCondLV c.type 'hideUIcheckbox'}}
+                        <input type="checkbox" name={{c.name}} id="{{c.name}}-{{s.id}}" data-dtype="Boolean" {{#if c.value}}checked{{/if}}>
+                    {{/ifCondLV}}
+                    {{#ifCondLV c.type 'select'}}
+                        {{#ifCondLV c.name 'autoScale'}}
+                        <select name={{c.name}} id="{{c.name}}-{{s.id}}" value={{c.value}}>
+                            {{#each ../autoScaleOptions as |o|}}
+                                <option value={{o.value}} {{o.selected}}>{{o.label}}</option>
+                            {{/each}}
+                        </select>
+                        {{/ifCondLV}}
+                        {{#ifCondLV c.name 'rotation'}}
+                        <select name={{c.name}} id="{{c.name}}-{{s.id}}" value={{c.value}}>
+                            {{#each ../rotationOptions as |o|}}
+                                <option value={{o.value}} {{o.selected}}>{{o.label}}</option>
+                            {{/each}}
+                        </select>
+                        {{/ifCondLV}}
+                        {{#ifCondLV c.name 'sidebar'}}
+                        <select name={{c.name}} id="{{c.name}}-{{s.id}}" value={{c.value}}>
+                            {{#each ../sidebarOptions as |o|}}
+                                <option value={{o.value}} {{o.selected}}>{{o.label}}</option>
+                            {{/each}}
+                        </select>
+                        {{/ifCondLV}}
+                    {{/ifCondLV}}
+                </td>
+                {{/each}}
+
+                <td>|</td>
+                <td class="lockView_sceneConfigTableVal">
+                    <button type="button" name="copy" id="copy-{{s.id}}"><i class="fas fa-copy lockView_sceneConfigTableCenterIcon"></i></button> 
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <button type="button" name="paste" id="paste-{{s.id}}"><i class="fas fa-paste lockView_sceneConfigTableCenterIcon"></i></button> 
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <button type="button" name="reset" id="reset-{{s.id}}"><i class="fas fa-trash lockView_sceneConfigTableCenterIcon"></i></button> 
+                </td>
+            </tr>
+            
+        {{/each}}
+
+        
+
+        <!--
+            <tr>
+            <th class="lockView_sceneConfigName"><div class="lockView_sceneConfigColumn__inner">Name</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Lock Pan</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Lock Zoom</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Bounding Box</div></th>
+            <th class="lockView_sceneConfigSelect"><div class="lockView_sceneConfigColumn__inner">Autoscale</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Exclude Sidebar</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Blacken Sidebar</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Collapse Sidebar</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Hide UI Elements</div></th>
+            <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">Hide Foundry Logo</div></th>
+            <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">Hide Scene Navigation</div></th>
+            <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">Hide Control Buttons</div></th>
+            <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">Hide Player List</div></th>
+            <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">Hide Macro Hotbar</div></th>
+            <th class="lockView_sceneConfigCB lockView_sub"><div class="lockView_sceneConfigColumn__inner">Hide Sidebar</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner">Force Initial View</div></th>
+            <th class="lockView_sceneConfigCB"><div class="lockView_sceneConfigColumn__inner"></div></th>
+            <th class="lockView_sceneConfigButton"><div class="lockView_sceneConfigColumn__inner">Copy</div></th>
+            <th class="lockView_sceneConfigButton"><div class="lockView_sceneConfigColumn__inner">Paste</div></th>
+            <th class="lockView_sceneConfigButton"><div class="lockView_sceneConfigColumn__inner">Reset</div></th>
+        </tr>
+
+            {{#each sceneData as |s|}}
+            {{#if s.default}}<tr><td></td></tr>{{/if}}
+            <tr>
+                <td class="lockView_sceneConfigTableVal">
+                    <label style="text-align:left;{{#if s.default}}font-style:italic;{{/if}}">
+                        <b>{{s.name}}</b>
+                    </label>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="lockPan" id="lockPan-{{s.id}}" data-dtype="Boolean" {{#if s.settings.lockPanInit}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="lockZoom" id="lockZoom-{{s.id}}" data-dtype="Boolean" {{#if s.settings.lockZoomInit}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="boundingBox" id="boundingBox-{{s.id}}" data-dtype="Boolean" {{#if s.settings.boundingBoxInit}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <select name="autoScale" id="autoScale-{{s.id}}" value={{s.settings.autoScale}}>
+                        {{#each autoScaleOptions as |o|}}
+                            <option value={{o.value}} {{o.selected}}>{{o.label}}</option>
+                        {{/each}}
+                    </select>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="excludeSidebar" id="excludeSidebar-{{s.id}}" data-dtype="Boolean" {{#if s.settings.excludeSidebar}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="blackenSidebar" id="blackenSidebar-{{s.id}}" data-dtype="Boolean" {{#if s.settings.blackenSidebar}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="collapseSidebar" id="collapseSidebar-{{s.id}}" data-dtype="Boolean" {{#if s.settings.collapseSidebar}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="hideUI" id="hideUI-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUI}}checked{{/if}}>
+                </td>
+
+                <td class="lockView_sceneConfigTableVal lockView_sub">
+                    <input type="checkbox" name="logo" id="logo-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUIelements.logo}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal lockView_sub">
+                    <input type="checkbox" name="navigation" id="navigation-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUIelements.navigation}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal lockView_sub">
+                    <input type="checkbox" name="controls" id="controls-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUIelements.controls}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal lockView_sub">
+                    <input type="checkbox" name="players" id="players-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUIelements.players}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal lockView_sub">
+                    <input type="checkbox" name="hotbar" id="hotbar-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUIelements.hotbar}}checked{{/if}}>
+                </td>
+                <td class="lockView_sceneConfigTableVal lockView_sub">
+                    <input type="checkbox" name="sidebar" id="sidebar-{{s.id}}" data-dtype="Boolean" {{#if s.settings.hideUIelements.sidebar}}checked{{/if}}>
+                </td>
+
+                <td class="lockView_sceneConfigTableVal">
+                    <input type="checkbox" name="forceInit" id="forceInit-{{s.id}}" data-dtype="Boolean" {{#if s.settings.forceInit}}checked{{/if}}>
+                </td>
+
+                <td>|</td>
+                <td class="lockView_sceneConfigTableVal">
+                    <button type="button" name="copy" id="copy-{{s.id}}"><i class="fas fa-copy lockView_sceneConfigTableCenterIcon"></i></button> 
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <button type="button" name="paste" id="paste-{{s.id}}"><i class="fas fa-paste lockView_sceneConfigTableCenterIcon"></i></button> 
+                </td>
+                <td class="lockView_sceneConfigTableVal">
+                    <button type="button" name="reset" id="reset-{{s.id}}"><i class="fas fa-trash lockView_sceneConfigTableCenterIcon"></i></button> 
+                </td>
+            </tr>
+        {{/each}}
+        -->
+        
+        
+
+    </table>
+</form>

@@ -7,8 +7,8 @@ export function compareVersions(checkedVersion, requiredVersion) {
   checkedVersion = checkedVersion.split(".");
   
   for (let i=0; i<3; i++) {
-      requiredVersion[i] = isNaN(parseInt(requiredVersion[i])) ? 0 : parseInt(requiredVersion[i]);
-      checkedVersion[i] = isNaN(parseInt(checkedVersion[i])) ? 0 : parseInt(checkedVersion[i]);
+    requiredVersion[i] = isNaN(parseInt(requiredVersion[i])) ? 0 : parseInt(requiredVersion[i]);
+    checkedVersion[i] = isNaN(parseInt(checkedVersion[i])) ? 0 : parseInt(checkedVersion[i]);
   }
   
   if (checkedVersion[0] > requiredVersion[0]) return false;

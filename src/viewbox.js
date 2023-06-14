@@ -2,7 +2,6 @@ import { mouseMode } from "./controlButtons.js";
 import { getFlags, excludeSidebar, blackenSidebar } from "./blocks.js";
 import * as VIEWBOX from "./viewbox.js";
 import { moduleName } from "../lockview.js";
-import { compatibleCore } from "./misc.js";
 
 export var viewboxStorage; 
 export var viewbox = [];
@@ -158,10 +157,10 @@ export function drawViewbox(payload){
     let senderNumbers = Array.from(game.users);
     //get index of the sending user
     for (let i=0; i<senderNumbers.length; i++)
-      if ((compatibleCore('10.0') && senderNumbers[i]._id == payload.senderId) || (!compatibleCore('10.0') && senderNumbers[i].data._id == payload.senderId))
+      if (senderNumbers[i]._id == payload.senderId)
         senderNumber = i;
     //check if sending user is in same scene, if not, hide viewbox and return
-    if ((compatibleCore('10.0') && payload.sceneId != canvas.scene.id) || (!compatibleCore('10.0') && payload.sceneId != canvas.scene.data._id)) {
+    if (payload.sceneId != canvas.scene.id) {
       if(viewbox[senderNumber] != undefined)
         viewbox[senderNumber].hide();
       return;
@@ -264,7 +263,7 @@ export function sendViewBox(viewPosition=null){
   //Sidebar offset
   let offset = 0;
   if (ui.sidebar._collapsed == false && excludeSidebar && blackenSidebar){
-    offset = compatibleCore('10.0') ? ui.sidebar.position.width : window.innerWidth-ui.sidebar._element[0].offsetLeft;
+    offset = ui.sidebar.position.width;
     viewPositionNew.x -= offset/(2*viewPosition.scale);
   }
 
@@ -274,7 +273,7 @@ export function sendViewBox(viewPosition=null){
     "senderName": game.user.name,
     "senderColor": game.user.color,
     "receiverId": game.data.users.find(users => users.role == 4)._id, 
-    "sceneId": compatibleCore('10.0') ? canvas.scene.id : canvas.scene.data._id,
+    "sceneId": canvas.scene.id,
     "viewPosition": viewPositionNew,
     "viewWidth": window.innerWidth-offset,
     "viewHeight": window.innerHeight,

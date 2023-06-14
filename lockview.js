@@ -1,11 +1,11 @@
-import { registerSettings } from "./src/settings.js";
+import { registerSettings, SceneConfigurator, configureSettings } from "./src/settings.js";
 import { sendViewBox, hideAllViewboxes, initializeViewboxes, getViewboxData } from "./src/viewbox.js";
 import { pushControlButtons, registerLayer } from "./src/controlButtons.js";
 import { getFlags, setBlocks, lockPan, lockZoom, autoScale, rotation, forceInit, blackenSidebar, excludeSidebar, storeDefaultPrototypes, boundingBox } from "./src/blocks.js";
 import { drawingConfigApp, closeDrawingConfigApp } from "./src/drawingConfig.js";
 import { renderSceneConfig, closeSceneConfig, closeInitialViewForm } from "./src/sceneConfig.js";
 import {socket, sendUpdate} from "./src/socket.js";
-import { updatePopup, setLockView, getEnable,blackSidebar, compatibleCore } from "./src/misc.js";
+import { updatePopup, setLockView, getEnable,blackSidebar } from "./src/misc.js";
 import { constrainView_Override, pan_OverrideHigherRes } from "./src/overrides.js";
 
 export const moduleName = "LockView";
@@ -25,8 +25,16 @@ let hiddenUIelements = {
 }
 let uiHidden = false;
 
+Handlebars.registerHelper('ifCondLV', function(v1, v2, options) {
+  if(v1 === v2) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 //CONFIG.debug.hooks = true;
-Hooks.on('ready', ()=>{ socket(); updatePopup() });
+
+Hooks.on('ready', ()=>{ socket(); updatePopup(); configureSettings() });
 Hooks.on('canvasReady',()=>{ onCanvasReady() });
 Hooks.on('renderSidebarTab',()=>{ if (combatTrigger == false) onRenderSidebarTab() });
 Hooks.on("renderSceneConfig", (app, html) => { renderSceneConfig(app,html) });
@@ -88,7 +96,7 @@ async function setUI(hide) {
     uiHidden = hide;
     let hideUIelements = {};
     if (canvas.scene.getFlag('LockView', 'hideUI')) {
-      if (compatibleCore('10.0') ? canvas.scene.flags["LockView"].hideUIelements : canvas.scene.data.flags["LockView"].hideUIelements){
+      if (canvas.scene.flags["LockView"].hideUIelements){
         hideUIelements = await canvas.scene.getFlag('LockView', 'hideUIelements');
       } 
       else hideUIelements = {
@@ -115,11 +123,13 @@ async function setUI(hide) {
       for (let element in hideUIelements) {
         if (hideUIelements?.[element]) {
           if (game.user.isGM && element == 'sidebar') continue;
-          $(`#${element}`).hide();
+          document.getElementById(element).style.visibility = 'hidden'
+          //$(`#${element}`).hide();
           hiddenUIelements[element] = true;
         }
         else {
-          $(`#${element}`).show();
+          document.getElementById(element).style.visibility = 'visible'
+          //$(`#${element}`).show();
           hiddenUIelements[element] = false;
         }
       }
@@ -127,7 +137,8 @@ async function setUI(hide) {
     else {
       for (let element in hideUIelements) {
         if (hideUIelements?.[element]) {
-          $(`#${element}`).show();
+          document.getElementById(element).style.visibility = 'visible'
+          //$(`#${element}`).show();
           hiddenUIelements[element] = false;
         }
       }
@@ -147,7 +158,7 @@ async function onRenderSceneControls(controls) {
   if (canvas?.scene == null)
     return;
 
-  if (compatibleCore('10.0') && controls.activeControls != 'LockView') 
+  if (controls.activeControls != 'LockView') 
       canvas['lockview'].deactivate();
       
   if (combatTrigger) {
@@ -155,9 +166,15 @@ async function onRenderSceneControls(controls) {
     return;
   }
   
-  if (getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'collapseSidebar')) {
+  if (getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'sidebar') == 'collapse') {
     if (newSceneLoad == true)
       ui.sidebar.collapse();
+
+    setUI(ui.sidebar._collapsed);
+  }
+  else if (getEnable(game.userId) && canvas?.scene?.getFlag('LockView', 'sidebar') == 'expand') {
+    if (newSceneLoad == true)
+      ui.sidebar.expand();
 
     setUI(ui.sidebar._collapsed);
   }
@@ -184,66 +201,6 @@ async function onRenderSceneControls(controls) {
     lockViewControls.activeTool = undefined;
     
     getViewboxData();
-  }
-}
-
-/*
- * Initialize the LockView flags of the current canvas
- */
-async function initializeFlags(){
-  if (canvas == null) return;
-  else if (canvas.scene == null || canvas.scene == undefined) return;
-  //Check if any LockView flags have been set for the current scene, if not, set them
-  if (canvas.scene.data.flags["LockView"] == undefined){
-    canvas.scene.setFlag('LockView', 'lockPan', false);
-    canvas.scene.setFlag('LockView', 'lockPanInit', false);
-    canvas.scene.setFlag('LockView', 'lockZoom', false);
-    canvas.scene.setFlag('LockView', 'lockZoomInit', false);
-    canvas.scene.setFlag('LockView', 'autoScale', 0);
-    canvas.scene.setFlag('LockView', 'rotation', 0);
-    canvas.scene.setFlag('LockView', 'forceInit', false);
-    canvas.scene.setFlag('LockView', 'boundingBox', false);
-    canvas.scene.setFlag('LockView', 'boundingBoxInit', false);
-    canvas.scene.setFlag('LockView', 'excludeSidebar', false);
-    canvas.scene.setFlag('LockView', 'blackenSidebar', false);
-  }
-  //If LockView flags exist, check if each of them is set, if not, set them
-  else {
-    if(canvas.scene.data.flags["LockView"].lockPanInit)
-      await canvas.scene.setFlag('LockView', 'lockPan', canvas.scene.getFlag('LockView', 'lockPanInit'));
-    else {
-      canvas.scene.setFlag('LockView', 'lockPanInit', false);
-      canvas.scene.setFlag('LockView', 'lockPan',false);
-    }
-
-    if (canvas.scene.data.flags["LockView"].lockZoomInit)
-      await canvas.scene.setFlag('LockView', 'lockZoom', canvas.scene.getFlag('LockView', 'lockZoomInit'));
-    else {
-      canvas.scene.setFlag('LockView', 'lockZoomInit', false);
-      canvas.scene.setFlag('LockView', 'lockZoom', false);
-    }
-
-    if (canvas.scene.data.flags["LockView"].autoScale){}
-    else canvas.scene.setFlag('LockView', 'autoScale', 0);
-
-    if (canvas.scene.data.flags["LockView"].rotation){}
-    else canvas.scene.setFlag('LockView', 'rotation', 0);
-
-    if (canvas.scene.data.flags["LockView"].forceInit){}
-    else canvas.scene.setFlag('LockView', 'forceInit', false);
-
-    if (canvas.scene.data.flags["LockView"].boundingBoxInit)
-      await canvas.scene.setFlag('LockView', 'boundingBox', canvas.scene.getFlag('LockView', 'boundingBoxInit'));
-    else {
-      canvas.scene.setFlag('LockView', 'boundingBoxInit', false);
-      canvas.scene.setFlag('LockView', 'boundingBox', false);
-    }
-
-    if (canvas.scene.data.flags["LockView"].excludeSidebar){}
-    else canvas.scene.setFlag('LockView', 'excludeSidebar', false);
-
-    if (canvas.scene.data.flags["LockView"].blackenSidebar){}
-    else canvas.scene.setFlag('LockView', 'blackenSidebar', false);
   }
 }
 
@@ -283,7 +240,7 @@ async function onRenderSidebarTab(){
 }
 
 function forceInitialView() {
-  if (newSceneLoad) return compatibleCore('10.0') ? canvas.scene.initial : canvas.scene.data.initial;
+  if (newSceneLoad) return canvas.scene.initial;
   else return {};
 }
 
@@ -298,9 +255,7 @@ export async function applySettings(force=false,forceInitial=true) {
   //Get the flags for this scene
   await getFlags();
 
-  if (rotation > 0){
-    canvas.stage.rotation = (rotation - 1) * (Math.PI / 2)
-  }
+  if (rotation != null) canvas.stage.rotation = rotation*Math.PI/180;
 
   //If 'autoScale' if 'horizontal fit', 'vertical fit' or 'automatic fit'
   if (autoScale > 0 && autoScale < 5 && force) 
@@ -347,15 +302,15 @@ export async function scaleToFit(rotation, force = 0){
   await getFlags();
   let horizontal;                                   //Stores whether the screen fills horizontally or vertically
   let sidebarOffset = 0;                            //Offset in pixels due to the presence of the sidebar
-  let windowWidth = window.innerWidth;              //width of the foundry window
+  let windowWidth = window.innerWidth;            //width of the foundry window
   const sceneWidth = canvas.dimensions.sceneWidth;  //width of the current scene
-  let windowHeight = window.innerHeight;            //height of the foundry window
+  let windowHeight = window.innerHeight;          //height of the foundry window
   const sceneHeight = canvas.dimensions.sceneHeight;//height of the current scene
   let autoScaleTemp = (force > 0) ? force : autoScale;  //Stores the autoscale for local usage
   
   //If exclude sidebar is on, and the sidebar is not collapsed, store the sidebar width to 'sidebarOffset'
   if (excludeSidebar && ui.sidebar._collapsed == false) 
-    sidebarOffset = compatibleCore('10.0') ? ui.sidebar.position.width : window.innerWidth-ui.sidebar._element[0].offsetLeft;
+    sidebarOffset = ui.sidebar.position.width;
 
   //Horizontal fit
   if (autoScaleTemp == 1) horizontal = true;
@@ -371,7 +326,7 @@ export async function scaleToFit(rotation, force = 0){
   
   else return;
 
-  if ((rotation-1) % 2 == 1){
+  if (rotation == 90 || rotation == 270){
     // If the canvas is rotated, swap the window width and height
     // This is necessary because window.innerWidth/window.innerHeight are not affected by rotating the canvas
     let swap = windowWidth;
@@ -390,8 +345,8 @@ export async function scaleToFit(rotation, force = 0){
   const scale = horizontal ? (windowWidth-sidebarOffset)/sceneWidth : windowHeight/sceneHeight;
 
   let newPosition = {
-    x : compatibleCore('10.0') ? canvas.dimensions.sceneX + (sceneWidth+sidebarOffset/scale)/2 : canvas.dimensions.paddingX + (sceneWidth+sidebarOffset/scale)/2,
-    y : compatibleCore('10.0') ? canvas.dimensions.sceneY + sceneHeight/2 : canvas.dimensions.paddingY + sceneHeight/2,
+    x : canvas.dimensions.sceneX + (sceneWidth+sidebarOffset/scale)/2,
+    y : canvas.dimensions.sceneY + sceneHeight/2,
     scale : Math.round(scale* 2000) / 2000
   }
 
@@ -425,7 +380,7 @@ export function getPhysicalScale(){
   //Get the number of pixels/gridsquare to get the desired grid size
   let grid = res/horSq;
   //Get the scale factor
-  let scale = compatibleCore('10.0') ? grid/canvas.scene.grid.size : grid/canvas.scene.data.grid;
+  let scale = grid/canvas.scene.grid.size;
   return scale;
 }
 

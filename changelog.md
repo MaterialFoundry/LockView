@@ -1,4 +1,25 @@
 # Changelog
+### v1.5.6 - 14-06-2023
+Additions:
+<ul>
+    <li>Added a scene configurator to allow easy configuration of the Lock View settings, including copying settings from one scene to another and configuring the default configuration for new scenes. Accessible through a button in the scene configuration and the module settings</li>
+    <li>Added default user settings which are applied to new or unconfigured users. By default this enables 'Enable' and 'Viewbox'</li>
+    <li>Canvas can now be rotated from the Lock View menu in the Scene Configuration and using the 'Set View' dialog (thanks to Dylancyclone)</li>
+</ul>
+
+Fixes:
+<ul>
+    <li>Fixed 'hide control button' not hiding the control button in all cases</li>
+    <li>Fixed error that would pop up when 'hide control button' was enabled and the scene configuration was closed</li>
+    <li>Hiding UI elements now only sets the element to invisible, preventing other elements from shifting around</li>
+</ul>
+
+Other:
+<ul>
+    <li>Made compatible with Foundry V11, dropped compatibility with V9</li>
+    <li>Changed 'Collapse Sidebar on Scene Load' to 'Sidebar on Scene Load' and made it a selection between 'No Change', 'Collapse' and 'Expand'</li>
+</ul>
+
 ### v1.5.4 - 14-09-2022
 Fixes:
 <ul>

@@ -21,11 +21,11 @@ When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and
 <br>
 Right now, there appear to be compatibility issues with the following modules:
 * DF Active Lights
+* DF Curvy Walls
 * Zoom/Pan Options
 
 ## Foundry Compatibility
-This module has been tested to work with Foundry V9 and V10.<br>
-The last v8 compatible version is v1.5.2, manifest url: https://github.com/CDeenen/LockView/releases/download/v1.5.2/module.json
+This module has been tested to work with Foundry V10 and V11.<br>
 
 ## Feedback
 Feel free [report an issue/suggestion](https://github.com/CDeenen/LockView/issues), contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.

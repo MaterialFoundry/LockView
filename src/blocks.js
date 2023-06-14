@@ -1,5 +1,5 @@
 import { forceConstrain } from "../lockview.js";
-import { getEnable, updateFlag, compatibleCore } from "./misc.js";
+import { getEnable, updateFlag } from "./misc.js";
 import { _Override, pan_Override, pan_OverrideHigherRes, onDragCanvasPan_Override, animatePan_Override } from "./overrides.js";
 import { sendUpdate } from "./socket.js";
 

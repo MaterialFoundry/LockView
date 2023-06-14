@@ -1,0 +1,82 @@
+.lockView_userConfig_table_name {
+    width: 30%;
+    text-align: left;
+}
+
+.lockView_userConfig_table_role {
+    width: 25%;
+    text-align: left;
+}
+
+.lockView_userConfig_table_checkbox {
+    width: 15%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.lockView_sceneConfigTable {  
+    width:100%;
+}
+
+.lockView_sceneConfigName{
+    width: 200px;
+}
+.lockView_sceneConfigCB{
+    min-width: 20px;
+    max-width: 20px;
+}
+.lockView_sceneConfigSelect{
+    max-width: 100px;
+}
+.lockView_sceneConfigButton{
+    min-width: 25px;
+    max-width: 25px;
+}
+.lockView_sceneConfigTableVal button{
+    height: 25px;
+    width: 25px;
+    font-size:0.75em;
+    vertical-align: middle;
+}
+.lockView_sub{
+    max-width:15px;
+    font-size: 0.85em;
+}
+.lockView_sub input{
+    max-width:15px;
+}
+
+
+.lockView_sceneConfigTableCenterIcon{
+    vertical-align:middle; 
+    margin-top:-10px
+}
+
+.lockView_sceneConfigTable tr{
+   width: 100%;
+}
+
+.lockView_sceneConfigColumn__inner {
+    display: inline-block;
+    white-space: nowrap;
+    line-height: 1.5;
+    transform: translate(0,100%) rotate(-90deg);
+    transform-origin: 0 0;
+}
+/* This element stretches the parent to be square
+by using the mechanics of vertical margins  */
+.lockView_sceneConfigColumn__inner:after {
+    content: "";
+    display: block;
+    margin: -1.5em 0 100%;
+}
+
+.lockView_expandable {
+    cursor: pointer;
+}
+.lockView_collapsed {
+    display:none;
+}
+.lockView_expandableIcon {
+    border: none;
+}

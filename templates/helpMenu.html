@@ -1,15 +1,4 @@
 <form autocomplete="off" onsubmit="event.preventDefault()">
-    <style>
-        .lockView_expandable {
-            cursor: pointer;
-        }
-        .lockView_collapsed {
-            display:none;
-        }
-        .lockView_expandableIcon {
-            border: none;
-        }
-    </style>
 
     <script>
         for (let element of document.getElementsByClassName("lockView_expandable")) {
@@ -106,26 +95,58 @@ Refer to the 'Settings and Controls' section below to see how the GM can manipul
             <h2 class="lockView_expandable"><img src="modules/LockView/img/icons/right.png" class="lockView_expandableIcon" style="width:15px">Module Settings</h2>
             <div class="lockView_collapsed">
                 <img src="modules/LockView/img/examples/ModuleSettings.png" align="right" HSPACE="5" width="450">
-                In the module settings, as a GM you will find a button to open the user configuration screen, where you can configure your users.<br>
-                You have the following options:
+                In the module settings, as a GM you will find 3 buttons at the top:
                 <ul>
-                    <li><b>Enable</b>: Enables all features for the user (locks, autoscaling, etc), except for the viewbox</li>
-                    <li><b>Viewbox</b>: Enables the viewbox for the user, and allows the view to be controlled</li>
-                    <li><b>Control</b>: Allows the user to control enabled users (always enabled for the GM). This will give access to the control buttons (to enable/disable locks, view/edit viewboxes, etc)</li>
+                    <li><b>Help: </b>Opens this help screen</li>
+                    <li><b>User Configuration: </b>Opens the user configuration screen, where you can configure how the module acts for specific players (see 'User Configuration' section below)</li>
+                    <li><b>Scene Configurator: </b>Opens the scene configurator, where you can configure Lock View for each scene (see 'Scene Configurator' section below)</li>
                 </ul>
-
-                Besides enabling control and viewbox for each specific user, you can also override this and enable them based on their user role.<br>
-                <hr>
+                <br>
+                Below that, as a GM you will see the following setting:
                 <ul>
                     <li><b>Hide Control Button</b> - Enabling this will hide the control button (on the left side of the screen). This can be useful if this control button is never used, and will prevent it from cluttering the screen.</li>
                 </ul>
-                All connected users will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see below), as these settings allow the module to calculate the correct grid scale.<br>
+                All connected users will also see two more settings which are only relevant if 'Autoscaling' is set to 'Physical Gridsize' (see 'Scene Settings' section below), as these settings allow the module to calculate the correct grid scale.<br>
                 These settings are:
                 <ul>
                 <li><b>Screen Width</b> - Fill in the physical screen width in mm or inch of the TV</li>
                 <li><b>Gridsize</b> - Fill in the desired gridsize in mm or inch (must be the same unit as 'Screen Width'). This is usually 25 mm or 1 inch</li>
                 </ul>
                 
+                <BR CLEAR="right" />
+
+                
+            </div>
+
+            <h2 class="lockView_expandable"><img src="modules/LockView/img/icons/right.png" class="lockView_expandableIcon" style="width:15px">User Configuration</h2>
+            <div class="lockView_collapsed">
+                <img src="modules/LockView/img/examples/UserConfiguration.png" align="right" HSPACE="5" width="300">
+                This screen can be accessed from the module settings. Here you can configure how the module acts for each user or group of users. Under 'User Settings' you can configure each user individually, and under 'Role Overrides' you can configure the settings based on user roles.<br>
+                <br>
+                The following options are available:
+                <ul>
+                    <li><b>Enable</b>: Enables all features for the user (locks, autoscaling, etc), except for the viewbox</li>
+                    <li><b>Viewbox</b>: Enables the viewbox for the user, and allows the view to be controlled</li>
+                    <li><b>Control</b>: Allows the user to control enabled users (always enabled for the GM). This will give access to the control buttons (to enable/disable locks, view/edit viewboxes, etc)</li>
+                </ul>
+                Below the users you'll find the 'Default' user settings. Whenever a new user is created these settings will be applied.
+                <BR CLEAR="right" />
+            </div>
+
+            <h2 class="lockView_expandable"><img src="modules/LockView/img/icons/right.png" class="lockView_expandableIcon" style="width:15px">Scene Configurator</h2>
+            <div class="lockView_collapsed">
+                <img src="modules/LockView/img/examples/SceneConfigurator.png" align="right" HSPACE="5" width="450">
+                This screen can be accessed from the module settings or from each scene's configuration.<br>
+                The Scene Configurator can be used to quickly modify the settings for each scene. The settings are identical to the ones configurable in the 'Scene Settings' (see below).<br>
+                Each row in the table represents a scene with its configured settings and can be changed as desired.<br>
+                The bottom row is the 'Default' configuration. New scenes will use these settings.<br>
+                <br>
+                At the right of each row are 3 buttons:
+                <ul>
+                    <li><b>Copy: </b>Copy this configuration</li>
+                    <li><b>Paste: </b>Paste the copied configuration to this scene</li>
+                    <li><b>Reset: </b>Reset this scene to the default configuration</li>
+                </ul>
                 <BR CLEAR="right" />
             </div>
             
@@ -134,27 +155,29 @@ Refer to the 'Settings and Controls' section below to see how the GM can manipul
                 In the scene configuration screen, you'll find a new Lock View section with the following settings:<br>
                 <img src="modules/LockView/img/examples/SceneSettings.png" align="right" HSPACE="5" width="450">
                 <ul>
-                <li><b>Pan Lock</b> - Initial 'Pan Lock' setting</li>
-                <li><b>Zoom Lock</b> - Initial 'Zoom Lock' setting</li>
-                <li><b>Bounding box:</b> Initial 'Bounding Box' settings</li>
-                <li><b>Autoscale</b> - Automatically scales the screen</li>
-                <li><b>Exclude Sidebar</b> - Exclude the area behind the sidebar from the bounding box or autoscaling. This can be enabled because the sidebar can obscure parts of the map</li>
-                <li><b>Blacken Sidebar</b> - Blackens the background of the sidebar to prevent users from seeing outsie of the bounding box or canvas (only works if 'Exclude Sidebar' is enabled)</li>
-                <li><b>Collapse Sidebar on Scene Load</b> - Collapses the sidebar when the scene is loaded, mainly useful in combination with 'Hide UI on Sidebar Collapse'</li>
-                <li><b>Hide UI Elements on Sidebar Collapse</b> - Hides selected UI elements (such as the macro hotbar, scene navigation, etc) when the sidebar is lockView_collapsed, great for landing pages or 
+                <li><b>Lock Pan: </b>Initial 'Pan Lock' setting</li>
+                <li><b>Lock Zoom: </b>Initial 'Zoom Lock' setting</li>
+                <li><b>Bounding box: </b>Initial 'Bounding Box' settings</li>
+                <li><b>Autoscale: </b>Automatically scales the screen</li>
+                <li><b>Rotation: </b>Rotate the canvas</li>
+                <li><b>Exclude Sidebar: </b>Exclude the area behind the sidebar from the bounding box or autoscaling. This can be enabled because the sidebar can obscure parts of the map</li>
+                <li><b>Blacken Sidebar: </b>Blackens the background of the sidebar to prevent users from seeing outsie of the bounding box or canvas (only works if 'Exclude Sidebar' is enabled)</li>
+                <li><b>Collapse Sidebar on Scene Load: </b>Collapses the sidebar when the scene is loaded, mainly useful in combination with 'Hide UI on Sidebar Collapse'</li>
+                <li><b>Hide UI Elements on Sidebar Collapse: </b>Hides selected UI elements (such as the macro hotbar, scene navigation, etc) when the sidebar is lockView_collapsed, great for landing pages or 
                     splash screens. You can configure which elements to hide by pressing the 'cog' button next to the checkbox. By default all elements except for the sidebar are enabled.
                     The 'Ctrl+u' hotkey can hide/unhide the elements in case they need to be accessed</li>
-                <li><b>Force Initial View</b> - Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off' or 'Physical Gridsize'</li>
-                <li><b>Configure Initial View Position button</b> - The button is located to the right of the 'Force Initial View' checkbox. Pressing it opens the 'Configure Initial View Position dialog screen (see below)</li>
+                <li><b>Force Initial View: </b>Forces the view to the 'Initial View Position' after loading the scene. Only works if 'Autoscale' is set to 'Off' or 'Physical Gridsize'</li>
+                <li><b>Configure Initial View Position button: </b>The button is located to the right of the 'Force Initial View' checkbox. Pressing it opens the 'Configure Initial View Position dialog screen (see below)</li>
+                <li><b>Scene Configurator: </b>Opens the scene configurator, where you can configure Lock View for each scene (see 'Scene Configurator' section above)</li>
                 </ul>
                 Autoscale can be set to the following options:<br>
                 <ul>
-                <li><b>Off</b> - Autoscale disabled</li>
-                <li><b>Horizontal Fit</b> - Automatically scales the scene to fit the browser window. Horizontal fit, so it may cut off vertical parts of the scene</li>
-                <li><b>Vertical Fit</b> - Automatically scales the scene to fit the browser window. Vertical fit, so it may cut off horizontal parts of the scene</li>
-                <li><b>Automatic Fit (inside)</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
-                <li><b>Automatic Fit (outside)</b> - Automatically chooses horizontal or vertical fit so the full background can be seen, but can show the padding (area outside of the background image)</li>
-                <li><b>Physical Gridsize</b> - Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1"). The gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client</li>
+                <li><b>Off: </b>Autoscale disabled</li>
+                <li><b>Horizontal Fit: </b>Automatically scales the scene to fit the browser window. Horizontal fit, so it may cut off vertical parts of the scene</li>
+                <li><b>Vertical Fit: </b>Automatically scales the scene to fit the browser window. Vertical fit, so it may cut off horizontal parts of the scene</li>
+                <li><b>Automatic Fit (inside): </b>Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
+                <li><b>Automatic Fit (outside): </b>Automatically chooses horizontal or vertical fit so the full background can be seen, but can show the padding (area outside of the background image)</li>
+                <li><b>Physical Gridsize: </b>Scales the scene so the on-screen gridsize corresponds with a real world value (for example 25mm or 1"). The gridsize is determined by setting the 'Screen Width' and 'Gridsize' in the module settings. These settings are local, which means that they can be different for each connected client</li>
                 </ul>
                 <b>Note 1:</b> The 'Pan Lock', 'Zoom Lock' and 'Bounding Box' settings determine the initial settings. These are applied when a scene is loaded, or after closing the scene configuration screen. After that, you can enable or disable them by pressing the control buttons (see below).<br>
                 <b>Note 2:</b> 'Horizontal Fit', 'Vertical Fit', 'Automatic Fit' and 'Physical Gridsize' are applied when a scene is loaded, or after closing the scene configuration screen. After that, the user can zoom and pan around (if Zoom Lock or Pan Lock are disabled)<br>
@@ -218,26 +241,29 @@ Refer to the 'Settings and Controls' section below to see how the GM can manipul
                 <BR CLEAR="right" />
         
                 <h3 style="width:100%">Set View Dialog</h3>
-                After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of users. There's 2 dropdown menu's, and 3 number boxes<br>
+                After clicking the 'Set View' control button, a dialog box appears that gives multiple options to control the view of users. There's 3 dropdown menu's, and 3 number boxes<br>
                 <b>Top dropdown menu (X & Y movement)</b><br>
                 <ul>
-                <li><b>Reset to initial view</b> - Resets the view to the initial view position, as set in the scene configuration screen</li>
-                <li><b>Horizontal fit</b> - Scale and move the view so the scene fits horizontally</li>
+                <li><b>Reset to initial view: </b>Resets the view to the initial view position, as set in the scene configuration screen</li>
+                <li><b>Horizontal fit: </b>Scale and move the view so the scene fits horizontally</li>
                 <img src="modules/LockView/img/examples/SetViewDialog.png" align="right" HSPACE="5" width="300">
-                <li><b>Vertical fit</b> - Scale and move the view so the scene fits vertically</li>
-                <li><b>Automatic Fit (inside)</b> - Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
-                <li><b>Automatic Fit (outside)</b> - Automatically chooses horizontal or vertical fit so the full background can be seen, but can show the padding (area outside of the background image)</li>
-                <li><b>Move grid spaces</b> - Moves the view in grid-units, relative to the current view. So setting X to 1 will move the view 1 gridspace to the right</li>
-                <li><b>Move to coordinates</b> - Moves the view to the absolute coordinates as set in the number boxes</li>
+                <li><b>Vertical fit: </b>Scale and move the view so the scene fits vertically</li>
+                <li><b>Automatic Fit (inside): </b>Automatically chooses horizontal or vertical fit so no non-image background will ever be seen</li>
+                <li><b>Automatic Fit (outside): </b>Automatically chooses horizontal or vertical fit so the full background can be seen, but can show the padding (area outside of the background image)</li>
+                <li><b>Move grid spaces: </b>Moves the view in grid-units, relative to the current view. So setting X to 1 will move the view 1 gridspace to the right</li>
+                <li><b>Move to coordinates: </b>Moves the view to the absolute coordinates as set in the number boxes</li>
                 </ul>
         
-                <b>Bottom dropdown menu (Zooming)</b><br>
+                <b>Middle dropdown menu (Zooming)</b><br>
                 <ul>
-                <li><b>Ignore scale</b> - No zooming will occur</li>
-                <li><b>Set scale</b> - Zooms to the scale size set in the 'Scale' box</li>
-                <li><b>Reset scale</b> - Resets the zoom to the initial zoom factor, as set in the scene configuration screen</li>
-                <li><b>Physical gridsize</b> - Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch), as set in the module settings </li>
+                <li><b>Ignore scale: </b>No zooming will occur</li>
+                <li><b>Set scale: </b>Zooms to the scale size set in the 'Scale' box</li>
+                <li><b>Reset scale: </b>Resets the zoom to the initial zoom factor, as set in the scene configuration screen</li>
+                <li><b>Physical gridsize: </b>Automatically scales the gridsize to make it correspond to a physical gridsize (in mm or inch), as set in the module settings </li>
                 </ul>
+
+                <b>Bottom dropdown menu (Rotation)</b><br>
+                Rotate the canvas as set in the dropdown menu.
             </div>
             
             <h2 class="lockView_expandable"><img src="modules/LockView/img/icons/right.png" class="lockView_expandableIcon" style="width:15px">Viewbox</h2>
