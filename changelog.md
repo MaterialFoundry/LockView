@@ -1,4 +1,10 @@
 # Changelog
+### v1.5.7 - 14-06-2023
+Fixes:
+<ul>
+    <li>Forgot to add the css folder to the release, preventing the module from functioning.</li>
+</ul>
+
 ### v1.5.6 - 14-06-2023
 Additions:
 <ul>

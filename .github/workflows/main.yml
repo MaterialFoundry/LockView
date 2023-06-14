@@ -28,7 +28,7 @@ jobs:
         download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
 
     # Create a zip file with all files required by the module to add to the release
-    - run: zip -r ./module.zip lockview.js module.json README.md changelog.md img/ lang/ src/ templates/
+    - run: zip -r ./module.zip lockview.js module.json README.md changelog.md img/ lang/ src/ templates/ css/
 
     # Create a release for this specific version
     - name: Update Release with Files
