@@ -10,7 +10,7 @@ import { updateControlButtons } from "./controlButtons.js";
 export function socket(){
   game.socket.on(`module.LockView`, (payload) =>{
     if (game.userId == payload.senderId) return;
-    console.log('pl',payload)
+    //console.log('pl',payload)
     if (payload.msgType == 'update') { updatePlayerSettings(payload) }
     else if (payload.msgType == 'resetView') { resetView(payload) }
     else if (payload.msgType == 'newView'){ newView(payload) }

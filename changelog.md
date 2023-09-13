@@ -1,4 +1,11 @@
 # Changelog
+### v1.5.8 - 14-09-2023
+Fixes:
+<ul>
+    <li>Default user settings are no longer applied to GM users</li>
+    <li>Removed debug message that would occasionally spam the console</li>
+</ul>
+
 ### v1.5.7 - 14-06-2023
 Fixes:
 <ul>

@@ -190,6 +190,7 @@ export async function configureSettings() {
   let userSettings = game.settings.get(moduleName, 'userSettings');
   const defaultUserSettings = game.settings.get(moduleName, 'defaultUserSettings');
   for (let user of game.users) {
+    if (user.role == 4) continue;
     let settings = userSettings.find(u => u.id == user.id);
     if (settings == undefined) {
       userSettings.push({
