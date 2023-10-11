@@ -207,7 +207,8 @@ export async function configureSettings() {
   let scenes = game.scenes;
   for (let scene of scenes) {
     let flags = scene.flags.LockView;
-    if (flags == undefined) flags = defaultSceneConfig;
+    const def = game.settings.get(moduleName, 'defaultSceneConfig')
+    if (flags == undefined) flags = def;
     else flags = fillMissingSceneSettings(flags, false);
     if ('collapseSidebar' in flags) {
       if (flags.collapseSidebar)  flags.sidebar = 'collapse';
@@ -220,15 +221,18 @@ export async function configureSettings() {
   }
 }
 
-export function fillMissingSceneSettings(settings, returnAll = true) {
+export function fillMissingSceneSettings(flags, returnAll = true) {
+  if (flags == undefined) flags = {};
+  const def = game.settings.get(moduleName, 'defaultSceneConfig')
   let missing = {};
-  for (let sett of Object.entries(defaultSceneConfig)) {
-    if (!(sett[0] in settings)) {
-      if (returnAll) settings[sett[0]] = sett[1]
-      else missing[sett[0]] = sett[1];
+  for (let flag of Object.entries(def)) {
+    if (!(flag[0] in flags)) {
+      if (returnAll) flags[flag[0]] = flag[1]
+      else missing[flag[0]] = flag[1];
     }
   }
-  if (returnAll) return settings;
+
+  if (returnAll) return flags;
   else return missing;
 }
 

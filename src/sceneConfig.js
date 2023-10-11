@@ -1,16 +1,18 @@
 import { applySettings, forceConstrain, getPhysicalScale, moduleName } from "../lockview.js";
 import { sendUpdate } from "./socket.js";
 import { viewbox, getViewboxData } from "./viewbox.js";
-import { SceneConfigurator } from "./settings.js";
+import { SceneConfigurator, fillMissingSceneSettings } from "./settings.js";
+
+let storedFlags = {};
 
 /*
  * Push Lock View settings onto the scene configuration menu
  */
-export function renderSceneConfig(app,html){ 
+export async function renderSceneConfig(app,html){ 
     getViewboxData();
 
-    const flags = app.object.flags.LockView;
-    
+    let flags = fillMissingSceneSettings(app.object.flags.LockView, true);
+
     let autoScaleOptions = [
         game.i18n.localize("LockView.Scene.Autoscale.Off"),
         game.i18n.localize("LockView.Scene.Autoscale.Hor"),
@@ -198,6 +200,8 @@ function handleUIelementsDialog(hideUIelements,app) {
  */
 export async function closeSceneConfig(app,html){
     
+    const flags = fillMissingSceneSettings(app.object.flags.LockView, true);
+
     const config = {
         lockPan: html.find("input[name ='LV_lockPan']").is(":checked"),
         lockPanInit: html.find("input[name ='LV_lockPan']").is(":checked"),
@@ -212,7 +216,7 @@ export async function closeSceneConfig(app,html){
         excludeSidebar: html.find("input[name ='LV_excludeSidebar']").is(":checked"),
         hideUI: html.find("input[name ='LV_hideUI']").is(":checked"),
         forceInit: html.find("input[name ='LV_forceInit']").is(":checked"),
-        hideUIelements: app.object.flags.LockView.hideUIelements
+        hideUIelements: flags.hideUIelements
     };
     for (let flag of Object.entries(config)) {
         await app.object.setFlag('LockView',flag[0],flag[1]);

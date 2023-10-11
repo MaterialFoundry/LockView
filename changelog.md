@@ -1,4 +1,11 @@
 # Changelog
+### v1.5.9 - 11-10-2023
+Fixes:
+<ul>
+<li>Default scene config is now properly applied on new scenes</li>
+<li>Physical Gridsize can now be applied to all scenes when accessed through the 'Set View' control button</li>
+</ul>
+
 ### v1.5.8 - 14-09-2023
 Fixes:
 <ul>

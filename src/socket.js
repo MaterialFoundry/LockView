@@ -35,8 +35,9 @@ async function resetView(payload){
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
     else if (payload.scaleSett == 3){
-      if (autoScale == 5) newPosition.scale = getPhysicalScale();
-      else newPosition.scale = canvas.scene._viewPosition.scale;
+      //if (autoScale == 5) newPosition.scale = getPhysicalScale();
+      //else newPosition.scale = canvas.scene._viewPosition.scale;
+      newPosition.scale = getPhysicalScale();
     } 
   
     //Disable all blocks
