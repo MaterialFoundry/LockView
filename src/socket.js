@@ -31,7 +31,11 @@ async function resetView(payload){
     let newPosition = canvas.scene.initial;
     if (newPosition == null) newPosition = canvas.scene._viewPosition;
     
-    if (payload.rotateSett != "null") canvas.stage.rotation = payload.rotateSett*Math.PI/180;
+    if (payload.rotateSett != "null") {
+      let rotationRadians = payload.rotateSett*Math.PI/180;
+      canvas.stage.rotation = rotationRadians
+      canvas.hud._element[0].style.rotate = `${rotationRadians}rad`
+    };
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
     else if (payload.scaleSett == 3){
@@ -145,7 +149,11 @@ async function newView(payload){
     let scale;
     let position = canvas.scene._viewPosition;
 
-    if (payload.rotateSett > 0) canvas.stage.rotation = payload.rotateSett*Math.PI/180;
+    if (payload.rotateSett > 0) {
+      let rotationRadians = payload.rotateSett*Math.PI/180;
+      canvas.stage.rotation = rotationRadians
+      canvas.hud._element[0].style.rotate = `${rotationRadians}rad`
+    };
 
     if (payload.scaleSett == 0) position.scale = canvas.scene._viewPosition.scale;
     else {
