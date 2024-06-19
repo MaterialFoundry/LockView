@@ -239,6 +239,17 @@ async function onRenderSidebarTab(){
   sendViewBox();
 }
 
+function waitForHudToRender() {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (canvas.hud.rendered) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 100);
+  });
+}
+
 function forceInitialView() {
   if (newSceneLoad) return canvas.scene.initial;
   else return {};
@@ -255,7 +266,15 @@ export async function applySettings(force=false,forceInitial=true) {
   //Get the flags for this scene
   await getFlags();
 
-  if (rotation != null) canvas.stage.rotation = rotation*Math.PI/180;
+  if (rotation != null) {
+    let rotationRadians = rotation*Math.PI/180
+    canvas.stage.rotation = rotationRadians
+    // The first time the canvas is rendered, the hud may not exist yet
+    // so don't try to rotate hud until it has rendered
+    waitForHudToRender().then(() => {
+      canvas.hud._element[0].style.rotate = `${rotationRadians}rad`
+    })
+  };
 
   //If 'autoScale' if 'horizontal fit', 'vertical fit' or 'automatic fit'
   if (autoScale > 0 && autoScale < 5 && force) 
