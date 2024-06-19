@@ -1,12 +1,13 @@
 import { registerSettings, SceneConfigurator, configureSettings } from "./src/settings.js";
 import { sendViewBox, hideAllViewboxes, initializeViewboxes, getViewboxData } from "./src/viewbox.js";
-import { pushControlButtons, registerLayer } from "./src/controlButtons.js";
+import { pushControlButtons, registerLayer, updateControlButtons } from "./src/controlButtons.js";
 import { getFlags, setBlocks, lockPan, lockZoom, autoScale, rotation, forceInit, blackenSidebar, excludeSidebar, storeDefaultPrototypes, boundingBox } from "./src/blocks.js";
 import { drawingConfigApp, closeDrawingConfigApp } from "./src/drawingConfig.js";
 import { renderSceneConfig, closeSceneConfig, closeInitialViewForm } from "./src/sceneConfig.js";
 import {socket, sendUpdate} from "./src/socket.js";
 import { updatePopup, setLockView, getEnable,blackSidebar } from "./src/misc.js";
 import { constrainView_Override, pan_OverrideHigherRes } from "./src/overrides.js";
+import { compatibilityInit } from "./src/compatibilityHandler.js";
 
 export const moduleName = "LockView";
 
@@ -47,7 +48,7 @@ Hooks.on("updateDrawing",()=>{ forceConstrain() });
 Hooks.on("closeinitialViewForm", () => { closeInitialViewForm() })
 Hooks.on("setLockView", (data) => { setLockView(data) })
 Hooks.on("sidebarCollapse", (app,collapse) => { getFlags(); forceConstrain(); setUI(collapse) });
-Hooks.on("collapseSidebar", (app,collapse) => { getFlags(); forceConstrain(); setUI(collapse) });
+Hooks.on("collapseSidebar", (app,collapse) => { getFlags(); forceConstrain(); setUI(collapse); });
 Hooks.on("renderSceneNavigation", () => { setUI(sidebarCollapsed) });
 Hooks.on("lightingRefresh", () => { getFlags(); applySettings(lockPan && lockZoom); });
 Hooks.on("updateCombat", () => { combatTrigger = true;})
@@ -60,6 +61,9 @@ Hooks.on('canvasPan',(canvas,data)=>{
 });
 
 Hooks.once('init', function(){
+
+  compatibilityInit();
+
   //Store default canvas prototype functions
   storeDefaultPrototypes();
   
@@ -187,9 +191,10 @@ async function onRenderSceneControls(controls) {
   if (editEnable == undefined) { 
     await canvas.scene.setFlag('LockView', 'editViewbox', false);
     editEnable = false;
+    updateControlButtons();
   }
 
-  if (editEnable && controls.activeTool != "EditViewbox") {
+  if (editEnable && controls.activeControl != "LockView") {
     await canvas.scene.setFlag('LockView', 'editViewbox', false);
     await setBlocks();
 
@@ -201,7 +206,9 @@ async function onRenderSceneControls(controls) {
     lockViewControls.activeTool = undefined;
     
     getViewboxData();
+    updateControlButtons();
   }
+  
 }
 
 /*
@@ -239,17 +246,6 @@ async function onRenderSidebarTab(){
   sendViewBox();
 }
 
-function waitForHudToRender() {
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      if (canvas.hud.rendered) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, 100);
-  });
-}
-
 function forceInitialView() {
   if (newSceneLoad) return canvas.scene.initial;
   else return {};
@@ -266,15 +262,7 @@ export async function applySettings(force=false,forceInitial=true) {
   //Get the flags for this scene
   await getFlags();
 
-  if (rotation != null) {
-    let rotationRadians = rotation*Math.PI/180
-    canvas.stage.rotation = rotationRadians
-    // The first time the canvas is rendered, the hud may not exist yet
-    // so don't try to rotate hud until it has rendered
-    waitForHudToRender().then(() => {
-      canvas.hud._element[0].style.rotate = `${rotationRadians}rad`
-    })
-  };
+  if (rotation != null) canvas.stage.rotation = rotation*Math.PI/180;
 
   //If 'autoScale' if 'horizontal fit', 'vertical fit' or 'automatic fit'
   if (autoScale > 0 && autoScale < 5 && force) 
@@ -303,9 +291,8 @@ export async function applySettings(force=false,forceInitial=true) {
     }
   }
 
-  //Set sidebar background to black if 'blackenSidebar' and 'excludeSidebar' are on
-  let blkSidebar = (blackenSidebar && excludeSidebar ? true : false);
-  blackSidebar(blkSidebar);
+  //Set sidebar background to black if 'blackenSidebar' is on
+  blackSidebar(blackenSidebar);
 
   //Set the blocks to the correct settings
   await setBlocks( {pan:lockPan, zoom:lockZoom, bBox: boundingBox} );

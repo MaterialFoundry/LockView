@@ -2,14 +2,18 @@ import { applySettings, forceConstrain, getPhysicalScale, moduleName } from "../
 import { sendUpdate } from "./socket.js";
 import { viewbox, getViewboxData } from "./viewbox.js";
 import { SceneConfigurator, fillMissingSceneSettings } from "./settings.js";
+import { compatibilityHandler } from "./compatibilityHandler.js";
 
 let storedFlags = {};
+let hideUiElementFlags;
 
 /*
  * Push Lock View settings onto the scene configuration menu
  */
 export async function renderSceneConfig(app,html){ 
+    console.log('renderSceneConfig')
     getViewboxData();
+    hideUiElementFlags = undefined;
 
     let flags = fillMissingSceneSettings(app.object.flags.LockView, true);
 
@@ -124,9 +128,9 @@ export async function renderSceneConfig(app,html){
         <i class="fas fa-lock"></i> Lock View
         </a>`;
     const contents = `<div class="tab" data-tab="lockview">${sceneConfigHtml}</div>`
-    html.find(".tabs .item").last().after(tab);
-    html.find(".tab").last().after(contents);
 
+    compatibilityHandler('sceneTab', html).after(tab);
+    compatibilityHandler('sceneTabContents', html).after(contents)
     
     const setInitialViewButton = html.find("button[id = 'LockView_setInitialView']");
     setInitialViewButton.on("click",event => {
@@ -138,7 +142,8 @@ export async function renderSceneConfig(app,html){
 
     const setUIElementsButton = html.find("button[id = 'LockView_setUIelements']");
     setUIElementsButton.on("click",event => {
-        handleUIelementsDialog(flags.hideUIelements,app);
+        if (hideUiElementFlags == undefined) hideUiElementFlags = flags.hideUIelements;
+        handleUIelementsDialog(hideUiElementFlags,app);
     })
 
     const openSceneConfigurator = html.find("button[id='LockView_sceneConfigurator']");
@@ -189,7 +194,7 @@ function handleUIelementsDialog(hideUIelements,app) {
                 hotbar: html.find("input[id ='LockView_hideUI_Hotbar']").is(":checked"),
                 sidebar: html.find("input[id ='LockView_hideUI_Sidebar']").is(":checked")
             }
-            app.object.setFlag('LockView', 'hideUIelements', uiElements);
+            hideUiElementFlags = uiElements;
         }
        });
        d.render(true);
@@ -216,7 +221,7 @@ export async function closeSceneConfig(app,html){
         excludeSidebar: html.find("input[name ='LV_excludeSidebar']").is(":checked"),
         hideUI: html.find("input[name ='LV_hideUI']").is(":checked"),
         forceInit: html.find("input[name ='LV_forceInit']").is(":checked"),
-        hideUIelements: flags.hideUIelements
+        hideUIelements: hideUiElementFlags == undefined ? flags.hideUIelements : hideUiElementFlags
     };
     for (let flag of Object.entries(config)) {
         await app.object.setFlag('LockView',flag[0],flag[1]);
@@ -461,7 +466,7 @@ export class initialViewForm extends FormApplication {
      * Default Options for this FormApplication
      */
     static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
+        return foundry.utils.mergeObject(super.defaultOptions, {
             id: "lockView_initialViewForm",
             title: game.i18n.localize("LockView.SetInitialView.Title"),
             template: "./modules/LockView/templates/initialView.html",
@@ -564,15 +569,15 @@ export class initialViewForm extends FormApplication {
                 scale: scale
             }
             initialViewBox.updateBox(newData);
-            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
-            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*compatibilityHandler('gridSize'));
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*compatibilityHandler('gridSize'));
         });
 
         gridX.on("change", event => {
-            let scale = window.innerWidth/(canvas.scene.data.grid*event.target.value);
+            let scale = window.innerWidth/(compatibilityHandler('gridSize')*event.target.value);
             if (scale > CONFIG.Canvas.maxZoom){
                 scale = CONFIG.Canvas.maxZoom;
-                html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
+                html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*compatibilityHandler('gridSize'));
             }
             const newData = {
                 x: initialViewBox.data.centerX,
@@ -581,14 +586,14 @@ export class initialViewForm extends FormApplication {
             }
             initialViewBox.updateBox(newData);
             html.find("input[name='dataScale']")[0].value = scale;
-            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*compatibilityHandler('gridSize'));
         });
 
         gridY.on("change", event => {
-            let scale = window.innerHeight/(canvas.scene.data.grid*event.target.value);
+            let scale = window.innerHeight/(compatibilityHandler('gridSize')*event.target.value);
             if (scale > CONFIG.Canvas.maxZoom){
                 scale = CONFIG.Canvas.maxZoom;
-                html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+                html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*compatibilityHandler('gridSize'));
             }
             const newData = {
                 x: initialViewBox.data.centerX,
@@ -597,7 +602,7 @@ export class initialViewForm extends FormApplication {
             }
             initialViewBox.updateBox(newData);
             html.find("input[name='dataScale']")[0].value = scale;
-            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*compatibilityHandler('gridSize'));
         });
 
         physicalScale.on("click", event => {
@@ -612,8 +617,8 @@ export class initialViewForm extends FormApplication {
             }
             initialViewBox.updateBox(newData);
             html.find("input[name='dataScale']")[0].value = scale;
-            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*canvas.scene.data.grid);
-            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*canvas.scene.data.grid);
+            html.find("input[name='gridX']")[0].value = window.innerWidth/(scale*compatibilityHandler('gridSize'));
+            html.find("input[name='gridY']")[0].value = window.innerHeight/(scale*compatibilityHandler('gridSize'));
         });
 
         snapGrid.on("click", event => {
@@ -625,7 +630,7 @@ export class initialViewForm extends FormApplication {
             else if (snapDir == 'downLeft') position = {x: initialViewBox.data.x, y: initialViewBox.data.y + initialViewBox.data.height};
             else if (snapDir == 'downRight') position = {x: initialViewBox.data.x + initialViewBox.data.width, y: initialViewBox.data.y + initialViewBox.data.height};
 
-            const center = canvas.grid.getCenter(position.x,position.y);
+            const center = compatibilityHandler('getCenter', canvas.grid, position.x, position.x);
             const gridSize = this.scene.grid.size;
             let offset = {
                 x:gridSize/2, 

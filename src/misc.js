@@ -21,8 +21,8 @@ export function compareVersions(checkedVersion, requiredVersion) {
 
 export function compatibleCore(compatibleVersion){
   const split = compatibleVersion.split(".");
-  if (split.length == 2) compatibleVersion = `0.${compatibleVersion}`;
-  let coreVersion = game.version == undefined ? game.data.version : `0.${game.version}`;
+  if (split.length == 1) compatibleVersion = `${compatibleVersion}.0`;
+  let coreVersion = game.version;
   return compareVersions(compatibleVersion, coreVersion);
 }
 

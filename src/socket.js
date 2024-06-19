@@ -31,11 +31,7 @@ async function resetView(payload){
     let newPosition = canvas.scene.initial;
     if (newPosition == null) newPosition = canvas.scene._viewPosition;
     
-    if (payload.rotateSett != "null") {
-      let rotationRadians = payload.rotateSett*Math.PI/180;
-      canvas.stage.rotation = rotationRadians
-      canvas.hud._element[0].style.rotate = `${rotationRadians}rad`
-    };
+    if (payload.rotateSett != "null") canvas.stage.rotation = payload.rotateSett*Math.PI/180;
     if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
     else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
     else if (payload.scaleSett == 3){
@@ -140,6 +136,7 @@ function onUpdateSetting(payload) {
  * Set a new view for the user
  */
 async function newView(payload){
+  //console.log('newView',payload)
     if (getViewboxEnable(game.userId)==false) return;
     const users = payload.users;
     if (users == undefined) return;
@@ -149,11 +146,7 @@ async function newView(payload){
     let scale;
     let position = canvas.scene._viewPosition;
 
-    if (payload.rotateSett > 0) {
-      let rotationRadians = payload.rotateSett*Math.PI/180;
-      canvas.stage.rotation = rotationRadians
-      canvas.hud._element[0].style.rotate = `${rotationRadians}rad`
-    };
+    if (payload.rotateSett > 0) canvas.stage.rotation = payload.rotateSett*Math.PI/180;
 
     if (payload.scaleSett == 0) position.scale = canvas.scene._viewPosition.scale;
     else {
@@ -181,7 +174,9 @@ async function newView(payload){
         screenWidth = ui.sidebar._element[0].offsetLeft;
       }
     
-      if (payload.scaleChange != null) position.scale = screenWidth/payload.scaleChange;
+      if (payload.scaleChange != null) {
+        position.scale = screen.width/payload.scaleChange;
+      }
       else position.scale = canvas.scene._viewPosition.scale;
       if (payload.shiftX != null) position.x = payload.shiftX + offset/(2*position.scale);;
       if (payload.shiftX != null) position.y = payload.shiftY;

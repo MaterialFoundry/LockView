@@ -148,7 +148,7 @@ export class Viewbox extends CanvasLayer {
  */
 export function drawViewbox(payload){
   let overrideSetting = game.settings.get(moduleName ,'userSettingsOverrides')[game.user.role].control;
-  let userSetting = game.settings.get(moduleName,'userSettings').filter(u => u.id == game.user.id)[0].control;
+  let userSetting = game.settings.get(moduleName,'userSettings').filter(u => u.id == game.user.id)[0]?.control;
   if ((overrideSetting == false || overrideSetting == undefined) && (userSetting == false || userSetting == undefined) && (game.user.isGM == false || mouseMode != null)) return;
 
   viewboxStorage = payload;

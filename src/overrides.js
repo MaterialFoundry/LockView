@@ -1,4 +1,5 @@
 import { boundingBox, excludeSidebar } from "./blocks.js";
+import { compatibilityHandler } from "./compatibilityHandler.js";
 import { getEnable } from "./misc.js";
 
   /**
@@ -60,7 +61,7 @@ import { getEnable } from "./misc.js";
         let activeToken = false;
         for (let j=0; j<controlledTokens.length; j++){
           //Get the center of the token
-          let center = controlledTokens[j].getCenter(controlledTokens[j].x,controlledTokens[j].y);
+          let center = compatibilityHandler('getCenter', controlledTokens[j], controlledTokens[j].x, controlledTokens[j].y);
           
           //Check if it is within the rectangle
           if (center.x>=rectTemp.Xmin && center.x<=rectTemp.Xmax && center.y>=rectTemp.Ymin && center.y<=rectTemp.Ymax){
@@ -117,7 +118,7 @@ import { getEnable } from "./misc.js";
     if (boundingBox) min = scaleMin;
     
     //Get the new scale
-    scale = Math.round(Math.clamped(scale, min, max) * 2000) / 2000;
+    scale = Math.round(compatibilityHandler('clamp', scale, min, max) * 2000) / 2000;
     
     //Set the bounding box
     bound.Xmin = rect.Xmin+window.innerWidth/(2*scale);
@@ -129,17 +130,17 @@ import { getEnable } from "./misc.js";
     if (Number.isNumeric(x) == false) x = canvas.stage.pivot.x;
     const padw = 0.4 * (window.innerWidth / scale);
     if (boundingBox){
-      x = Math.clamped(x, bound.Xmin, bound.Xmax);
+      x = compatibilityHandler('clamp', x, bound.Xmin, bound.Xmax);
     }
-    else x = Math.clamped(x, -padw, d.width + padw);
+    else x = compatibilityHandler('clamp', x, -padw, d.width + padw);
    
     //Get the new y value
     if (Number.isNumeric(y) == false) y = canvas.stage.pivot.y;
     const padh = 0.4 * (window.innerHeight / scale);
     if (boundingBox){
-      y = Math.clamped(y, bound.Ymin, bound.Ymax);
+      y = compatibilityHandler('clamp', y, bound.Ymin, bound.Ymax);
     }
-    else y = Math.clamped(y, -padh, d.height + padh);
+    else y = compatibilityHandler('clamp', y, -padh, d.height + padh);
     
     return {x, y, scale};
   }
@@ -156,6 +157,7 @@ import { getEnable } from "./misc.js";
     canvas.scene._viewPosition = constrained;
     Hooks.callAll("canvasPan", this, constrained);
     this.hud.align();
+    compatibilityHandler('refreshVision');
   }
 
 /**
@@ -195,6 +197,8 @@ export function pan_Override({x=null, y=null, scale=null}={}) {
 
   // Align the HUD
   this.hud.align();
+
+  compatibilityHandler('refreshVision');
 }
 
 let panTime = 0;
@@ -221,6 +225,7 @@ export function onDragCanvasPan_Override(event){
   else if ( y > window.innerHeight - pad ) dy = shift;
 
   const constrained = constrainView_Override({x:this.stage.pivot.x + dx, y:this.stage.pivot.y + dy});
+
   // Enact panning
   if ( dx || dy ) return this.animatePan({x: constrained.x, y: constrained.y, duration: 200});
 }
@@ -269,7 +274,7 @@ function constrainView({x, y, scale}) {
   if ( Number.isNumeric(scale) && (scale !== canvas.stage.scale.x) ) {
     const max = CONFIG.Canvas.maxZoom;
     const ratio = Math.max(d.width / window.innerWidth, d.height / window.innerHeight, max);
-    scale = Math.clamped(scale, 1 / ratio, max);
+    scale = compatibilityHandler('clamp', scale, 1 / ratio, max);
   } else {
     scale = canvas.stage.scale.x;
   }
@@ -278,12 +283,12 @@ function constrainView({x, y, scale}) {
   // Constrain the pivot point using the new scale
   if ( Number.isNumeric(x) && x !== canvas.stage.pivot.x ) {
     const padw = 0.4 * (window.innerWidth / scale);
-    x = Math.clamped(x, -padw, d.width + padw);
+    x = compatibilityHandler('clamp', x, -padw, d.width + padw);
   }
   else x = canvas.stage.pivot.x;
   if ( Number.isNumeric(y) && y !== canvas.stage.pivot.y ) {
     const padh = 0.4 * (window.innerHeight / scale);
-    y = Math.clamped(y, -padh, d.height + padh);
+    y = compatibilityHandler('clamp', y, -padh, d.height + padh);
   }
   else y = canvas.stage.pivot.y;
 

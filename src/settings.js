@@ -246,7 +246,7 @@ export class SceneConfigurator extends FormApplication {
    * Default Options for this FormApplication
    */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
         id: "lockView_sceneConfigurator",
         title: "Lock View: "+game.i18n.localize("LockView.Sett.SceneConfigurator.Title"),
         template: "./modules/LockView/templates/sceneConfigurator.html",
@@ -476,7 +476,7 @@ export class enableMenu extends FormApplication {
    * Default Options for this FormApplication
    */
   static get defaultOptions() {
-      return mergeObject(super.defaultOptions, {
+      return foundry.utils.mergeObject(super.defaultOptions, {
           id: "enableMenu",
           title: "Lock View: "+game.i18n.localize("LockView.Sett.EnableMenu"),
           template: "./modules/LockView/templates/enableMenu.html"
@@ -647,7 +647,7 @@ export class helpMenu extends FormApplication {
    * Default Options for this FormApplication
    */
   static get defaultOptions() {
-      return mergeObject(super.defaultOptions, {
+      return foundry.utils.mergeObject(super.defaultOptions, {
           id: "helpMenu",
           title: "Lock View: "+game.i18n.localize("LockView.Sett.HelpMenu"),
           template: "./modules/LockView/templates/helpMenu.html",

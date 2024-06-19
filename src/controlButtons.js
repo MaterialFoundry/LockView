@@ -96,9 +96,11 @@ export function updateControlButtons() {
   if (game.settings.get(moduleName,'hideControlButton') || (overrideSetting == false || overrideSetting == undefined) && (userSetting == false || userSetting == undefined) && (game.user.isGM == false || canvas == null)) return;
 
   getFlags();
-  ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "PanLock").active = lockPan;
-  ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
-  ui.controls.controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
+  const tools = ui.controls.controls.find(controls => controls.name == "LockView").tools;
+  tools.find(tools => tools.name == "PanLock").active = lockPan;
+  tools.find(tools => tools.name == "ZoomLock").active = lockZoom;
+  tools.find(tools => tools.name == "BoundingBox").active = boundingBox;
+  tools.find(tools => tools.name == "EditViewbox").active = canvas.scene.getFlag('LockView', 'editViewbox');
   ui.controls.render();
 }
 
@@ -185,10 +187,12 @@ export function pushControlButtons(controls){
         title: game.i18n.localize("LockView.ControlBtns.Label_Viewbox"),
         icon: "far fa-square",
         visible: true,
-        onClick: () => {
+        onClick: async () => {
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox");
           let currentState = currentTool.active;
           viewbox(currentState,currentTool);
+          await canvas.scene.setFlag('LockView', 'editViewbox', false);
+          updateControlButtons();
         },
         toggle: true,
         active: game.settings.get("LockView","viewbox")
@@ -199,8 +203,8 @@ export function pushControlButtons(controls){
         icon: "fas fa-vector-square",
         visible: true,
         onClick: () => { editViewboxConfig(controls) },
-        toggle: false,
-        active: game.settings.get("LockView","editViewbox")
+        toggle: true,
+        active: canvas.scene.getFlag('LockView', 'editViewbox')
       },
     ],
   });
@@ -311,9 +315,9 @@ function handleMouseMove(e){
   let position = e.data.getLocalPosition(canvas.stage);
   let width = VIEWBOX.viewbox[selectedViewbox].boxWidth;
   let height = VIEWBOX.viewbox[selectedViewbox].boxHeight;
-  
+
   if (mouseMode == 'move') {
-    position.x += 20 - startOffset.x + VIEWBOX.viewbox[selectedViewbox].boxWidth/2
+    position.x += 20 - startOffset.x;// + VIEWBOX.viewbox[selectedViewbox].boxWidth/2
     position.y += 20 - startOffset.y + VIEWBOX.viewbox[selectedViewbox].boxHeight/2
 
     let payload = {
@@ -332,7 +336,7 @@ function handleMouseMove(e){
     let offset = VIEWBOX.viewbox[selectedViewbox].scaleLocation.x - position.x;
     position.scale = (width - offset)/width;
     
-    position.x = VIEWBOX.viewbox[selectedViewbox].xStorage + Math.floor(width / 2) - offset/2;
+    position.x = VIEWBOX.viewbox[selectedViewbox].xStorage - offset/2;
     position.y = VIEWBOX.viewbox[selectedViewbox].yStorage + Math.floor(height / 2) - offset*height/(2*width);
     
     width *= position.scale;
@@ -356,7 +360,7 @@ function handleMouseMove(e){
   //update viewbox
   VIEWBOX.viewbox[selectedViewbox].updateViewbox(
     {
-      x: position.x,
+      x: position.x + VIEWBOX.viewbox[selectedViewbox].boxWidth/2,
       y: position.y,
       width: width,
       height: height,

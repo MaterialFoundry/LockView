@@ -4,6 +4,7 @@ Fixes:
 <ul>
 <li>Default scene config is now properly applied on new scenes</li>
 <li>Physical Gridsize can now be applied to all scenes when accessed through the 'Set View' control button</li>
+<li>When editing what UI elements to hide, other changes to scene settings are no longer reset</li>
 </ul>
 
 ### v1.5.8 - 14-09-2023
