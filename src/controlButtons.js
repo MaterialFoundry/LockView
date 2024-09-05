@@ -191,7 +191,7 @@ export function pushControlButtons(controls){
           let currentTool = controls.find(controls => controls.name == "LockView").tools.find(tools => tools.name == "Viewbox");
           let currentState = currentTool.active;
           viewbox(currentState,currentTool);
-          await canvas.scene.setFlag('LockView', 'editViewbox', false);
+          await canvas.scene?.setFlag('LockView', 'editViewbox', false);
           updateControlButtons();
         },
         toggle: true,
@@ -204,7 +204,7 @@ export function pushControlButtons(controls){
         visible: true,
         onClick: () => { editViewboxConfig(controls) },
         toggle: true,
-        active: canvas.scene.getFlag('LockView', 'editViewbox')
+        active: canvas.scene?.getFlag('LockView', 'editViewbox')
       },
     ],
   });
