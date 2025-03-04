@@ -286,7 +286,8 @@ export class SceneConfigurator extends FormApplication {
         {label: game.i18n.localize("LockView.Scene.Rotation.Landscape_Short"), value:'0', selected:''},
         {label: game.i18n.localize("LockView.Scene.Rotation.Portrait_Short"), value:'90', selected:''},
         {label: game.i18n.localize("LockView.Scene.Rotation.FlippedLandscape_Short"), value:'180', selected:''},
-        {label: game.i18n.localize("LockView.Scene.Rotation.FlippedPortrait_Short"), value:'270', selected:''}
+        {label: game.i18n.localize("LockView.Scene.Rotation.FlippedPortrait_Short"), value:'270', selected:''},
+        {label: "Isometric View", value: '330', selected: ''}
       ];
       
       if (i == game.scenes.size) {
