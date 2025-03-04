@@ -77,6 +77,7 @@ export async function renderSceneConfig(app,html){
             <option value=90 ${flags.rotation==90 ? "selected" : ""}>${rotationOptions[1]}</option>
             <option value=180 ${flags.rotation==180 ? "selected" : ""}>${rotationOptions[2]}</option>
             <option value=270 ${flags.rotation==270 ? "selected" : ""}>${rotationOptions[3]}</option>
+            <option value=330 ${flags.rotation==330 ? "selected" : ""}>${rotationOptions[4]}</option>
             </select>
         <p class="notes">${game.i18n.localize("LockView.Scene.Rotation_Hint")}</p>
     </div>
