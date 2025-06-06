@@ -92,7 +92,6 @@ export class UserConfig extends HandlebarsApplicationMixin(ApplicationV2) {
         
         await game.settings.set(moduleName, 'userSettings', userData);
         await game.settings.set(moduleName, 'defaultUserSettings', data.default);
-        lockView.userSettings = userData.find(s => s.id === game.userId);
         lockView.refresh();
     }
 }

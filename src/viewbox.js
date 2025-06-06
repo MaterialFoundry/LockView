@@ -1,4 +1,5 @@
 import { moduleName } from "../lockview.js";
+import { Helpers } from "./helpers.js";
 
 /**
  * The Viewbox class handles the display of viewboxes for users with 'Control' enabled, 
@@ -12,9 +13,8 @@ export class Viewbox {
     activeViewbox;          /* Stores the user id of the active viewbox */
 
     constructor() {
-
         Hooks.on('userConnected', (user, connected) => {
-            if (lockView.userSettings.control && !connected) this.remove(user);
+            if (Helpers.getUserSetting('control') && !connected) this.remove(user);
         })
     }
 
@@ -74,7 +74,7 @@ export class Viewbox {
      * Only happens for users with 'Viewbox' enabled.
      */
     emit() {
-        if (!lockView.userSettings.viewbox) return;
+        if (!Helpers.getUserSetting('viewbox')) return;
         lockView.socket.emitViewbox();
     }
 
@@ -275,7 +275,7 @@ export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
             .drawRect(0, 0, this.data.width, this.data.height) 
             .hitArea = new PIXI.Rectangle(0, 0, data.width, data.height)
         this.label.position.set(data.width / 2,-15);
-        this.resizeButton.setTransform(20 + data.width/2, 20 + data.height);
+        this.resizeButton.setTransform(20 + data.width, 20 + data.height);
         
         this.container.setTransform(data.position.x - data.width/2, data.position.y - data.height/2);
     }

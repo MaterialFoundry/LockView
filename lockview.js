@@ -20,10 +20,9 @@ export const documentationUrl = "https://materialfoundry.github.io/LockView/";
 
 class LockView {
   constructor() {
-    this.userSettings = game.settings.get(moduleName, 'userSettings').find(s => s.id === game.userId);
     let hideControlButton = game.settings.get(moduleName, "hideControlButton");
-    this.controlButtonVisible = this.userSettings.control && !hideControlButton;
-    this.locks = new Locks(this.userSettings.enable);
+    this.controlButtonVisible = Helpers.getUserSetting('control') && !hideControlButton;
+    this.locks = new Locks(Helpers.getUserSetting('enable'));
     this.migrationHandler = new migrationHandler();
     this.sceneHandler = new SceneHandler();
     this.Helpers = Helpers;
@@ -39,7 +38,6 @@ class LockView {
   }
 
   refresh(fromSocket=false) {
-    this.userSettings = game.settings.get(moduleName, 'userSettings').find(s => s.id === game.userId);
     const locks = canvas.scene.getFlag(moduleName, 'locks');
     this.locks.update(locks);
     this.viewbox.removeAll();
@@ -47,7 +45,7 @@ class LockView {
     if (!fromSocket) this.socket.refresh();
 
     setTimeout(()=> {
-      if (this.userSettings.control) this.socket.requestViewbox();
+      if (Helpers.getUserSetting('control')) this.socket.requestViewbox();
     }, 100);
   }
 }
@@ -56,12 +54,14 @@ Hooks.once('init', () => {
   registerLibWrapperFunctions();
   registerSettings();
   initializeControlButtons();
+});
 
+Hooks.once('setup', () => {
   globalThis.lockView = new LockView();
 });
 
 Hooks.once('ready', async()=>{
-  if (lockView.userSettings.control)
+  if (Helpers.getUserSetting('control'))
     lockView.socket.requestViewbox();
   lockView.viewbox.emit();
 

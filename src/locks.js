@@ -1,4 +1,4 @@
-import { moduleName } from "../lockview.js";
+import { Helpers } from "./helpers.js";
 
 export class Locks {
     pan = false;
@@ -42,7 +42,7 @@ export class Locks {
             ui.controls.render();
         }
 
-        if (options.save && lockView.userSettings.control) {
+        if (options.save && Helpers.getUserSetting('control')) {
             if (game.user.isGM) {
                 canvas.scene.setFlag('LockView', 'locks', this.get());
             }
