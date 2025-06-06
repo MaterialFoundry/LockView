@@ -1,4 +1,33 @@
 # Changelog
+
+### v2.0.0
+The module has been completely rewritten, so new bugs are to be expected.
+Compatible with Foundry v13, dropped compatibility with Foundry v12.
+
+Additions:
+<ul>
+<li>LibWrapper is now used to help prevent module incompatibilities</li>
+<li>User Config: Added 'Static' option to create users that don't change scenes when they're normally activated. The GM can control which scene is viewed by these users by right-clicking a scene in the scene navigation</li>
+<li>Set View dialog: Options are stored and recalled when re-opened</li>
+<li>Set View dialog: Added user selection</li>
+<li>Scene Config: Expanded options for when to hide UI elements</li>
+<li>Scene Config: Added option to hide the camera feed</li>
+<li>Module Settings: Added 'Right-Drag Viewbox Editing' option to enable or disable dragging the viewbox with the right mouse button</li>
+<li>Module Settings: Added 'Force GM-Set Settings' for the 'Physical Grid Size' which allows the GM to override all user configured grid size settings</li>
+<li>Module Settings: Added 'Pan Canvas to Ping Behavior' to allow panning through pings even when locks are applied</li>
+</ul>
+
+Removals:
+<ul>
+<li>Removed 'Rotation' option from scene config because it was too buggy</li>
+</ul>
+
+Other:
+<ul>
+<li>Switched all applications over to ApplicationV2</li>
+<li>Reoganized scene flags. Old scene flags are no longer used, existing flags should automatically migrate</li>
+</ul>
+
 ### v1.5.9 - 11-10-2023
 Fixes:
 <ul>

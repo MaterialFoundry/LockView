@@ -1,0 +1,81 @@
+<div>
+    <p>
+        {{localize "LOCKVIEW.InitialViewConfig.Hint_A"}}<br>
+        {{localize "LOCKVIEW.InitialViewConfig.Hint_B"}}<br>
+        <i>{{localize "LOCKVIEW.InitialViewConfig.Hint_C"}}<br></i>
+    </p>
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.InitialViewConfig.CurrentInitialView"}}</label>
+        <div class="form-fields">
+            <label>X</label>
+            <input type="number" name="initial.x" value={{initialView.x}} step="1" disabled>
+            <label>Y</label>
+            <input type="number" name="initial.y" value={{initialView.y}} step="1" disabled>
+            <label>Scale</label>
+            <input type="number" name="initial.scale" value={{initialView.scale}} step="any" disabled>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.InitialViewConfig.NewInitialView"}}</label>
+        <div class="form-fields">
+            <label>X</label>
+            <input type="number" name="newInitial.x" value={{initialView.x}} step="1">
+            <label>Y</label>
+            <input type="number" name="newInitial.y" value={{initialView.y}} step="1">
+            <label>Scale</label>
+            <input type="number" name="newInitial.scale" value={{initialView.scale}} step="any">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.InitialViewConfig.SizeInGridSpaces"}}</label>
+        <div class="form-fields">
+            <label>X</label>
+            <input type="number" name="gridSpaces.x" value={{gridSpaces.x}} step="any">
+            <label>Y</label>
+            <input type="number" name="gridSpaces.y" value={{gridSpaces.y}} step="any">
+            <label style="visibility: hidden">Scale</label>
+            <input type="number" style="visibility: hidden">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.InitialViewConfig.SetToPhysicalGridSize"}}</label>
+        <div class="form-fields">
+            <button type="button" data-action="setToPhysicalGridSize">{{localize "LOCKVIEW.InitialViewConfig.SetToPhysicalGridSize"}}</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.InitialViewConfig.SetToPlayerView"}}</label>
+        <div class="form-fields">
+            <select name="playerView">
+                {{selectOptions users}}
+            </select>
+            <button type="button" data-action="captureView">{{localize "LOCKVIEW.InitialViewConfig.CaptureView"}}</button>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.InitialViewConfig.SnapToGrid"}}</label>
+        <div class="form-fields">
+            <select name="snapToGrid">
+                <option value="topLeft">{{localize "LOCKVIEW.InitialViewConfig.SnapDir.TopLeft"}}</option>
+                <option value="topRight">{{localize "LOCKVIEW.InitialViewConfig.SnapDir.TopRight"}}</option>
+                <option value="bottomLeft">{{localize "LOCKVIEW.InitialViewConfig.SnapDir.BottomLeft"}}</option>
+                <option value="bottomRight">{{localize "LOCKVIEW.InitialViewConfig.SnapDir.BottomRight"}}</option>
+            </select>
+            <button type="button" data-action="snapToGrid">{{localize "LOCKVIEW.InitialViewConfig.SnapToGrid"}}</button>
+        </div>
+    </div>
+
+    <footer class="form-footer">
+        <button type="submit">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>{{localize "LOCKVIEW.InitialViewConfig.SaveChanges"}}</span>
+        </button>
+    </footer>
+
+</div>

@@ -1,0 +1,136 @@
+<div>
+    <p>
+        {{localize "LOCKVIEW.SceneConfigurator.AppHint"}}<br>
+        {{localize "LOCKVIEW.SceneConfigurator.Default_Hint"}}<br>
+
+        <ul>
+            <li><b>{{localize "LOCKVIEW.SceneConfigurator.Copy"}}</b>: {{localize "LOCKVIEW.SceneConfigurator.Copy_Hint"}}</li>
+            <li><b>{{localize "LOCKVIEW.SceneConfigurator.Paste"}}</b>: {{localize "LOCKVIEW.SceneConfigurator.Paste_Hint"}}</li>
+            <li><b>{{localize "LOCKVIEW.SceneConfigurator.Reset"}}</b>: {{localize "LOCKVIEW.SceneConfigurator.Reset_Hint"}}</li>
+        </ul>
+        
+    </p>
+
+    <header class="table-header flexrow" id="lockView-headerTop" name="headerTop">
+        <div class="columnName"></div>
+        <div class="vl-top"></div>
+
+        <div class="columnCB">&nbsp;</div>
+        <label class="columnCB" style="margin-left:-5px; margin-right:5px">{{localize "LOCKVIEW.Locks.Label"}}</label>
+        <div class="columnCB">&nbsp;</div>
+        <div class="vl-top"></div>
+
+        <div class="columnSelect columnAutoscale">&nbsp;</div>
+        <div class="vl-top"></div>
+
+        <div class="columnSelect columnSidebarSceneLoad">&nbsp;</div>
+        <div class="columnCB" style="margin-left:-75px; margin-right:75px">{{localize "LOCKVIEW.SceneConfig.Sidebar.Label"}}</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="vl-top"></div>
+
+        <div class="columnSelect columnHideOn">&nbsp;</div>
+        <label class="columnCB" style="margin-left:-35px; margin-right:35px">{{localize "LOCKVIEW.SceneConfig.UI.Label"}}</label>
+        <div class="columnCB">&nbsp;</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="vl-top"></div>
+
+        <div class="columnCB">&nbsp;</div>
+        <div class="vl-top"></div>
+
+        <div class="columnButton">&nbsp;</div>
+        <div class="columnButton">&nbsp;</div>
+        <div class="columnButton">&nbsp;</div>
+    </header>
+
+    <header class="table-header flexrow" name="headerBottom">
+        <div class="columnName"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfigurator.Name"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.Locks.PanLock"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.Locks.ZoomLock"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.Locks.BoundingBox"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnSelect columnAutoscale"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Autoscale.Label"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnSelect columnSidebarSceneLoad"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Sidebar.OnSceneLoad"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Sidebar.ExcludeSidebar"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Sidebar.BlackenSidebar"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnSelect columnHideOn"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.HideOn"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.SceneControls"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.Hotbar"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.SceneNavigation"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.Players"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.ChatNotifications"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.CameraViews"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.Sidebar"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.ForceInitialView.Label"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnButton"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfigurator.Copy"}}</label></div>
+        <div class="columnButton"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfigurator.Paste"}}</label></div>
+        <div class="columnButton"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfigurator.Reset"}}</label></div>
+    </header>
+
+    <ul class="sceneConfigurator-list">
+    {{#each scenes as |s|}}
+        {{#if s.default}}<hr>{{/if}}
+        <li class="sceneConfigurator-line form-group">
+            <label class="columnName {{#if s.default}}defaultConfig{{/if}}">{{s.name}}</label>
+            <div class="vl-li"></div>
+
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="locks.pan" {{#if s.settings.locks.pan.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="locks.zoom" {{#if s.settings.locks.zoom.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="locks.boundingBox" {{#if s.settings.locks.boundingBox.initial}} checked {{/if}}></label>
+            <div class="vl-li"></div>
+
+            <label class="columnSelect columnAutoscale">
+                <select  data-scene="{{s.id}}" data-action="autoscale">
+                    {{selectOptions s.settings.autoscale.options selected=s.settings.autoscale.value}}
+                </select>
+            </label>
+            <div class="vl-li"></div>
+
+            <label class="columnSelect columnSidebarSceneLoad">
+                <select  data-scene="{{s.id}}" data-action="sidebar.sceneLoad">
+                    {{selectOptions s.settings.sidebar.sceneLoad.options selected=s.settings.sidebar.sceneLoad.value}}
+                </select>
+            </label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="sidebar.exclude" {{#if s.settings.sidebar.exclude.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="sidebar.blacken" {{#if s.settings.sidebar.blacken.initial}} checked {{/if}}></label>
+            <div class="vl-li"></div>
+
+            <label class="columnSelect columnHideOn">
+                <select  data-scene="{{s.id}}" data-action="ui.hideOn">
+                    {{selectOptions s.settings.ui.hideOn.options selected=s.settings.ui.hideOn.value}}
+                </select>
+            </label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.scene-controls" {{#if s.settings.ui.sceneControls.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.hotbar" {{#if s.settings.ui.hotbar.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.scene-navigation" {{#if s.settings.ui.sceneNavigation.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.players" {{#if s.settings.ui.players.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.chat-notifications" {{#if s.settings.ui.chatNotifications.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.camera-views" {{#if s.settings.ui.cameraViews.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.sidebar" {{#if s.settings.ui.sidebar.initial}} checked {{/if}}></label>
+            <div class="vl-li"></div>
+
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="ui.forceInitialView" {{#if s.settings.forceInitialView.initial}} checked {{/if}}></label>
+            <div class="vl-li"></div>
+
+            <label class="columnButton" {{#if s.default}}style="visibility:hidden"{{/if}}><button type="button" data-scene="{{s.id}}" data-action="copy"><i class="fas fa-copy"></i></button></label>
+            <label class="columnButton" {{#if s.default}}style="visibility:hidden"{{/if}}><button type="button" data-scene="{{s.id}}" data-action="paste"><i class="fas fa-paste"></i></button></label>
+            <label class="columnButton" {{#if s.default}}style="visibility:hidden"{{/if}}><button type="button" data-scene="{{s.id}}" data-action="reset"><i class="fas fa-trash"></i></button></label>
+        </li>
+    {{/each}}
+    </ul>
+    
+</div>

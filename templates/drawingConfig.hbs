@@ -1,0 +1,24 @@
+<div class="tab scrollable{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    <p>
+        {{localize "LOCKVIEW.DrawingConfig.Hint_1"}}<br>
+        <br>
+        {{localize "LOCKVIEW.DrawingConfig.Hint_2"}} 
+    </p>
+
+    <hr style="margin: 0;">
+
+    <ul style="margin-top: 0;">
+        <li><b>{{localize "LOCKVIEW.DrawingConfig.Disabled"}}</b>: {{localize "LOCKVIEW.DrawingConfig.Disabled_Hint"}}</li>
+        <li><b>{{localize "LOCKVIEW.DrawingConfig.OwnedTokens"}}</b>: {{localize "LOCKVIEW.DrawingConfig.OwnedTokens_Hint"}}</li>
+        <li><b>{{localize "LOCKVIEW.DrawingConfig.Always"}}</b>: {{localize "LOCKVIEW.DrawingConfig.Always_Hint"}}</li>
+    </ul>   
+
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.DrawingConfig.ForceToBoundingBox"}}</label>
+        <div class="form-fields">
+            <select name="lockview.boundingBox">
+                {{selectOptions boundingBoxOptions selected=boundingBox}}
+            </select>
+        </div>
+    </div>
+</div>

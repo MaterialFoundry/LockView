@@ -1,295 +1,395 @@
-import { mouseMode } from "./controlButtons.js";
-import { getFlags, excludeSidebar, blackenSidebar } from "./blocks.js";
-import * as VIEWBOX from "./viewbox.js";
 import { moduleName } from "../lockview.js";
 
-export var viewboxStorage; 
-export var viewbox = [];
-
-/*
- * Viewbox class that draws the viewbox
+/**
+ * The Viewbox class handles the display of viewboxes for users with 'Control' enabled, 
+ * and it handles the transmission of viewbox data for users with 'Viewbox' enabled.
+ * The actual viewboxes that are displayed on screen are handled by the ViewboxDrawing class.
  */
-export class Viewbox extends CanvasLayer {
-  constructor() {
-    super();
-    this.init();
-    this.moveLocation;
-    this.scaleLocation;
-    this.boxWidth;
-    this.boxHeight;
-    this.boxColor;
-    this.boxName;
-    this.xStorage;
-    this.yStorage;
-    this.userId;
-    this.moveOffset = 0;
-    this.scaleOffset = 0;
-    this.screenWidth;
-    this.zIndex = 500;
-    this.currentPosition;
-  }
+export class Viewbox {
+    viewboxes = {};         /* Stores all the viewboxes */
+    editEnabled = false;    /* Allows editing of viewboxes if set to true */
+    enabled = false;        /* Displays the viewboxes if set to true */
+    activeViewbox;          /* Stores the user id of the active viewbox */
 
-  init() {
-    this.container = new PIXI.Container();
-    this.addChild(this.container);
-  }
+    constructor() {
 
-  async draw() {
-    super.draw();
-  }
+        Hooks.on('userConnected', (user, connected) => {
+            if (lockView.userSettings.control && !connected) this.remove(user);
+        })
+    }
 
-  /*
-   * Update the viewbox
-   */
-  updateViewbox(data) {
-    this.currentPosition = data.currentPosition;
-    const x = data.x - Math.floor(data.width / 2);
-    const y = data.y - Math.floor(data.height / 2);
+    /**
+     * Cycle through the viewboxes to set the next one active. Key is set with keybinding 'cycleViewboxes'
+     */
+    cycleViewboxes() {
+        if (!this.activeViewbox || !this.enabled || !this.editEnabled) return;
+        let vBoxes = Object.values(this.viewboxes);
+        if (vBoxes.length <= 1) return;
+        let index = vBoxes.findIndex(b => b.userId === this.activeViewbox);
+        index++;
+        if (index >= vBoxes.length) index = 0;
+        this.setActiveViewbox(vBoxes[index].userId);
+    }
 
-    this.moveLocation = {x:x-20, y:y-20};
-    this.scaleLocation = {x:x+data.width+20, y:y+data.height+20};
-    this.boxWidth = data.width;
-    this.boxHeight = data.height;
-    this.boxColor = data.color;
-    this.boxName = data.name;
-    this.xStorage = x;
-    this.yStorage = y;
-    this.screenWidth = data.screenWidth;
-    if (this.userId == undefined) this.userId = data.id;
+    /**
+     * Set a viewbox as the active viewbox
+     * @param {*} userId User ID of the viewbox to set active
+     */
+    setActiveViewbox(userId) {
+        if (!userId || this.activeViewbox === userId) return;
+        if (this.activeViewbox) this.viewboxes[this.activeViewbox]?.setActive(false);
+        this.viewboxes[userId]?.setActive(true);
+        this.activeViewbox = userId;
+    }
 
-    this.container.removeChildren();
-    var drawing = new PIXI.Graphics();
-    drawing.lineStyle(2, data.color, 1);
-    drawing.drawRect(0,0,data.width,data.height);
-    this.container.addChild(drawing);
+    /**
+     * @returns The User ID of the current active viewbox
+     */
+    getActiveViewbox() {
+        return this.activeViewbox;
+    }
 
-    if (canvas.scene.getFlag('LockView', 'editViewbox')){
-      this.moveOffset = 0;
-      this.scaleOffset = 0;
-      //Check if the location of the moveButton and scaleButton is already occupied by another button
-      if (data.controlBtn != true)
-        for (let i=0; i<VIEWBOX.viewbox.length; i++){
-          
-          const viewbox = VIEWBOX.viewbox[i];
-          if (viewbox == undefined || viewbox.boxName == data.name) continue;
-          
-          if (Math.abs(viewbox.moveLocation.x - this.moveLocation.x) <= 40 && Math.abs(viewbox.moveLocation.y - this.moveLocation.y) <= 40) {
-            this.moveOffset += 50-Math.abs(viewbox.moveLocation.y - this.moveLocation.y);
-            this.moveLocation.y += 50-Math.abs(viewbox.moveLocation.y - this.moveLocation.y);
-          }
-          if (Math.abs(viewbox.scaleLocation.x - this.moveLocation.x) <= 40 && Math.abs(viewbox.scaleLocation.y - this.moveLocation.y) <= 40) {
-            this.moveOffset += 50-Math.abs(viewbox.scaleLocation.y - this.moveLocation.y);
-            this.moveLocation.y += 50-Math.abs(viewbox.scaleLocation.y - this.moveLocation.y);
-          }
+    /**
+     * Enable or disable viewboxes
+     */
+    enable(en) {
+        this.enabled = en;
+        Object.values(this.viewboxes).forEach((vb)=>{
+            vb.enable(en);
+        })
+    }
 
-          if (Math.abs(viewbox.moveLocation.x - this.scaleLocation.x) <= 40 && Math.abs(viewbox.moveLocation.y - this.scaleLocation.y) <= 40) {
-            this.scaleOffset -= 50-Math.abs(viewbox.moveLocation.y - this.scaleLocation.y);
-            this.scaleLocation.y -= 50-Math.abs(viewbox.moveLocation.y - this.scaleLocation.y);
-          }
-          if (Math.abs(viewbox.scaleLocation.x - this.scaleLocation.x) <= 40 && Math.abs(viewbox.scaleLocation.y - this.scaleLocation.y) <= 40) {
-            this.scaleOffset -= 50-Math.abs(viewbox.scaleLocation.y - this.scaleLocation.y);
-            this.scaleLocation.y -= 50-Math.abs(viewbox.scaleLocation.y - this.scaleLocation.y);
-          }
+    /**
+     * Enable or disable editing of viewboxes
+     */
+    enableEdit(en) {
+        this.editEnabled = en;
+        Object.values(this.viewboxes).forEach((vb)=>{
+            vb.enableEdit(en);
+        })
+    }
+
+    /**
+     * Emit the current view to users with 'Control' enabled.
+     * Only happens for users with 'Viewbox' enabled.
+     */
+    emit() {
+        if (!lockView.userSettings.viewbox) return;
+        lockView.socket.emitViewbox();
+    }
+
+    /**
+     * Update the viewbox, this happens when a user with 'Viewbox' enabled calls emit().
+     */
+    update(senderId, data) {
+        if (data.scene !== canvas.scene.id && this.viewboxes[senderId]) {
+            this.viewboxes[senderId].visible = false;
+            return;
+        }
+        
+        if (this.viewboxes[senderId]) {
+            this.viewboxes[senderId].update(data);
+        }
+        else {
+            this.viewboxes[senderId] = new ViewboxDrawing(senderId, data);
         }
 
-      var drawingCircles = new PIXI.Graphics();
-      drawingCircles.lineStyle(2, data.color, 1);
-      drawingCircles.beginFill(data.color);
-      drawingCircles.drawCircle(-20,-20+this.moveOffset,20);
-      drawingCircles.drawCircle(data.width+20,data.height+20+this.scaleOffset,20);
-      this.container.addChild(drawingCircles);
-
-      var moveIcon = PIXI.Sprite.from('modules/LockView/img/icons/arrows-alt-solid.png');
-      moveIcon.anchor.set(0.5);
-      moveIcon.scale.set(0.25);
-      moveIcon.position.set(-20,-20+this.moveOffset)
-      this.container.addChild(moveIcon);
-
-      var scaleIcon = PIXI.Sprite.from('modules/LockView/img/icons/compress-arrows-alt-solid.png');
-      scaleIcon.anchor.set(0.5);
-      scaleIcon.scale.set(0.20);
-      scaleIcon.position.set(data.width+20,data.height+20+this.scaleOffset)
-      this.container.addChild(scaleIcon);
+        if (!this.activeViewbox) {
+            this.setActiveViewbox(senderId);
+        }
     }
-      
-    var label = new PIXI.Text(data.name, {fontFamily : 'Arial', fontSize: 24, fontWeight : 'bold', fill : data.color, align : 'center'});
-    label.anchor.set(0.5);
-    label.position.set(data.width / 2,-15)
-    this.container.addChild(label);
-    
-    this.container.setTransform(x+(data.width/2), y+(data.height/2), 1, 1, data.rotation, 0, 0, (data.width/2), (data.height/2));
-    this.container.visible = true;
-  }
-  
-  /*
-   * Hide the viewbox
-   */
-  hide() {
-    this.container.visible = false;
-  }
 
-  /*
-   * Show the viewbox
-   */
-  show() {
-    this.container.visible = true;
-  }
-
-  /*
-   * Remove the viewbox
-   */
-  remove() {
-    this.container.removeChildren();
-  }
-}
-
-/*
- * Find the correct values for the viewbox, and update the viewbox
- */
-export function drawViewbox(payload){
-  let overrideSetting = game.settings.get(moduleName ,'userSettingsOverrides')[game.user.role].control;
-  let userSetting = game.settings.get(moduleName,'userSettings').filter(u => u.id == game.user.id)[0]?.control;
-  if ((overrideSetting == false || overrideSetting == undefined) && (userSetting == false || userSetting == undefined) && (game.user.isGM == false || mouseMode != null)) return;
-
-  viewboxStorage = payload;
-  if(game.settings.get("LockView","viewbox")){
-    let senderNumber;
-    let senderNumbers = Array.from(game.users);
-    //get index of the sending user
-    for (let i=0; i<senderNumbers.length; i++)
-      if (senderNumbers[i]._id == payload.senderId)
-        senderNumber = i;
-    //check if sending user is in same scene, if not, hide viewbox and return
-    if (payload.sceneId != canvas.scene.id) {
-      if(viewbox[senderNumber] != undefined)
-        viewbox[senderNumber].hide();
-      return;
+    /**
+     * Remove the viewbox of a user, for example when they disconnect.
+     * @param {*} user 
+     */
+    remove(user) {
+        if (this.viewboxes[user.id]) this.viewboxes[user.id].visible = false;
     }
-    
-    //If viewbox doesn't exist for player, create it
-    if (viewbox[senderNumber] == undefined){
-      viewbox[senderNumber] = new Viewbox();
-      canvas.stage.addChild(viewbox[senderNumber]);
-      viewbox[senderNumber].init();
+
+    /**
+     * Remove all viewboxes
+     */
+    removeAll() {
+        Object.values(this.viewboxes).forEach(vb => vb.visible = false);
     }
-    //update viewbox
-    viewbox[senderNumber].updateViewbox(
-      {
-        x: payload.viewPosition.x,
-        y: payload.viewPosition.y,
-        scale: payload.viewPosition.scale,
-        currentPosition: payload.currentPosition,
-        width: payload.viewWidth/payload.viewPosition.scale,
-        height: payload.viewHeight/payload.viewPosition.scale,
-        rotation: payload.viewRotation,
-        color: parseInt(payload.senderColor.replace(/^#/, ''), 16),
-        name: payload.senderName,
-        id: payload.senderId,
-        screenWidth: payload.viewWidth
-      }
-    );
-  }
 }
 
-/*
- * Hide all viewboxes
+/**
+ * Class to draw viewboxes on the screen for users with 'Control' enabled.
  */
-export function hideAllViewboxes(){
-  if (game.user.isGM) {
-    for (let i=0; i< viewbox.length; i++)
-      if (viewbox[i] != undefined)
-        viewbox[i].hide();
-  }
-}
+export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
+    editEnabled = false;
+    enabled = false;
+    interactiveChildren = true;
+    active = false;
 
-/*
- * Initialize viewboxes
- */
-export function initializeViewboxes(users){
-  for (let i=0; i<users.length; i++){
-    if(viewbox[i] == undefined){
-      viewbox[i] = new Viewbox();
-      canvas.stage.addChild(viewbox[i]);
-      viewbox[i].init();
+    constructor(userId, data, isInitialView=false) {
+        super();
+        this.userId = userId;
+        this.data = data;
+        this.userName = data.name;
+        this.isInitialView = isInitialView;
+
+        /* Main container */
+        this.container = new PIXI.Container();
+        this.container.visible = false;
+        this.container.interactiveChildren = true;
+        this.addChild(this.container);
+
+        /* Rectangle that corresponds with the view of the user */
+        this.box = new PIXI.Graphics()
+            .lineStyle(2 + 4*this.active*this.editEnabled, data.color, 1)
+            .drawRect(0, 0, data.width, data.height)
+        
+        this.box.eventMode = 'dynamic';
+        this.container.addChild(this.box);
+
+        /* Label to display name of the user */
+        this.label = new PIXI.Text(data.name, {fontFamily : 'Arial', fontSize: 24, fontWeight : 'bold', fill : data.color, align : 'center'});
+        this.label.anchor.set(0.5);
+        this.label.position.set(data.width / 2,-15);
+        this.container.addChild(this.label);
+
+        /* Button to move the view of a user. Only visible if this.editEnabled is true */
+        this.moveButton = this.drawButton({
+            icon: 'modules/LockView/img/icons/arrows-alt-solid.png',
+            offset: { x: -20, y: -20 },
+            color: data.color,
+            cursor: 'move',
+            type: 'move'
+        }, this);
+        this.container.addChild(this.moveButton);
+
+        /* Button to resize the view of a user. Only visible if this.editEnabled is true */
+        this.resizeButton = this.drawButton({
+            icon: 'modules/LockView/img/icons/compress-arrows-alt-solid.png',
+            offset: { x: 20 + data.width, y: 20 + data.height },
+            color: data.color,
+            cursor: 'nw-resize',
+            type: 'resize'
+        }, this);
+        this.container.addChild(this.resizeButton);
+
+        this.container.setTransform(data.position.x - data.width/2, data.position.y - data.height/2);
+
+        canvas.stage.addChild(this);
     }
-  }
-}
 
-/*
- * Returns whether the viewbox is enabled for a user
- */
-export function getViewboxEnable(userId){
-  const settings = game.settings.get("LockView","userSettings");
-  const settingsOverride = game.settings.get("LockView","userSettingsOverrides");
-  const user = game.users.get(userId);
+    async draw() {
+        super.draw();
+    }
 
-  //if user is undefined, return false
-  if (user == undefined) return false;
+    remove() {
+        canvas.stage.removeChild(this);
+    }
 
-  //Check if the user's role has override enabled
-  if (settingsOverride[user.role]?.viewbox) return true;
+    /**
+     * Set the viewbox as active.
+     */
+    setActive(en) {
+        this.active = en;
+        this.update(this.data);
+        this.zIndex = en;
+        return this;
+    }
 
-  //Check if the userId matches an existing id in the settings array
-  for (let i=0; i<settings.length; i++)
-    if (settings[i].id == userId) return settings[i].viewbox;
+    /**
+     * Enable/disable the viewbox. Viewbox will be hidden if disabled.
+     */
+    enable(en) {
+        this.enabled = en;
+        this.container.visible = en;
+        return this;
+    }
 
-  //Else return true for new players, return false for new GMs
-  const userList = game.users.entries;
-  for (let i=0; i<userList.length; i++){
-    if (userList[i]._id == userId && userList[i].role != 4)
-      return true;
-  }
-  return false;
-}
+    /**
+     * Enable/disable editing of the viewbox, either through the buttons, by right-dragging or the mousewheel.
+     */
+    enableEdit(en) {
+        let parent = this;
+        this.editEnabled = en;              
+        this.moveButton.visible = en;       /* Show or hide the move button based on whether editing is enabled */
+        this.resizeButton.visible = en;     /* Show or hide the resize button based on whether editing is enabled */
+        let userId = this.userId;   
+        let startUserData;
 
-/*
- * Send viewbox data to the GM to draw the viewbox
- */
-export function sendViewBox(viewPosition=null){
-  if (getViewboxEnable(game.userId)==false) return;
-  if (canvas.scene == null || canvas.scene == undefined) return;
-  if (viewPosition == null) viewPosition=canvas.scene._viewPosition;
-  
-  //get all flags
-  getFlags();
+        this.update(this.data);
 
-  //New viewbox data
-  let viewPositionNew = {
-    x: viewPosition.x,
-    y: viewPosition.y,
-    scale: viewPosition.scale
-  }
+        if (en && !this.isInitialView) this.box.on('rightdown', onDragStart);
+        this.box.on('rightup', onDragEnd);
+        this.box.on('rightupoutside', onDragEnd);
 
-  //Sidebar offset
-  let offset = 0;
-  if (ui.sidebar._collapsed == false && excludeSidebar && blackenSidebar){
-    offset = ui.sidebar.position.width;
-    viewPositionNew.x -= offset/(2*viewPosition.scale);
-  }
+        /* 
+            Called when right mouse button is held down. 
+            Sets the current viewbox as active,
+            Stores the current view,
+            Enables the 'globalpointermove' event
+        */
+        function onDragStart() {
+            if (!game.settings.get(moduleName, 'rightClickViewboxDrag')) return;
+            lockView.viewbox.setActiveViewbox(userId);
+            startUserData = structuredClone(parent.data);
+            parent.box.on('globalpointermove', onDragMove);
+        }
 
-  const payload = {
-    "msgType": "viewbox",
-    "senderId": game.userId, 
-    "senderName": game.user.name,
-    "senderColor": game.user.color,
-    "receiverId": game.data.users.find(users => users.role == 4)._id, 
-    "sceneId": canvas.scene.id,
-    "viewPosition": viewPositionNew,
-    "viewWidth": window.innerWidth-offset,
-    "viewHeight": window.innerHeight,
-    "viewRotation": canvas.stage.rotation,
-    "currentPosition": viewPosition
-  };
-  game.socket.emit(`module.LockView`, payload);
-}
+        /* Called when the right mouse button is released. Removes the 'globalpointermove' event */
+        function onDragEnd() {
+            parent.box.off('globalpointermove', onDragMove)
+        }
 
-/*
- * Request viewbox data from connected users
- */
-export function getViewboxData(){
-    let payload = {
-      "msgType": "getViewboxData",
-      "senderId": game.userId
-    };
-    game.socket.emit(`module.LockView`, payload);
+        /*
+            Called when the mouse is moved while holding down the right mouse button.
+            Calculates how far the mouse has moved and how far the view of the user should move, then sends this over sockets to the user.
+        */
+        function onDragMove(ev) {
+            if (!ev.interactionData) return;
+            const movedCoords = {
+                x: ev.interactionData.destination.x - ev.interactionData.origin.x,
+                y: ev.interactionData.destination.y - ev.interactionData.origin.y
+            }
+            const position = {
+                x: startUserData.position.x + movedCoords.x - startUserData.width/2,
+                y: startUserData.position.y + movedCoords.y - startUserData.height/2
+            }
+
+            lockView.socket.setView({
+                type: 'absolute',
+                userId: lockView.viewbox.getActiveViewbox(),
+                position
+            })
+        }
+
+        return this;
+    }
+
+    /**
+     * Update the displayed viewbox. Called when the user's view has changed.
+     */
+    update(data) {
+        this.data = data;
+        this.visible = true;
+
+        this.box.clear()
+            .lineStyle(2 + 4*this.active*this.editEnabled, this.data.color, 1)
+            .drawRect(0, 0, this.data.width, this.data.height) 
+            .hitArea = new PIXI.Rectangle(0, 0, data.width, data.height)
+        this.label.position.set(data.width / 2,-15);
+        this.resizeButton.setTransform(20 + data.width/2, 20 + data.height);
+        
+        this.container.setTransform(data.position.x - data.width/2, data.position.y - data.height/2);
+    }
+
+    /**
+     * Draw the edit buttons
+     */
+    drawButton(data, parentContainer) {
+        let container = new PIXI.Container();
+        container.visible = parentContainer.editEnabled;
+
+        let button = new PIXI.Graphics();
+        button.lineStyle(2, data.color, 1);
+        button.beginFill(data.color);
+        button.drawCircle(0, 0, 20);
+        container.addChild(button);
+
+        let icon = PIXI.Sprite.from(data.icon);
+        icon.anchor.set(0.5);
+        icon.scale.set(0.25);
+        icon.position.set(0, 0);
+        container.addChild(icon);
+
+        container.setTransform(data.offset.x, data.offset.y);
+        container.cursor = data.cursor;
+        container.eventMode = 'static';
+
+        container.on('pointerdown', onDragStart, container);
+        container.on('pointerup', onDragEnd);
+        container.on('pointerupoutside', onDragEnd);
+        
+        let userId = this.userId;
+        let startUserData;
+        let parent = this;
+
+        /* Called when the button is clicked, enables 'globalpointermove' event */
+        function onDragStart() {
+            lockView.viewbox.setActiveViewbox(userId);
+            startUserData = parentContainer.data;
+            container.on('globalpointermove', onDragMove);
+        }
+
+        /* Called when mouse button is released, removes 'globalpointermove' event */
+        function onDragEnd() {
+            container.off('globalpointermove', onDragMove)
+        }
+
+        /* Called when the mouse is moved when the button was pressed. */
+        function onDragMove(ev) {
+            
+            /* For the move button, send the new coordinates to the user */
+            if (data.type === 'move' && ev.interactionData?.destination) {
+                if (parent.isInitialView) {
+                    lockView.apps.initialViewConfig.update({
+                        position: {
+                            x: ev.interactionData.destination.x - data.offset.x + startUserData.width/2,
+                            y: ev.interactionData.destination.y - data.offset.y + startUserData.height/2,
+                            scale: window.innerWidth/startUserData.width
+                        }
+                    })
+                }
+                else {
+                    lockView.socket.setView({
+                        type: 'absolute',
+                        userId,
+                        position: {
+                            x: ev.interactionData.destination.x - data.offset.x,
+                            y: ev.interactionData.destination.y - data.offset.y
+                        }
+                    })
+                }
+            }
+
+            /* For the resize button, calculate the new position and size of the view. */
+            else if (data.type === 'resize' && ev.interactionData?.destination) {
+                const movedCoords = {
+                    x: ev.interactionData.origin.x - ev.interactionData.destination.x,
+                    y: ev.interactionData.origin.y - ev.interactionData.destination.y
+                }
+
+                const moved = Math.max(movedCoords.x, movedCoords.y)
+
+                const position = {
+                        x: startUserData.position.x - startUserData.width/2, 
+                        y: startUserData.position.y - startUserData.height/2
+                    }
+
+                if (parent.isInitialView) {
+                    let scale = window.innerWidth/(startUserData.width - moved);
+                    if (scale > 3 || scale < 0) return;
+
+                    lockView.apps.initialViewConfig.update({
+                        position: {
+                            x: position.x + startUserData.width/2,
+                            y: position.y + startUserData.height/2,
+                            scale
+                        },
+                        width: (startUserData.width - moved),
+                        height: (startUserData.height - moved) 
+                    })
+                }
+                else {
+                    lockView.socket.setView({
+                        type: 'absolute',
+                        userId,
+                        position,
+                        width: startUserData.width - moved,
+                        height: startUserData.height - moved
+                    })
+                }
+                
+            }
+        }
+
+        return container;
+    }
 }

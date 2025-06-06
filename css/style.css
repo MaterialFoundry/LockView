@@ -1,82 +1,216 @@
-.lockView_userConfig_table_name {
-    width: 30%;
-    text-align: left;
+.LockView-SceneConfig-list {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
-.lockView_userConfig_table_role {
-    width: 25%;
-    text-align: left;
+/**
+ *  Expandable
+ */
+.lockview-expandable {
+    cursor: pointer;
+    display: flex;
 }
 
-.lockView_userConfig_table_checkbox {
-    width: 15%;
+.lockview-expandable i {
+    margin-top: 2px;
+    margin-right: 5px;
+}
+
+.lockview-collapsed {
+    display: none;
+}
+
+/**
+ * Shared
+ */
+
+#lockView-userConfig header.table-header,
+#lockView-sceneConfigurator header.table-header {
+    background: var(--color-text-dark-inactive);
+    padding: 0.5rem;
+    color: var(--color-text-light-highlight);
+    border: 1px solid var(--color-border-dark-4);
+    font-weight: bold;
+    text-shadow: 1px 1px var(--color-shadow-dark);
+}
+
+.theme-dark #lockView-userConfig header.table-header,
+.theme-dark #lockView-sceneConfigurator header.table-header {
+    background-color: var(--color-cool-4);
+    border-color: var(--color-cool-4);
+}
+
+#lockView-userConfig ul.userSettings-list,
+#lockView-sceneConfigurator ul.sceneConfigurator-list,
+#lockView-setView ul.setView-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 400px;
+    overflow: hidden auto;
+}
+
+#lockView-userConfig li.userSettings-line,
+#lockView-sceneConfigurator li.sceneConfigurator-line,
+#lockView-setView li.setView-line {
+    padding: 0.25rem 0.5rem;
+    border-bottom: 1px solid var(--color-border-dark-4);
+    gap: 0;
+}
+
+#lockView-userConfig li.userSettings-line .form-fields,
+#lockView-sceneConfigurator li.sceneConfigurator-line .form-fields,
+#lockView-setView li.setView-line .form-fields {
+    justify-content: space-around;
+}
+
+/**
+ * User Config
+ */
+#lockView-userConfig .columnLabel {
+    width: auto;
+    text-align: left;
+    line-height: 1.25rem;
+}
+
+#lockView-userConfig .columnCheckbox {
+    min-width: 12.5%;
+    max-width: 12.5%;
     text-align: center;
-    vertical-align: middle;
 }
 
-.lockView_sceneConfigTable {  
-    width:100%;
+#lockView-userConfig hr {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
-.lockView_sceneConfigName{
-    width: 200px;
+/**
+ * Initial View Config
+ */
+#lockView-initialViewConfig .form-group {
+    margin-bottom: 0.25rem;
 }
-.lockView_sceneConfigCB{
-    min-width: 20px;
-    max-width: 20px;
+
+#lockView-initialViewConfig .form-group button {
+    min-width: 50%;
 }
-.lockView_sceneConfigSelect{
-    max-width: 100px;
+
+#lockView-initialViewConfig footer {
+    margin-top: 1rem;
 }
-.lockView_sceneConfigButton{
+
+/**
+ * Scene Configurator
+ */
+
+#lockView-sceneConfigurator li.sceneConfigurator-line {
+    margin: 0;
+    padding: 0;
+}
+
+.theme-dark #lockView-sceneConfigurator header.table-header {
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+#lockView-sceneConfigurator header.table-header div {
+    margin-top: auto;
+    text-align: center;
+}
+
+#lockView-sceneConfigurator .columnName {
+    text-align: left;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#lockView-sceneConfigurator .columnCB {
     min-width: 25px;
     max-width: 25px;
-}
-.lockView_sceneConfigTableVal button{
-    height: 25px;
-    width: 25px;
-    font-size:0.75em;
-    vertical-align: middle;
-}
-.lockView_sub{
-    max-width:15px;
-    font-size: 0.85em;
-}
-.lockView_sub input{
-    max-width:15px;
+    line-height: 1.25rem;
 }
 
-
-.lockView_sceneConfigTableCenterIcon{
-    vertical-align:middle; 
-    margin-top:-10px
+#lockView-sceneConfigurator .columnButton {
+    min-width: 25px;
+    max-width: 25px;
+    margin-left: 5px;
+    margin-right: 0px;
 }
 
-.lockView_sceneConfigTable tr{
-   width: 100%;
+#lockView-sceneConfigurator .columnButton button {
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
 }
 
-.lockView_sceneConfigColumn__inner {
+#lockView-sceneConfigurator .sceneConfigurator-line .columnSelect {
+    padding: 2.5px;
+}
+
+#lockView-sceneConfigurator .columnAutoscale,
+#lockView-sceneConfigurator .columnHideOn,
+#lockView-sceneConfigurator .columnSidebarSceneLoad {
+    max-width: 125px;
+    min-width: 125px;
+}
+
+#lockView-sceneConfigurator .columnAutoscale label {
+    transform: translate(20px,100%) rotate(-90deg);
+}
+
+#lockView-sceneConfigurator .columnHideOn label {
+    transform: translate(10px,100%) rotate(-90deg);
+}
+
+#lockView-sceneConfigurator .columnSidebarSceneLoad label {
+    transform: translate(30px,100%) rotate(-90deg);
+}
+
+#lockView-sceneConfigurator .table-header-inner {
+    text-align: center;
     display: inline-block;
     white-space: nowrap;
     line-height: 1.5;
     transform: translate(0,100%) rotate(-90deg);
     transform-origin: 0 0;
+    padding-left: 5px;
+    padding-right: 5px;
 }
-/* This element stretches the parent to be square
-by using the mechanics of vertical margins  */
-.lockView_sceneConfigColumn__inner:after {
+
+#lockView-sceneConfigurator .table-header-inner:after {
     content: "";
     display: block;
     margin: -1.5em 0 100%;
 }
 
-.lockView_expandable {
-    cursor: pointer;
+#lockView-sceneConfigurator .vl-top,
+#lockView-sceneConfigurator .vl-bottom,
+#lockView-sceneConfigurator .vl-li {
+    border-left: 1px solid;
+    max-width: 1px;
+    margin: 0;
 }
-.lockView_collapsed {
-    display:none;
+
+#lockView-sceneConfigurator hr {
+    margin: 0;
 }
-.lockView_expandableIcon {
-    border: none;
+
+#lockView-sceneConfigurator .defaultConfig {
+    font-style: italic;
+}
+
+/**
+ * Set View
+ */
+#lockView-setView .columnCheckbox {
+    min-width: 50px;
+    max-width: 50px;
+    line-height: 1.25rem;
+}
+
+#lockView-setView .indent {
+    padding-left: 10px;
 }

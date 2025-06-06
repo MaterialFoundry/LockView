@@ -10,9 +10,9 @@ assignees: ''
 **Setup**
  - OS: [e.g. windows]
  - Browser: [e.g. chrome, safari, Foundry app]
- - Module version: [e.g. 1.2.5]
- - Foundry version: [e.g. 0.8.6]
- - Gaming system & version: [e.g. dnd5e 1.3.3]
+ - Module version: [e.g. 2.0.0]
+ - Foundry version: [e.g. 13.344]
+ - Gaming system & version: [e.g. dnd5e 5.0.0]
  - Any other modules enabled: [yes/no]
 
 **Describe the bug**

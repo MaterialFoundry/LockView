@@ -25,7 +25,7 @@ Right now, there appear to be compatibility issues with the following modules:
 * Zoom/Pan Options
 
 ## Foundry Compatibility
-This module has been tested to work with Foundry V10 and V11.<br>
+This module has been tested to work with Foundry V11 and V12.<br>
 
 ## Feedback
 Feel free [report an issue/suggestion](https://github.com/CDeenen/LockView/issues), contact me on Discord (Cris#6864), or send me an email: cdeenen@outlook.com.

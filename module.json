@@ -1,16 +1,14 @@
 {
     "id": "LockView",
-    "name": "LockView",
     "title": "Lock View",
-    "description": "Locks the view of players by enabling the GM to block zooming and panning. The module also gives control over the player view, allowing the GM to zoom and pan. Developed for the purpose of play on a digital playmat, such as a horizontally mounted TV, and for that purpose the module can scale the scene so the gridsize is always displayed corresponding to a real-world size.",
-    "version": "1.5.10",
+    "description": "Lock View is a module that helps GMs take control of what players can view. It can lock the view of players by enabling the GM to block zooming and panning. It can give control over the player's view, allowing the GM to zoom and pan it. It can autoscale the view to, for example, fit the canvas or scale it to a physical grid size.",
+    "version": "2.0.0_pre1",
     "authors": [
         {
-            "name": "CDeenen",
-            "email": "cdeenen@outlook.com",
-            "discord": "Cris#6864",
-            "patreon": "MaterialFoundry",
-            "reddit": "CDeenen123"
+            "name": "Material Foundry",
+            "email": "info@materialfoundry.nl",
+            "discord": "MaterialFoundry",
+            "patreon": "MaterialFoundry"
         }
     ],
     "esmodules": [
@@ -20,11 +18,9 @@
         "./css/style.css"
     ],
     "socket": true,
-    "minimumCoreVersion": "11",
-    "compatibleCoreVersion": "12",
     "compatibility": {
-        "minimum": "11",
-        "verified": "12"
+        "minimum": "13",
+        "verified": "13"
     },
     "languages": [
         {
@@ -49,5 +45,5 @@
     ],
     "url": "https://github.com/MaterialFoundry/LockView",
     "manifest": "https://github.com/MaterialFoundry/LockView/releases/latest/download/module.json",
-    "download": "https://github.com/MaterialFoundry/LockView/releases/download/v1.5.10/module.zip"
+    "download": "https://github.com/MaterialFoundry/LockView/releases/download/v2.0.0/module.zip"
 }

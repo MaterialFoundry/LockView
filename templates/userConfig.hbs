@@ -1,0 +1,50 @@
+<div>
+    <p>
+        {{localize "LOCKVIEW.UserConfig.UserSettings_Hint"}}<br>
+        <ul>
+            <li><b>{{localize "LOCKVIEW.UserConfig.Enable"}}: </b>{{localize "LOCKVIEW.UserConfig.Enable_Hint"}}</p></li>
+            <li><b>{{localize "LOCKVIEW.UserConfig.Viewbox"}}: </b>{{localize "LOCKVIEW.UserConfig.Viewbox_Hint"}}</p></li>
+            <li><b>{{localize "LOCKVIEW.UserConfig.Static"}}: </b>{{localize "LOCKVIEW.UserConfig.Static_Hint"}}</p></li>
+            <li><b>{{localize "LOCKVIEW.UserConfig.Control"}}: </b>{{localize "LOCKVIEW.UserConfig.Control_Hint"}}</p></li>
+        </ul>
+    </p>
+
+    <header class="table-header flexrow">
+        <label class="columnLabel">{{localize "LOCKVIEW.UserConfig.Name"}}</label>
+        <label class="columnLabel">{{localize "LOCKVIEW.UserConfig.Role"}}</label>
+        <label class="columnCheckbox">{{localize "LOCKVIEW.UserConfig.Enable"}}</label>
+        <label class="columnCheckbox">{{localize "LOCKVIEW.UserConfig.Viewbox"}}</label>
+        <label class="columnCheckbox">{{localize "LOCKVIEW.UserConfig.Static"}}</label>
+        <label class="columnCheckbox">{{localize "LOCKVIEW.UserConfig.Control"}}</label>
+    </header>
+
+    <ul class="userSettings-list">
+        {{#each userSettings as |u|}}
+        <li class="userSettings-line form-group">
+            <label class="columnLabel">{{u.name}}</label>
+            <label class="columnLabel">{{u.role}}</label>
+            <label class="columnCheckbox"><input type="checkbox" name="user.{{u.id}}.enable" {{#if u.enable}} checked {{/if}}></label>
+            <label class="columnCheckbox"><input type="checkbox" name="user.{{u.id}}.viewbox" {{#if u.viewbox}} checked {{/if}}></label>
+            <label class="columnCheckbox"><input type="checkbox" name="user.{{u.id}}.static" {{#if u.static}} checked {{/if}}></label>
+            <label class="columnCheckbox"><input type="checkbox" name="user.{{u.id}}.control" {{#if u.control}} checked {{/if}}></label>
+        </li>
+        {{/each}}
+
+        <hr>
+
+        <li class="userSettings-line form-group">
+            <label class="columnLabel"><i>{{localize "LOCKVIEW.UserConfig.Default"}}</i></label>
+            <label class="columnLabel"></label>
+            <label class="columnCheckbox"><input type="checkbox" name="default.enable" {{#if defaultUserSettings.enable}} checked {{/if}}></label>
+            <label class="columnCheckbox"><input type="checkbox" name="default.viewbox" {{#if defaultUserSettings.viewbox}} checked {{/if}}></label>
+            <label class="columnCheckbox"><input type="checkbox" name="default.static" {{#if defaultUserSettings.static}} checked {{/if}}></label>
+            <label class="columnCheckbox"><input type="checkbox" name="default.control" {{#if defaultUserSettings.control}} checked {{/if}}></label>
+        </li>
+    </ul>
+
+    <div class="form-footer">
+        <button type="submit">
+            <i class="fas fa-save"></i> {{localize 'SETTINGS.Save'}}
+        </button>
+    </div>
+</div>

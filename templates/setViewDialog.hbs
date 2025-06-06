@@ -1,0 +1,86 @@
+<div>
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.SetView.Pan"}}</label>
+        <div class="form-fields">
+            <select name="pan">
+                <option value="noChange">{{localize "LOCKVIEW.SetView.ZoomModes.DontChange"}}</option>
+                <option value="initialView">{{localize "LOCKVIEW.SetView.PanModes.InitialView"}}</option>
+                <option value="horizontal">{{localize "LOCKVIEW.SceneConfig.Autoscale.HorizontalFit"}}</option>
+                <option value="vertical">{{localize "LOCKVIEW.SceneConfig.Autoscale.VerticalFit"}}</option>
+                <option value="autoInside">{{localize "LOCKVIEW.SceneConfig.Autoscale.AutomaticFitInside"}}</option>
+                <option value="autoOutside">{{localize "LOCKVIEW.SceneConfig.Autoscale.AutomaticFitOutside"}}</option>
+                <option value="moveGridSpaces">{{localize "LOCKVIEW.SetView.PanModes.MoveGridSpaces"}}</option>
+                <option value="moveByCoords">{{localize "LOCKVIEW.SetView.PanModes.MoveByCoordinates"}}</option>
+                <option value="moveToCoords">{{localize "LOCKVIEW.SetView.PanModes.MoveToCoordinates"}}</option>
+            </select>
+        </div>
+        <p class="hint">{{localize "LOCKVIEW.SetView.Pan_Hint"}}</p>
+    </div>
+
+    <div class="form-group indent" style="display:none" name="gridSpacesSection">
+        <label>{{localize "LOCKVIEW.SetView.GridSpaces"}}</label>
+        <div class="form-fields">
+            <label>X</label>
+            <input type="number" name="grid.x" step="1" placeholder="0" value="{{config.grid.x}}">
+            <label>Y</label>
+            <input type="number" name="grid.y" step="1" placeholder="0" value="{{config.grid.y}}">
+        </div>
+        <p class="hint">{{localize "LOCKVIEW.SetView.GridSpaces_Hint"}}</p>
+    </div>
+
+    <div class="form-group indent" style="display:none" name="coordinatesSection">
+        <label>{{localize "LOCKVIEW.SetView.Coordinates"}}</label>
+        <div class="form-fields">
+            <label>X</label>
+            <input type="number" name="coordinates.x" step="1" placeholder="0" value="{{config.coordinates.x}}">
+            <label>Y</label>
+            <input type="number" name="coordinates.y" step="1" placeholder="0" value="{{config.coordinates.y}}">
+        </div>
+        <p class="hint">{{localize "LOCKVIEW.SetView.Coordinates_Hint"}}</p>
+    </div>
+    <div name="zoomModeSection">
+        <hr>
+
+        <div class="form-group">
+            <label>{{localize "LOCKVIEW.SetView.Zoom"}}</label>
+            <div class="form-fields">
+                <select name="zoom">
+                    <option value="noChange">{{localize "LOCKVIEW.SetView.ZoomModes.DontChange"}}</option>
+                    <option value="set">{{localize "LOCKVIEW.SetView.ZoomModes.Set"}}</option>
+                    <option value="initialView">{{localize "LOCKVIEW.SetView.PanModes.InitialView"}}</option>
+                    <option value="physical">{{localize "LOCKVIEW.SetView.ZoomModes.PhysicalGridSize"}}</option>
+                </select>
+            </div>
+            <p class="hint">{{localize "LOCKVIEW.SetView.Zoom_Hint"}}</p>
+        </div>
+
+        <div class="form-group indent" class="form-group" style="display:none" name="scaleSection">
+            <label>{{localize "LOCKVIEW.SetView.Scale"}}</label>
+            <div class="form-fields">
+                <input type="number" name="scale" step="any" placeholder="1" min="0" max="3" value="{{config.scale}}">
+            </div>
+            <p class="hint">{{localize "LOCKVIEW.SetView.Scale_Hint"}}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <p>{{localize "LOCKVIEW.SetView.UserHint"}}</p>
+
+    <ul class="setView-list">
+        {{#each userSettings as |u|}}
+        <li class="setView-line form-group">
+            <label class="columnLabel">{{u.name}}</label>
+            <label class="columnCheckbox"><input type="checkbox" name="users.{{u.id}}" {{#if u.enable}} checked {{/if}}></label>
+        </li>
+        {{/each}}
+    </ul>
+
+    <hr>
+
+    <div class="form-footer">
+        <button type="submit">
+            <i class="fas fa-compress-arrows-alt"></i> {{localize "LOCKVIEW.SetView.Title"}}
+        </button>
+    </div>
+</div>

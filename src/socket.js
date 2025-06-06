@@ -1,203 +1,198 @@
-import { forceConstrain, getPhysicalScale, scaleToFit, applySettings } from "../lockview.js";
-import { drawViewbox, sendViewBox, getViewboxEnable } from "./viewbox.js";
-import { getEnable } from "./misc.js";
-import { setBlocks, getFlags, autoScale, lockPan, lockZoom, boundingBox, excludeSidebar, blackenSidebar } from "./blocks.js";
-import { updateControlButtons } from "./controlButtons.js";
+import { moduleName } from "../lockview.js";
+import { Helpers } from "./helpers.js";
 
-/*
- * Set up the socket used to communicate between GM and player clients
- */
-export function socket(){
-  game.socket.on(`module.LockView`, (payload) =>{
-    if (game.userId == payload.senderId) return;
-    //console.log('pl',payload)
-    if (payload.msgType == 'update') { updatePlayerSettings(payload) }
-    else if (payload.msgType == 'resetView') { resetView(payload) }
-    else if (payload.msgType == 'newView'){ newView(payload) }
-    else if (payload.msgType == 'forceConstrain') { forceConstrain() }
-    else if (payload.msgType == 'viewbox') { drawViewbox(payload) }
-    else if (payload.msgType == "getViewboxData"){ sendViewBox() }
-    else if (payload.msgType == "flagUpdate") { onUpdateFlag(payload) }
-    else if (payload.msgType == "settingUpdate") { onUpdateSetting(payload) }
-  });  
-}
+export class Socket {
+    constructor() {
 
-/*
- * Reset the view to the initial view settings or autofit settings
- */
-async function resetView(payload){
-    if (getEnable(game.userId) == false) return;
-    getFlags();
-    let newPosition = canvas.scene.initial;
-    if (newPosition == null) newPosition = canvas.scene._viewPosition;
-    
-    if (payload.rotateSett != "null") canvas.stage.rotation = payload.rotateSett*Math.PI/180;
-    if (payload.scaleSett == 0) newPosition.scale = canvas.scene._viewPosition.scale;
-    else if (payload.scaleSett == 1) newPosition.scale = payload.scale;
-    else if (payload.scaleSett == 3){
-      //if (autoScale == 5) newPosition.scale = getPhysicalScale();
-      //else newPosition.scale = canvas.scene._viewPosition.scale;
-      newPosition.scale = getPhysicalScale();
-    } 
-  
-    //Disable all blocks
-    await setBlocks( {pan:false,zoom:false,bBox:false} );
-  
-    //Pan to the new position
-    if (payload.autoScale > 0 && payload.autoScale < 5) await scaleToFit(payload.rotateSett, payload.autoScale);
-    else await canvas.pan( newPosition );
-  
-    //Set blocks
-    setBlocks( {pan:lockPan,zoom:lockZoom,bBox:boundingBox} );
-}
+        game.socket.on('module.LockView', (payload) => {
+            //console.log('pl', payload)
+            const messageType = payload.messageType;
+            const sender = payload.sender;
+            const target = payload.target;
+            const data = payload.data;
 
-/*
- *  Update the player settings
- */
-export async function updatePlayerSettings(payload){
-    //If module isn't enabled for this client, disable blocks and return
-    if (getEnable(game.userId) == false) {
-      //Disable all blocks
-      setBlocks( {pan:false,zoom:false,bBox:false} );
-  
-      return;
+            if (target === 'all') {}
+            else if (target === 'enable') {
+                if (!Helpers.getUserSetting('enable')) return;
+            }
+            else if (target === 'control') {
+                if (!Helpers.getUserSetting('control')) return;
+            }
+            else if (target === 'viewbox') {
+                if (!Helpers.getUserSetting('viewbox')) return;
+            }
+            else if (target === 'static') {
+                if (!Helpers.getUserSetting('static')) return;
+            }
+            else if (target === 'activeGM') {
+                if (!game.user.isActiveGM) return;
+            }
+            else if (target !== game.userId) return;
+
+            //console.log('Socket rec', messageType, sender, target, data)
+            if (messageType === 'requestFlagSet') this.onRequestFlagSet(data);
+            else if (messageType === 'updateLocks' && canvas.scene._id === data.scene) lockView.locks.update(data.locks, {fromSocket:true});
+            else if (messageType === 'updateViewbox') lockView.viewbox.update(sender, data);
+            else if (messageType === 'requestViewbox') lockView.viewbox.emit();
+            else if (messageType === 'setView') this.onSetView(data);
+            else if (messageType === 'pullStaticUsers') this.onPullStaticUsers(data);
+            else if (messageType === 'setViewDialog') this.onSetViewDialog(data);
+            else if (messageType === 'sceneUpdated') this.onSceneUpdated(data);
+            else if (messageType === 'refresh') lockView.refresh(true);
+        });
     }
-  
-    //Get all flags
-    getFlags();
-  
-    //Apply new settings
-    if (payload.forceInit || payload.autoScale || payload.rotation) applySettings(payload.force);
-  
-    //Set blocks
-    setBlocks( {
-      pan:payload.lockPan,
-      zoom:payload.lockZoom,
-      bBox:payload.boundingBox
-    });
 
-    updateControlButtons();
-}
-
-/*
- * Send updated settings to connected clients
- */
-export function sendUpdate({pan=null,zoom=null,bBox=null,aScale=null,rotation=null,fInit=null,force=false}){
-    let payload = {
-      "msgType": "update",
-      "senderId": game.userId, 
-      "lockPan": pan,
-      "lockZoom": zoom,
-      "autoScale": aScale,
-      "rotation": rotation,
-      "forceInit": fInit,
-      "boundingBox": bBox,
-      "force": force
-    };
-    game.socket.emit(`module.LockView`, payload);
-}
-
-/*
- * Send flag update to GM
- */
-export function sendFlagUpdate(flag, value) {
-  let payload = {
-    "msgType": "flagUpdate",
-    "senderId": game.userId,
-    "flag": flag,
-    "value": value
-  }
-  game.socket.emit(`module.LockView`, payload);
-  return new Promise(resolve => setTimeout(resolve, 100));
-}
-
-function onUpdateFlag(payload) {
-  if (!game.user.isGM) return;
-  canvas.scene.setFlag('LockView', payload.flag, payload.value);
-}
-
-export function sendSettingUpdate(setting, value) {
-  let payload = {
-    "msgType": "settingUpdate",
-    "senderId": game.userId,
-    "setting": setting,
-    "value": value
-  }
-  game.socket.emit(`module.LockView`, payload);
-  return new Promise(resolve => setTimeout(resolve, 100));
-}
-
-function onUpdateSetting(payload) {
-  if (!game.user.isGM) return;
-  game.settings.set("LockView", payload.setting, payload.value);
-}
-
-/*
- * Set a new view for the user
- */
-async function newView(payload){
-  //console.log('newView',payload)
-    if (getViewboxEnable(game.userId)==false) return;
-    const users = payload.users;
-    if (users == undefined) return;
-    if (users != "all" && users.find(id => id == game.user.id) == undefined) return;
-  
-    getFlags();
-    let scale;
-    let position = canvas.scene._viewPosition;
-
-    if (payload.rotateSett > 0) canvas.stage.rotation = payload.rotateSett*Math.PI/180;
-
-    if (payload.scaleSett == 0) position.scale = canvas.scene._viewPosition.scale;
-    else {
-      if (autoScale && payload.scaleSett == 3) position.scale = getPhysicalScale();
-      else if (autoScale == false && payload.scaleSett == 3) position.scale = canvas.scene._viewPosition.scale;
-      else if (payload.scaleSett == 1) position.scale = payload.scale;
-      else if (payload.type == "shift") position.scale = scale = canvas.scene._viewPosition.scale;
-      else position.scale = canvas.scene.initial.scale;
+    refresh() {
+        this.emit('refresh', 'all');
     }
-  
-    if (payload.type == "grid"){
-      position.x += payload.shiftX*canvas.scene.grid.size;
-      position.y += payload.shiftY*canvas.scene.grid.size;
+
+    requestFlagSet(data) {
+        this.emit('requestFlagSet', 'activeGM', data);
     }
-    else if (payload.type == "coords"){
-      position.x = payload.shiftX;
-      position.y = payload.shiftY;
+
+    onRequestFlagSet(data) {
+        const scene = game.scenes.get(data.scene);
+        if (!scene) return;
+        scene.setFlag(moduleName, data.flag, data.value);
     }
-    else if (payload.type == "coordsAbs"){
-      //Sidebar offset
-      let offset = 0;
-      let screenWidth = screen.width;
-      if (ui.sidebar._collapsed == false && excludeSidebar && blackenSidebar){
-        offset = (window.innerWidth-ui.sidebar._element[0].offsetLeft);
-        screenWidth = ui.sidebar._element[0].offsetLeft;
-      }
-    
-      if (payload.scaleChange != null) {
-        position.scale = screen.width/payload.scaleChange;
-      }
-      else position.scale = canvas.scene._viewPosition.scale;
-      if (payload.shiftX != null) position.x = payload.shiftX + offset/(2*position.scale);;
-      if (payload.shiftX != null) position.y = payload.shiftY;
+
+    updateLocks(data) {
+        this.emit('updateLocks', 'all', data);
     }
-    else {
-      position.x = payload.shiftX+canvas.scene._viewPosition.x;
-      position.y = payload.shiftY+canvas.scene._viewPosition.y;
+
+    requestViewbox() {
+        this.emit('requestViewbox', 'all');
     }
-    if (payload.type == "shift" && payload.scaleChange != 0){
-      position.scale = canvas.scene._viewPosition.scale*payload.scaleChange;
+
+    sceneUpdated(data) {
+        this.emit('sceneUpdated', 'enable', data);
     }
-  
-    //Disable all blocks
-    setBlocks( {pan:false,zoom:false,bBox:false} );
-  
-    //Pan to the new position
-    await canvas.pan( position );
-  
-    //If module isn't enabled for this client, return
-    if (getEnable(game.userId) == false) return;
-  
-    //Set blocks
-    setBlocks( {pan:lockPan,zoom:lockZoom,bBox:boundingBox} );
-  }
+
+    onSceneUpdated(data) {
+        lockView.sceneHandler.onSceneUpdate(game.scenes.get(data.scene))
+    }
+
+    pullStaticUsers(data) {
+        this.emit('pullStaticUsers', 'static', data);
+    }
+
+    onPullStaticUsers(data) {
+        const scene = game.scenes.get(data);
+        scene?.view({forceView: true})
+    }
+
+    emitViewbox() {
+        if (!canvas?.scene?._viewPosition?.scale) return;
+        let windowWidth = window.innerWidth;
+        let position = structuredClone(canvas.scene._viewPosition);
+        if (canvas.scene.getFlag(moduleName, 'sidebar')?.exclude) {
+            windowWidth -= Helpers.getSidebarWidth();
+            position.x -= 0.5*Helpers.getSidebarWidth()/canvas.scene._viewPosition.scale
+        }
+        
+        this.emit('updateViewbox', 'control', {
+            position,
+            width: windowWidth/canvas.scene._viewPosition.scale,
+            height: window.innerHeight/canvas.scene._viewPosition.scale,
+            color: game.user.color,
+            name: game.user.name,
+            scene: canvas.scene.id
+        });
+    }
+
+    setView(data) {
+        this.emit('setView', data.userId, {
+            type: data.type,
+            position: data.position,
+            width: data.width,
+            height: data.height
+        })
+    }
+
+    async onSetView(data) {
+        const currentLocks = lockView.locks.applyLocks;
+        if (currentLocks) lockView.locks.applyLocks = false;
+        if (data.type === 'absolute') {
+            let scale = canvas.scene._viewPosition.scale;
+            let width = window.innerWidth/canvas.scene._viewPosition.scale;
+            let height = window.innerHeight/canvas.scene._viewPosition.scale;
+            if (data.width) {
+                scale = window.innerWidth/data.width;
+                width = data.width;
+                height = window.innerHeight/scale;
+                if (scale > 3 || scale < 0) return;
+            }
+            
+            await canvas.pan({
+                x: data.position.x + width/2,
+                y: data.position.y + height/2,
+                scale
+            });
+        }
+        else if (data.type === 'relative') {
+            let newPos = {
+                x: data.position.x ? data.position.x*canvas.scene._viewPosition.scale + canvas.scene._viewPosition.x : undefined,
+                y: data.position.y ? data.position.y*canvas.scene._viewPosition.scale + canvas.scene._viewPosition.y : undefined,
+                scale: data.position.scale ? data.position.scale*canvas.scene._viewPosition.scale : undefined
+            }
+            canvas.pan(newPos)
+        }
+        lockView.viewbox.emit();
+        if (currentLocks) lockView.locks.applyLocks = true;
+    }
+
+    setViewDialog(data, users) {
+        for (let user of users) {
+            if (user === game.userId) this.onSetViewDialog(data);
+            else this.emit('setViewDialog', user, data);
+        }
+        
+    }
+
+    async onSetViewDialog(data) {
+        const currentLocks = lockView.locks.applyLocks;
+        if (currentLocks) lockView.locks.applyLocks = false;
+
+        let position = {};
+
+        if (data.pan === 'initialView') {
+            position.x = canvas.scene.initial.x;
+            position.y = canvas.scene.initial.y;
+        }
+        else if (data.pan === 'moveGridSpaces') {
+            position = canvas.scene._viewPosition;
+            if (data.grid?.x) position.x += data.grid?.x * canvas.grid.sizeX;
+            if (data.grid?.y) position.y += data.grid?.y * canvas.grid.sizeY;
+        }
+        else if (data.pan === 'moveByCoords') {
+            position = canvas.scene._viewPosition;
+            if (data.coordinates?.x) position.x += data.coordinates.x;
+            if (data.coordinates?.y) position.y += data.coordinates.y;
+        }
+        else if (data.pan === 'moveToCoords') {
+            position = canvas.scene._viewPosition;
+            if (data.coordinates?.x) position.x = data.coordinates.x;
+            if (data.coordinates?.y) position.y = data.coordinates.y;
+        }
+        else if (data.pan !== 'noChange') position = lockView.sceneHandler.getAutoscale(data.pan);
+
+        if (data.zoom === 'set') position.scale = data.scale;
+        else if (data.zoom === 'initialView') position.scale = canvas.scene.initial.scale;
+        else if (data.zoom === 'physical') position.scale = lockView.sceneHandler.getAutoscale('physical').scale;
+
+        await canvas.pan(position);
+        
+        lockView.viewbox.emit();
+        if (currentLocks) lockView.locks.applyLocks = true;
+    }
+
+    emit(messageType, target='all', data) {
+        //console.log('emit', messageType, target, data)
+        game.socket.emit('module.LockView', {
+            messageType,
+            sender: game.userId,
+            target, 
+            data
+        });
+    }
+}

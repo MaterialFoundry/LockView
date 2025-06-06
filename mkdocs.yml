@@ -1,0 +1,70 @@
+site_name: Lock View Documentation
+site_url: https://materialfoundry.github.io/LockView/
+nav:
+  - Home: index.md
+  - Getting Started: 
+    - Getting Started: gettingStarted/gettingStarted.md
+  #  - Requirements: gettingStarted/requirements.md
+  #  - Installation: gettingStarted/installation.md
+  #  - Gaming Systems: gettingStarted/gamingSystems.md
+  - Control Buttons: controlButtons.md
+  - Viewbox: viewbox.md
+  - Scene Config:
+    - Scene Config: sceneConfig/sceneConfig.md
+    - Initial View Configurator: sceneConfig/initialViewConfig.md
+  - Module Settings: 
+    - Module Settings: moduleSettings/moduleSettings.md
+    - User Configurator: moduleSettings/userConfigurator.md
+    - Scene Configurator: moduleSettings/sceneConfigurator.md
+  - Example Configurations: exampleConfigurations.md
+    
+theme:
+  name: material
+  palette:
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: black
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - scheme: default
+      primary: blue grey
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+  
+  favicon: img/icon.ico
+  logo: img/MaterialFoundry.png
+
+  features:
+    - navigation.tracking
+    - navigation.tabs
+    - toc.integrate
+    - navigation.top
+
+plugins:
+  - search
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+
+extra:
+  social:
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/3hd4G6TkmA
+    - icon: fontawesome/brands/patreon
+      link: https://www.patreon.com/materialfoundry
+
+extra_css:
+  - style.css

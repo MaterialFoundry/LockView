@@ -1,0 +1,145 @@
+<div class="tab scrollable{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.SceneConfig.CollapseExpandAll"}}</label>
+        <div class="form-fields">
+            <button type="button" name="lockview-collapseAll"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.Collapse"}}</button>
+            <button type="button" name="lockview-expandAll"><i class="fa-solid fa-caret-down"></i>{{localize "LOCKVIEW.SceneConfig.Expand"}}</button>
+        </div>
+    </div>
+    
+    <fieldset>
+        <legend class="lockview-expandable" data-expand="lockview-locks"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.Locks.Label"}}</legend>
+        
+        <div class="lockview-collapsed" name="lockview-locks">
+            <p class="hint">{{localize "LOCKVIEW.SceneConfig.Locks.Hint"}}</p>
+            {{formGroup locks.pan}}
+            {{formGroup locks.zoom}}
+            {{formGroup locks.boundingBox}}
+        </div>
+        <div name="lockview-locks">
+            <p class="hint">
+                {{localize "LOCKVIEW.SceneConfig.Locks.Hint"}}<br>
+                <i>{{localize "LOCKVIEW.SceneConfig.ExpandToSeeMore"}}</i>
+            </p>
+        </div>
+
+    </fieldset>
+
+    <fieldset>
+        <legend class="lockview-expandable" data-expand="lockview-autoscale"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.Autoscale.Label"}}</legend>
+        <div class="lockview-collapsed" name="lockview-autoscale">
+            <p class="hint">{{localize "LOCKVIEW.SceneConfig.Autoscale.Hint"}}</p><br>
+
+            <div class="form-group">
+                <label>{{localize "LOCKVIEW.SceneConfig.Autoscale.Label"}}</label>
+                <div class="form-fields">
+                    <select name="lockview.autoscale">
+                        {{selectOptions autoscale.options selected=autoscale.value}}
+                    </select>
+                </div>
+                <p class="hint">
+                    {{localize "LOCKVIEW.SceneConfig.Autoscale.Hint"}}<br>
+                    &nbsp;&nbsp;-{{localize "LOCKVIEW.SceneConfig.Autoscale.HorizontalFit_Hint"}}<br>
+                    &nbsp;&nbsp;-{{localize "LOCKVIEW.SceneConfig.Autoscale.VerticalFit_Hint"}}<br>
+                    &nbsp;&nbsp;-{{localize "LOCKVIEW.SceneConfig.Autoscale.AutomaticFitInside_Hint"}}<br>
+                    &nbsp;&nbsp;-{{localize "LOCKVIEW.SceneConfig.Autoscale.AutomaticFitOutside_Hint"}}<br>
+                    &nbsp;&nbsp;-{{localize "LOCKVIEW.SceneConfig.Autoscale.PhysicalGridSize_Hint"}}<br>
+                </p>
+            </div>
+        </div>
+        <div name="lockview-autoscale">
+            <p class="hint">
+                {{localize "LOCKVIEW.SceneConfig.Autoscale.Hint"}}<br>
+                <i>{{localize "LOCKVIEW.SceneConfig.ExpandToSeeMore"}}</i>
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend class="lockview-expandable" data-expand="lockview-sidebar"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.Sidebar.Label"}}</legend>
+        <div class="lockview-collapsed" name="lockview-sidebar">
+            <p class="hint">{{localize "LOCKVIEW.SceneConfig.Sidebar.Hint"}}</p><br>
+
+            <div class="form-group">
+                <label>{{localize "LOCKVIEW.SceneConfig.Sidebar.OnSceneLoad"}}</label>
+                <div class="form-fields">
+                    <select name="lockview.sidebar.sceneLoad">
+                        {{selectOptions sidebar.sceneLoad.options selected=sidebar.sceneLoad.value}}
+                    </select>
+                </div>
+                <p class="hint">{{localize "LOCKVIEW.SceneConfig.Sidebar.OnSceneLoad_Hint"}}</p>
+            </div>
+            {{formGroup sidebar.exclude}}
+            {{formGroup sidebar.blacken}}
+        </div>
+        <div name="lockview-sidebar">
+            <p class="hint">
+                {{localize "LOCKVIEW.SceneConfig.Sidebar.Hint"}}<br>
+                <i>{{localize "LOCKVIEW.SceneConfig.ExpandToSeeMore"}}</i>
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend class="lockview-expandable" data-expand="lockview-ui"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.UI.Label"}}</legend>
+        <div class="lockview-collapsed" name="lockview-ui">
+            <p class="hint">{{localize "LOCKVIEW.SceneConfig.UI.Hint"}}</p><br>
+            
+            <div class="form-group">
+                <label>{{localize "LOCKVIEW.SceneConfig.UI.HideOn"}}</label>
+                <div class="form-fields">
+                    <select name="lockview.ui.hideOn">
+                        {{selectOptions ui.hideOn.options selected=ui.hideOn.value}}
+                    </select>
+                </div>
+            </div>
+
+            {{formGroup ui.sceneControls}}
+            {{formGroup ui.hotbar}}
+            {{formGroup ui.sceneNavigation}}
+            {{formGroup ui.players}}
+            {{formGroup ui.chatNotifications}}
+            {{formGroup ui.cameraViews}}
+            {{formGroup ui.sidebar}}
+        </div>
+        <div name="lockview-ui">
+            <p class="hint">
+                {{localize "LOCKVIEW.SceneConfig.UI.Hint"}}<br>
+                <i>{{localize "LOCKVIEW.SceneConfig.ExpandToSeeMore"}}</i>
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend class="lockview-expandable" data-expand="lockview-forceInit"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.ForceInitialView.Label"}}</legend>
+        <div class="lockview-collapsed" name="lockview-forceInit">
+            <p class="hint">{{localize "LOCKVIEW.SceneConfig.ForceInitialView.Hint_Short"}}</p>
+            <div class="form-group">
+                <label>{{localize "LOCKVIEW.SceneConfig.ForceInitialView.Label"}}</label>
+                <div class="form-fields">
+                    {{formInput forceInitialView}}
+                    <button type="button" data-action="openInitialViewConfig" name="openInitialViewConfig" data-tooltip aria-label="{{localize "LOCKVIEW.SceneConfig.ForceInitialView.Config"}}">
+                        <i class="fa-solid fa-crop-simple fa-fw" inert></i>
+                    </button>
+                </div>
+                <p class="hint">{{localize "LOCKVIEW.SceneConfig.ForceInitialView.Hint"}}</p>
+            </div>
+        </div>
+        <div name="lockview-forceInit">
+            <p class="hint">
+                {{localize "LOCKVIEW.SceneConfig.ForceInitialView.Hint_Short"}}<br>
+                <i>{{localize "LOCKVIEW.SceneConfig.ExpandToSeeMore"}}</i>
+            </p>
+        </div>
+    </fieldset>
+            
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.SceneConfigurator.Title"}}</label>
+        <div class="form-fields">
+            <button type="button" name="lockView-openSceneConfigurator">
+                <i class="window-icon fa-fw fa-solid fa-map" inert></i>{{localize "LOCKVIEW.SceneConfigurator.Title"}}
+            </button>
+        </div>
+        <p class="hint">{{localize "LOCKVIEW.SceneConfigurator.Hint"}}</p>
+    </div>
+</div>
