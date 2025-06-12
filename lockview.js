@@ -12,6 +12,7 @@ import { InitialViewConfig } from "./src/apps/initialViewConfig.js";
 import { SceneConfigurator } from "./src/apps/sceneConfigurator.js";
 import { StylesHandler } from "./src/stylesHandler.js";
 import { SetViewDialog } from "./src/apps/setViewDialog.js";
+import { CloneView } from "./src/apps/cloneView.js";
 
 export const moduleName = "LockView";
 export const documentationUrl = "https://materialfoundry.github.io/LockView/";
@@ -31,7 +32,8 @@ class LockView {
       userConfig: new UserConfig(),
       initialViewConfig: new InitialViewConfig(),
       sceneConfigurator: new SceneConfigurator(),
-      setView: new SetViewDialog()
+      setView: new SetViewDialog(),
+      cloneView: new CloneView()
     }
     this.viewbox = new Viewbox();
     this.styles = new StylesHandler();

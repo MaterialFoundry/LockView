@@ -18,11 +18,13 @@ export class Locks {
     }
 
     update(locks, options = {fromSocket:false, save: false}) {
-        if (locks.pan !== undefined) this.pan = locks.pan;
-        if (locks.zoom !== undefined) this.zoom = locks.zoom;
-        if (locks.boundingBox !== undefined) {
-            this.boundingBox = locks.boundingBox;
-            if (this.boundingBox) canvas.pan(canvas.scene._viewPosition);
+        if (locks) {
+            if (locks.pan !== undefined) this.pan = locks.pan;
+            if (locks.zoom !== undefined) this.zoom = locks.zoom;
+            if (locks.boundingBox !== undefined) {
+                this.boundingBox = locks.boundingBox;
+                if (this.boundingBox) canvas.pan(canvas.scene._viewPosition);
+            }
         }
         
         if (lockView.controlButtonVisible) {

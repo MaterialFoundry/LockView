@@ -1,0 +1,19 @@
+<div>
+    <p>
+        {{localize "LOCKVIEW.CloneView.Hint_A"}}
+    </p>
+
+    {{formGroup pan}}
+    {{formGroup zoom}}
+
+    <hr>
+
+    <p>
+        {{localize "LOCKVIEW.CloneView.Hint_B"}}
+    </p>
+
+    {{#each users as |u|}}
+        {{formGroup u}}
+    {{/each}}
+
+</div>

@@ -97,7 +97,7 @@ export class SetViewDialog extends HandlebarsApplicationMixin(ApplicationV2) {
             setViewSettings.pan = mode;
             gridSpaceElmnt.style.display = mode === 'moveGridSpaces' ? '' : 'none';
             coordinatesElmnt.style.display = mode === 'moveByCoords' || mode === 'moveToCoords' ? '' : 'none';
-            zoomModeElmnt.style.display = (mode === 'noChange' || mode === 'initialView' || mode === 'moveGridSpaces' || mode === 'moveByCoords' || mode === 'moveToCoords') ? '' : 'none';
+            zoomModeElmnt.style.display = (mode === 'noChange' || mode === 'initialView' || mode === 'moveGridSpaces' || mode === 'moveByCoords' || mode === 'moveToCoords' || mode === 'cloneView') ? '' : 'none';
         }
 
         const onZoomModeChange = (mode) => {

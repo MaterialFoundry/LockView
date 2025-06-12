@@ -23,12 +23,21 @@ export function initializeControlButtons() {
                     order: 0,
                     onChange: () => lockView.apps.setView.render(true)
                 },
+                cloneView: {
+                    name: "cloneView",
+                    title: game.i18n.localize("LOCKVIEW.ControlButtons.CloneView"),
+                    icon: "fas fa-clone",
+                    visible: true,
+                    button: true,
+                    order: 1,
+                    onChange: () => lockView.apps.cloneView.apply()
+                },
                 panLock: {
                     name: "panLock",
                     title: game.i18n.localize("LOCKVIEW.ControlButtons.PanLock"),
                     icon: "fas fa-arrows-alt",
                     visible: true,
-                    order: 1,
+                    order: 2,
                     onChange: (event, active) => {
                         lockView.locks.update({pan: active}, {save: true})
                     },
@@ -40,7 +49,7 @@ export function initializeControlButtons() {
                     title: game.i18n.localize("LOCKVIEW.ControlButtons.ZoomLock"),
                     icon: "fas fa-search-plus",
                     visible: true,
-                    order: 2,
+                    order: 3,
                     onChange: (event, active) => {
                         lockView.locks.update({zoom: active}, {save: true})
                     },
@@ -52,7 +61,7 @@ export function initializeControlButtons() {
                     title: game.i18n.localize("LOCKVIEW.ControlButtons.BoundingBox"),
                     icon: "fas fa-box",
                     visible: true,
-                    order: 3,
+                    order: 4,
                     onChange: (event, active) => {
                         lockView.locks.update({boundingBox: active}, {save: true})
                     },
@@ -64,7 +73,7 @@ export function initializeControlButtons() {
                     title: game.i18n.localize("LOCKVIEW.ControlButtons.Viewbox"),
                     icon: "far fa-square",
                     visible: true,
-                    order: 4,
+                    order: 5,
                     onChange: async (event, active) => {
                         lockView.viewbox.enable(active);
                         if (!active) {
@@ -81,7 +90,7 @@ export function initializeControlButtons() {
                     title: game.i18n.localize("LOCKVIEW.ControlButtons.EditViewbox"),
                     icon: "fas fa-vector-square",
                     visible: true,
-                    order: 5,
+                    order: 6,
                     onChange: (event, active) => {
                         if (active && !lockView.viewbox.enabled) {
                             lockView.viewbox.enable(true);
@@ -107,5 +116,9 @@ export function initializeControlButtons() {
             //hide dummy tool
             document.querySelector('button[data-tool="dummy"]').parentElement.style.display = 'none' 
         }
+
+        document.querySelector('button[data-tool="cloneView"]')?.addEventListener('contextmenu', (ev) => {
+            lockView.apps.cloneView.render(true);
+        })
     })
 }

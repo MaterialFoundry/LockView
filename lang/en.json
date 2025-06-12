@@ -25,7 +25,9 @@
                 "PanOnly": "Allow panning, prevent zooming",
                 "ZoomOnly": "Allow zooming, prevent panning",
                 "Any": "Allow all movemement"
-            }
+            },
+            "CloneView": "Clone View",
+            "CloneView_Hint": "Clone the current view to enabled users."
         },
         "SetView": {
             "Title": "Set View",
@@ -110,7 +112,8 @@
             "ZoomLock": "Zoom Lock",
             "BoundingBox": "Bounding Box",
             "Viewbox": "Viewbox",
-            "EditViewbox": "Edit Viewbox"
+            "EditViewbox": "Edit Viewbox",
+            "CloneView": "Clone View"
         },
         "SceneConfigurator": {
             "Title": "Scene Configurator",
@@ -204,6 +207,17 @@
             "Always": "Always",
             "Always_Hint": "Always force the view to this drawing",
             "ForceToBoundingBox": "Force to Bounding Box"
+        },
+        "CloneView": {
+            "Title": "Clone View",
+            "Hint_A": "Configure whether \"Clone View\" clones the pan and/or the zoom.",
+            "Hint_B": "Apply to the selected users.",
+            "Pan": "Pan",
+            "Zoom": "Zoom",
+            "ButtonTitle": "Clone View Config",
+            "ButtonHint": "Configure what happens when the view is cloned.",
+            "DialogContent": "Cloning the view will override the pan and zoom lock, are you sure you want to continue?",
+            "DoNotShowAgain": "Do not show again"
         },
         "Notifications": {
             "CopiedSceneConfig": "Copied scene config from \"{scene}\"",

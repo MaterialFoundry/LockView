@@ -169,6 +169,17 @@ export function registerSettings() {
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
     });
 
+    //Register keybinding to clone the view
+    game.keybindings.register("LockView", "cloneView", {
+        name: "LOCKVIEW.Settings.CloneView",
+        hint: "LOCKVIEW.Settings.CloneView_Hint",
+        editable: [
+            {key: "KeyC", modifiers: [foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.ALT]}
+        ],
+        onDown: () => { lockView.apps.cloneView.apply() },
+        precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+    });
+
     /**
      * Configure the Lock View module settings:
      * -Add buttons
@@ -222,11 +233,13 @@ export function registerSettings() {
         //Documentation button
         lvSettings.before(createSettingsButton(localize("Documentation"), "fas fa-circle-question", localize("Documentation_Hint"), ()=> open(documentationUrl)));
 
-        //User Config button
+        //User Config and Scene Configurator buttons
         if (game.user.isGM) {
             lvSettings.before(createSettingsButton(localize("Title", "UserConfig"), "fas fa-users", localize("Hint", "UserConfig"), ()=> lockView.apps.userConfig.render(true)));
             lvSettings.before(createSettingsButton(localize("Title", "SceneConfigurator"), "window-icon fa-fw fa-solid fa-map", localize("Hint", "SceneConfigurator"), ()=> lockView.apps.sceneConfigurator.render(true)));
         }
+
+        lvSettings.before(createSettingsButton(localize("ButtonTitle", "CloneView"), "fas fa-clone", localize("ButtonHint", "CloneView"), ()=> lockView.apps.cloneView.render(true)));
         
     })
 }
