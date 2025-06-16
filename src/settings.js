@@ -147,6 +147,14 @@ export function registerSettings() {
         config: false
     })
 
+    //Hide the visibility of the viewbox
+    game.settings.register(moduleName, "viewboxEnable", {
+        scope: "user",
+        config: false,
+        default: false,
+        type: Boolean
+    });
+
     //Register keybinding to show or hide the UI elements
     game.keybindings.register("LockView", "showHideUI", {
         name: "LOCKVIEW.Settings.ShowHideUI",

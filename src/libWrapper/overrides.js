@@ -15,7 +15,7 @@ export function registerLibWrapperFunctions() {
 function addLockOverrides() {
     libWrapper.register(moduleName, "foundry.canvas.Canvas.prototype.pan", function (wrapped, ...args) {
         const locks = lockView.locks;
-   
+       
         /* For users with 'Enable' */
         if (locks.applyLocks) {
 

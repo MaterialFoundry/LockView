@@ -169,7 +169,7 @@ export class InitialViewConfig extends HandlebarsApplicationMixin(ApplicationV2)
 
         //Draw viewbox
         if (canvas.scene.id === this.scene.id) {
-            this.viewbox = new ViewboxDrawing('initialView', this.data, true);
+            this.viewbox = new ViewboxDrawing('initialView', this.data, true, true);
             this.viewbox.enable(true).enableEdit(true);
         }
 

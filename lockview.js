@@ -41,8 +41,10 @@ class LockView {
 
   refresh(fromSocket=false) {
     const locks = canvas.scene.getFlag(moduleName, 'locks');
+    this.locks.applyLocks = Helpers.getUserSetting('enable');
     this.locks.update(locks);
     this.viewbox.removeAll();
+    this.sceneHandler.onSceneLoad(canvas.scene, 'canvasReady')
     
     if (!fromSocket) this.socket.refresh();
 

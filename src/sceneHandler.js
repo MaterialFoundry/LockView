@@ -28,10 +28,13 @@ export class SceneHandler {
 
         /* Reconfigure the view and send an updated view to 'Control' users when the sidebar is collapsed or expanded */
         Hooks.on('collapseSidebar', (app, collapsed) => {
-            if (lockView.locks.pan && lockView.locks.zoom) {
-                this.setAutoscale();
+            if (lockView.locks.applyLocks) {
+                if (lockView.locks.pan && lockView.locks.zoom) {
+                    this.setAutoscale();
+                }
+                this.setUiElements(canvas.scene, collapsed ? 'sidebarCollapse' : 'off')
             }
-            this.setUiElements(canvas.scene, collapsed ? 'sidebarCollapse' : 'off')
+            
             lockView.viewbox.emit();
         })
 
@@ -43,9 +46,8 @@ export class SceneHandler {
         //Set locks
         const locks = scene.getFlag(moduleName, 'locks');
         lockView.locks.update(locks);
-        if (!lockView.locks.applyLocks) return;
-
         this.setUiElements(scene, source);
+        if (!lockView.locks.applyLocks) return;
         this.setSidebar(scene);
         await this.forceInitialView(scene);
         this.setAutoscale(scene);
@@ -57,6 +59,8 @@ export class SceneHandler {
     }
 
     async forceInitialView(scene = canvas.scene) {
+        if (!lockView.locks.applyLocks) return;
+
         const forceInitial = scene.getFlag(moduleName, 'forceInitialView');
         if (!forceInitial) return;
 
@@ -116,6 +120,15 @@ export class SceneHandler {
 
     setUiElements(scene, source) {
         const uiFlags = scene.getFlag(moduleName, 'ui');
+        if (!lockView.locks.applyLocks) {
+            for (let [elmntId, hide] of Object.entries(uiFlags)) 
+                if (document.getElementById(elmntId)) {
+                    if (elmntId === 'camera-views') document.getElementById(elmntId).style.display = '';
+                    else document.getElementById(elmntId).style.visibility = '';
+                }
+            lockView.styles.setBlackenSidebar(false);
+            return;
+        }
 
         const blackenSidebar = scene.getFlag(moduleName, 'sidebar').blacken;
         lockView.styles.setBlackenSidebar(blackenSidebar);
@@ -137,7 +150,6 @@ export class SceneHandler {
     } 
 
     setSidebar(scene) {
-        const uiFlags = scene.getFlag(moduleName, 'ui');
         const sidebarFlags = scene.getFlag(moduleName, 'sidebar');
         
         if (sidebarFlags.sceneLoad !== 'noChange') {

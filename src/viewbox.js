@@ -16,6 +16,8 @@ export class Viewbox {
         Hooks.on('userConnected', (user, connected) => {
             if (Helpers.getUserSetting('control') && !connected) this.remove(user);
         })
+
+        this.enabled = game.settings.get(moduleName, 'viewboxEnable');
     }
 
     /**
@@ -57,6 +59,7 @@ export class Viewbox {
         Object.values(this.viewboxes).forEach((vb)=>{
             vb.enable(en);
         })
+        game.settings.set(moduleName, 'viewboxEnable', en);
     }
 
     /**
@@ -91,7 +94,7 @@ export class Viewbox {
             this.viewboxes[senderId].update(data);
         }
         else {
-            this.viewboxes[senderId] = new ViewboxDrawing(senderId, data);
+            this.viewboxes[senderId] = new ViewboxDrawing(senderId, data, this.enabled);
         }
 
         if (!this.activeViewbox) {
@@ -124,16 +127,17 @@ export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
     interactiveChildren = true;
     active = false;
 
-    constructor(userId, data, isInitialView=false) {
+    constructor(userId, data, enabled=false, isInitialView=false) {
         super();
         this.userId = userId;
         this.data = data;
         this.userName = data.name;
         this.isInitialView = isInitialView;
+        this.enabled = enabled;
 
         /* Main container */
         this.container = new PIXI.Container();
-        this.container.visible = false;
+        this.container.visible = enabled;
         this.container.interactiveChildren = true;
         this.addChild(this.container);
 
