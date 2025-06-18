@@ -214,3 +214,15 @@
 #lockView-setView .indent {
     padding-left: 10px;
 }
+
+/**
+ * Control buttons config
+ */
+
+#lockView-controlButtonsConfig label {
+    flex: 6;
+}
+
+#lockView-controlButtonsConfig .form-fields {
+    flex: 1;
+}

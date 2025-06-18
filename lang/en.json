@@ -4,8 +4,6 @@
         "Settings": {
             "ShowHideUI": "Show/Hide UI",
             "ShowHideUI_Hint": "Toggle between showing and hiding the UI, if configured in the scene configuration.",
-            "HideControlButton": "Hide Control Button",
-            "HideControlButton_Hint": "Hides the Lock View control button.",
             "PhysicalGridSize": "Physical Grid Size",
             "PhysicalGridSize_Hint": "Configure the real-world dimensions for when using Physical Grid Size. Display Width is the real-world width of your display, while Grid Size is the desired real-world size of the grid. Unit can be millimeter or inches, but the unit must be the same for both settings.",
             "PhysicalGridSize_Hint2": "By default these settings are configurable by each user, but the GM can set values that apply to all users.",
@@ -16,8 +14,8 @@
             "Documentation_Hint": "Open the Lock View documentation.",
             "CycleViewboxes": "Cycle Viewboxes",
             "CycleViewboxes_Hint": "Cycle between viewboxes when Edit Viewbox is enabled.",
-            "RightClickViewboxDrag": "Right-Drag Viewbox Editing",
-            "RightClickViewboxDrag_Hint": "Enable editing of viewboxes by dragging with the right mouse button. If enabled, you will not be able to pan or zoom when the 'Edit Viewbox' control is enabled.",
+            "MouseViewboxControl": "Mouse Viewbox Editing",
+            "MouseViewboxControl_Hint": "Enable editing of viewboxes by dragging with the right mouse button and using the mousewheel. If enabled, you will not be able to pan or zoom when the Edit Viewbox control is enabled.",
             "PingPan": {
                 "Label": "Pan Canvas to Ping Behavior",
                 "Hint": "Configure what happens when a Control user uses Pan Canvas to Ping while (zoom and/or pan) locks are applied.",
@@ -62,15 +60,15 @@
             "Name": "Name",
             "Role": "Role",
             "Enable": "Enable",
-            "Enable_Hint": "Enables all of Lock View's functions, except for the functions covered by 'Viewbox' and 'Static'.",
+            "Enable_Hint": "Enables all of Lock View's functions, except for the functions covered by Viewbox and Static.",
             "Viewbox": "Viewbox",
-            "Viewbox_Hint": "Users with this setting enabled will share their view with 'Control' users, 'Control' users can display this view using the control buttons and change it, which allows them to control the view of other users.",
+            "Viewbox_Hint": "Users with this setting enabled will share their view with Control users, Control users can display this view using the control buttons and change it, which allows them to control the view of other users.",
             "Static": "Static",
-            "Static_Hint": "Static users will not change scenes when, for example, a scene is activated. 'Control' users can change scenes by right-clicking a scene in the scene navigation and selecting \"Pull Static Users\".",
+            "Static_Hint": "Static users will not change scenes when, for example, a scene is activated. Control users can change scenes for Static Users by right-clicking a scene in the scene navigation and selecting Pull Static Users.",
             "Control": "Control",
             "Control_Hint": "Users with this setting enabled can control Lock View's functions. This includes setting (pan or zoom) locks and changing a user's view using the viewbox.",
             "UserSettings": "User Settings",
-            "UserSettings_Hint": "Configure each user. The \"Default\" settings are applied to new and unconfigured 'Player' and 'Trusted Player' users.",
+            "UserSettings_Hint": "Configure each user. The Default settings are applied to new and unconfigured Player and Trusted Player users.",
             "Default": "Default"
         },
         "InitialViewConfig": {
@@ -113,7 +111,12 @@
             "BoundingBox": "Bounding Box",
             "Viewbox": "Viewbox",
             "EditViewbox": "Edit Viewbox",
-            "CloneView": "Clone View"
+            "CloneView": "Clone View",
+            "ResetView": "Reset View",
+            "ControlButtonsConfig": "Control Buttons Configurator",
+            "ControlButtonsConfig_Hint": "Choose to enable or disable all (Enable Control Buttons) or some of the Lock View control buttons.",
+            "ControlButtonsConfig_ButtonHint": "Configure which control buttons are visible.",
+            "EnableControlButtons": "Enable Control Buttons"
         },
         "SceneConfigurator": {
             "Title": "Scene Configurator",
@@ -214,7 +217,7 @@
             "Hint_B": "Apply to the selected users.",
             "Pan": "Pan",
             "Zoom": "Zoom",
-            "ButtonTitle": "Clone View Config",
+            "ButtonTitle": "Clone View Configurator",
             "ButtonHint": "Configure what happens when the view is cloned.",
             "DialogContent": "Cloning the view will override the pan and zoom lock, are you sure you want to continue?",
             "DoNotShowAgain": "Do not show again"

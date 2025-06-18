@@ -40,7 +40,7 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     static openDocumentation() {
-        window.open(Helpers.getDocumentationUrl(''))
+        window.open(Helpers.getDocumentationUrl('moduleSettings/cloneViewConfigurator/'))
     }
 
     pan = true;

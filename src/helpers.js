@@ -3,7 +3,7 @@ import { moduleName, documentationUrl } from "../lockview.js";
 export class Helpers {
 
     static getDocumentationUrl(path) {
-        return `${documentationUrl}/${path}`;
+        return `${documentationUrl}${path}`;
     }
     
     static localize(str, category='', formatData) {

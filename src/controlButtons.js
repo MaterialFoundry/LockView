@@ -1,7 +1,8 @@
+import { moduleName } from "../lockview.js";
+import { Helpers } from "./helpers.js";
+
 export function initializeControlButtons() {
     Hooks.on('getSceneControlButtons', controls => {
-        if (!lockView?.controlButtonVisible) return;
-
         controls.lockView = {
             name: "lockView",
             title: "Lock View",
@@ -31,6 +32,21 @@ export function initializeControlButtons() {
                     button: true,
                     order: 1,
                     onChange: () => lockView.apps.cloneView.apply()
+                },
+                resetView: {
+                    name: "resetView",
+                    title: game.i18n.localize("LOCKVIEW.ControlButtons.ResetView"),
+                    icon: "fas fa-rotate-left",
+                    visible: true,
+                    button: true,
+                    order: 1,
+                    onChange: () => {
+                        let users = [];
+                        game.users.forEach((u) => {
+                            if (Helpers.getUserSetting('enable', u.id)) 
+                                lockView.socket.refresh();
+                        })
+                    }
                 },
                 panLock: {
                     name: "panLock",
@@ -107,14 +123,26 @@ export function initializeControlButtons() {
     });
 
     Hooks.on('renderSceneControls', () => {
-        if (!lockView?.controlButtonVisible) return;
+        const visibleControlButtons = game.settings.get(moduleName, "controlButtons");
+        
+        if (!visibleControlButtons.enable || !Helpers.getUserSetting('control')) {
+            document.querySelector('button[data-control="lockView"]').parentElement.style.display = 'none';
+            if (ui.controls.control.name === "lockView")
+                ui.controls.activate({control: "tokens"}) 
+            return;
+        }
         if (ui.controls.control.name !== 'lockView') {
             lockView.viewbox.enableEdit(false);
             ui.controls.controls.lockView.tools.editViewbox.active = false;
         }
         else {
+            const toolElements = document.getElementById("scene-controls-tools");
             //hide dummy tool
-            document.querySelector('button[data-tool="dummy"]').parentElement.style.display = 'none' 
+            toolElements.querySelector('button[data-tool="dummy"]').parentElement.style.display = 'none';
+            
+            Object.entries(visibleControlButtons).forEach(([id, value]) => {
+                if (!value) toolElements.querySelector(`button[data-tool="${id}"]`).parentElement.style.display = 'none';
+            })
         }
 
         document.querySelector('button[data-tool="cloneView"]')?.addEventListener('contextmenu', (ev) => {

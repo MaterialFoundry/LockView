@@ -13,6 +13,7 @@ import { SceneConfigurator } from "./src/apps/sceneConfigurator.js";
 import { StylesHandler } from "./src/stylesHandler.js";
 import { SetViewDialog } from "./src/apps/setViewDialog.js";
 import { CloneView } from "./src/apps/cloneView.js";
+import { ControlButtonsConfig } from "./src/apps/controlButtonsConfig.js";
 
 export const moduleName = "LockView";
 export const documentationUrl = "https://materialfoundry.github.io/LockView/";
@@ -21,8 +22,7 @@ export const documentationUrl = "https://materialfoundry.github.io/LockView/";
 
 class LockView {
   constructor() {
-    let hideControlButton = game.settings.get(moduleName, "hideControlButton");
-    this.controlButtonVisible = Helpers.getUserSetting('control') && !hideControlButton;
+    this.controlButtonVisible = Helpers.getUserSetting('control') && game.settings.get(moduleName, "controlButtons")?.enable;
     this.locks = new Locks(Helpers.getUserSetting('enable'));
     this.migrationHandler = new migrationHandler();
     this.sceneHandler = new SceneHandler();
@@ -33,13 +33,16 @@ class LockView {
       initialViewConfig: new InitialViewConfig(),
       sceneConfigurator: new SceneConfigurator(),
       setView: new SetViewDialog(),
-      cloneView: new CloneView()
+      cloneView: new CloneView(),
+      controlButtonsConfig: new ControlButtonsConfig()
     }
     this.viewbox = new Viewbox();
     this.styles = new StylesHandler();
   }
 
   refresh(fromSocket=false) {
+    this.controlButtonVisible = Helpers.getUserSetting('control') && game.settings.get(moduleName, "controlButtons")?.enable;
+    ui.controls.render();
     const locks = canvas.scene.getFlag(moduleName, 'locks');
     this.locks.applyLocks = Helpers.getUserSetting('enable');
     this.locks.update(locks);
@@ -79,6 +82,7 @@ Hooks.once('ready', async()=>{
       //lockView.apps.initialViewConfig.setScene(canvas.scene).render(true);
       //lockView.apps.sceneConfigurator.render(true);
       //lockView.apps.setView.render(true);
+      //lockView.apps.controlButtonsConfig.render(true);
     },1000)
   }
   */

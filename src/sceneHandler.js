@@ -28,7 +28,7 @@ export class SceneHandler {
 
         /* Reconfigure the view and send an updated view to 'Control' users when the sidebar is collapsed or expanded */
         Hooks.on('collapseSidebar', (app, collapsed) => {
-            if (lockView.locks.applyLocks) {
+            if (Helpers.getUserSetting('enable')) {
                 if (lockView.locks.pan && lockView.locks.zoom) {
                     this.setAutoscale();
                 }
@@ -47,7 +47,7 @@ export class SceneHandler {
         const locks = scene.getFlag(moduleName, 'locks');
         lockView.locks.update(locks);
         this.setUiElements(scene, source);
-        if (!lockView.locks.applyLocks) return;
+        if (!Helpers.getUserSetting('enable')) return;
         this.setSidebar(scene);
         await this.forceInitialView(scene);
         this.setAutoscale(scene);
@@ -59,7 +59,7 @@ export class SceneHandler {
     }
 
     async forceInitialView(scene = canvas.scene) {
-        if (!lockView.locks.applyLocks) return;
+        if (!Helpers.getUserSetting('enable')) return;
 
         const forceInitial = scene.getFlag(moduleName, 'forceInitialView');
         if (!forceInitial) return;
@@ -120,7 +120,7 @@ export class SceneHandler {
 
     setUiElements(scene, source) {
         const uiFlags = scene.getFlag(moduleName, 'ui');
-        if (!lockView.locks.applyLocks) {
+        if (!Helpers.getUserSetting('enable')) {
             for (let [elmntId, hide] of Object.entries(uiFlags)) 
                 if (document.getElementById(elmntId)) {
                     if (elmntId === 'camera-views') document.getElementById(elmntId).style.display = '';
@@ -132,6 +132,7 @@ export class SceneHandler {
 
         const blackenSidebar = scene.getFlag(moduleName, 'sidebar').blacken;
         lockView.styles.setBlackenSidebar(blackenSidebar);
+        
 
         if (uiFlags.hideOn === 'always' || (uiFlags.hideOn === 'sceneLoad' && source === 'canvasReady') || (uiFlags.hideOn === 'sidebar' && source === 'sidebarCollapse')) {
             for (let [elmntId, hide] of Object.entries(uiFlags)) 

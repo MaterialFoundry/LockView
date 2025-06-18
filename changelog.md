@@ -1,8 +1,8 @@
 # Changelog
 
-### v2.0.0 - Unreleased
+### v2.0.0 - 18-06-2025
 The module has been completely rewritten, so new bugs are to be expected.
-Compatible with Foundry v13, dropped compatibility with Foundry v12.
+Compatible with Foundry v13, use older versions for Foundry v12 (or earlier).
 
 Additions:
 * LibWrapper is now used to help prevent module incompatibilities
@@ -15,10 +15,11 @@ Additions:
 * Module Settings: Added 'Force GM-Set Settings' for the 'Physical Grid Size' which allows the GM to override all user configured grid size settings
 * Module Settings: Added 'Pan Canvas to Ping Behavior' to allow panning through pings even when locks are applied
 * Added 'Clone View' functionality, which will clone the current view to selected players. This can be done using the 'Set View' control button, the new 'Clone View' control button, or a configurable hotkey (C + Alt, by default). You can configure if this should clone the pan and/or the zoom, and which users this should apply to ('Enabled' users, by default) through the module settings or by right-clicking the 'Clone View' control button
+* Control buttons:Added 'Reset View' control button that resets the view of users as if the scene was reloaded
+* Module Settings: Added 'Control Button Configurator', which can be used to configure which (if any) Lock View control buttons are displayed
 
 Removals:
 * Removed 'Rotation' option from scene config because it was too buggy
-
 
 Other:
 * Switched all applications over to ApplicationV2

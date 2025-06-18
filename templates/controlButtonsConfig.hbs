@@ -1,0 +1,20 @@
+<div>
+    <p>
+        {{localize "LOCKVIEW.ControlButtons.ControlButtonsConfig_Hint"}}
+    </p>
+
+    {{#each controlButtons as |c|}}
+        <div class="form-group">
+            <label><i class="{{c.icon}}"></i>{{c.label}}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="{{c.id}}" {{#if c.value}} checked {{/if}}>
+            </div>
+        </div>
+    {{/each}}
+
+    <div class="form-footer">
+        <button type="submit">
+            <i class="fas fa-save"></i> {{localize 'SETTINGS.Save'}}
+        </button>
+    </div>
+</div>

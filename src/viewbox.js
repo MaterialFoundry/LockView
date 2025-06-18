@@ -138,7 +138,7 @@ export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
         /* Main container */
         this.container = new PIXI.Container();
         this.container.visible = enabled;
-        this.container.interactiveChildren = true;
+        this.container.interactiveChildren = false;
         this.addChild(this.container);
 
         /* Rectangle that corresponds with the view of the user */
@@ -212,6 +212,7 @@ export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
      */
     enableEdit(en) {
         let parent = this;
+        this.container.interactiveChildren = en;
         this.editEnabled = en;              
         this.moveButton.visible = en;       /* Show or hide the move button based on whether editing is enabled */
         this.resizeButton.visible = en;     /* Show or hide the resize button based on whether editing is enabled */
@@ -231,7 +232,7 @@ export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
             Enables the 'globalpointermove' event
         */
         function onDragStart() {
-            if (!game.settings.get(moduleName, 'rightClickViewboxDrag')) return;
+            if (!game.settings.get(moduleName, 'mouserViewboxControl')) return;
             lockView.viewbox.setActiveViewbox(userId);
             startUserData = structuredClone(parent.data);
             parent.box.on('globalpointermove', onDragMove);

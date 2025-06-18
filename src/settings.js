@@ -8,24 +8,32 @@ function localize(str, category="Settings") {
 export function registerSettings() {
 
     //Enable right-click dragging for the viewbox
-    game.settings.register(moduleName, "rightClickViewboxDrag", {
-        name: "LOCKVIEW.Settings.RightClickViewboxDrag",
-        hint: "LOCKVIEW.Settings.RightClickViewboxDrag_Hint",
+    game.settings.register(moduleName, "mouserViewboxControl", {
+        name: "LOCKVIEW.Settings.MouseViewboxControl",
+        hint: "LOCKVIEW.Settings.MouseViewboxControl_Hint",
         scope: "user",
         config: true,
         default: true,
         type: Boolean
     });
 
-    //Hide the control button
-    game.settings.register(moduleName, "hideControlButton", {
-        name: "LOCKVIEW.Settings.HideControlButton",
-        hint: "LOCKVIEW.Settings.HideControlButton_Hint",
+    //Sets which control buttons are visible
+    game.settings.register(moduleName, "controlButtons", {
         scope: "user",
-        config: true,
-        default: false,
-        type: Boolean,
-        onChange: x => window.location.reload()
+        config: false,
+        default: {
+            enable: true,
+            setView: true,
+            cloneView: true,
+            resetView: true,
+            panLock: true,
+            zoomLock: true,
+            boundingBox: true,
+            viewbox: true,
+            editViewbox: true
+        },
+        type: Object,
+        onChange: x => {}
     });
 
     //Sets what to do if the 'control' user pans the canvas using a ping
@@ -247,7 +255,10 @@ export function registerSettings() {
             lvSettings.before(createSettingsButton(localize("Title", "SceneConfigurator"), "window-icon fa-fw fa-solid fa-map", localize("Hint", "SceneConfigurator"), ()=> lockView.apps.sceneConfigurator.render(true)));
         }
 
-        lvSettings.before(createSettingsButton(localize("ButtonTitle", "CloneView"), "fas fa-clone", localize("ButtonHint", "CloneView"), ()=> lockView.apps.cloneView.render(true)));
+        if (game.user.isGM || Helpers.getUserSetting('control')) {
+            lvSettings.before(createSettingsButton(localize("ButtonTitle", "CloneView"), "fas fa-clone", localize("ButtonHint", "CloneView"), ()=> lockView.apps.cloneView.render(true)));
+            lvSettings.before(createSettingsButton(localize("ControlButtonsConfig", "ControlButtons"), "fas fa-eye", localize("ControlButtonsConfig_ButtonHint", "ControlButtons"), ()=> lockView.apps.controlButtonsConfig.render(true)));
+        }
         
     })
 }

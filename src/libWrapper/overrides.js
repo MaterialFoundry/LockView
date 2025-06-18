@@ -53,7 +53,7 @@ function addLockOverrides() {
             If viewbox editing is enabled, prevent default canvas pan and send scale changes to users to change their view. 
             Only scale is set this way, position is handled by the Viewbox class.
         */
-        if (lockView.viewbox.editEnabled && game.settings.get('LockView', 'rightClickViewboxDrag')) {
+        if (lockView.viewbox.editEnabled && game.settings.get('LockView', 'mouserViewboxControl')) {
             if (args[0].scale && lockView.viewbox.getActiveViewbox()) {
                 lockView.socket.setView({
                     type: 'relative',

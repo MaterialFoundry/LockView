@@ -41,7 +41,7 @@ export class UserConfig extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     static openDocumentation(event, target) {
-        window.open(Helpers.getDocumentationUrl('moduleSettings/userConfig/'))
+        window.open(Helpers.getDocumentationUrl('moduleSettings/userConfigurator/'))
     }
 
 

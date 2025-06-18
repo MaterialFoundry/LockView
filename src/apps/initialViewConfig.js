@@ -49,7 +49,7 @@ export class InitialViewConfig extends HandlebarsApplicationMixin(ApplicationV2)
     }
 
     static openDocumentation() {
-        window.open(Helpers.getDocumentationUrl('sceneConfig/initialViewConfig/'))
+        window.open(Helpers.getDocumentationUrl('sceneConfig/initialView/#initial-view-configurator'))
     }
 
     static onSetToPhysicalGridSize() {
