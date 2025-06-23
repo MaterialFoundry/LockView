@@ -1,9 +1,11 @@
 # Changelog
 
-### v2.0.1 - 23-06-2025
+### v2.0.1 - 24-06-2025
 
 Fixes:
-* Fixed issue where user settings would not correctly return their value under certain circumstances. If, for example, 'Enable' was set to false, it would return the default 'Enable' setting instead of false.
+* Fixed issue where user settings would not correctly return their value under certain circumstances. If, for example, 'Enable' was set to false, it would return the default 'Enable' setting instead of false. This could cause settings being enabled for users for which they should've been disabled.
+* Fixed viewbox showing on wrong scene.
+* Fixed viewbox not correctly being removed when a user logs off.
 
 ### v2.0.0 - 18-06-2025
 The module has been completely rewritten, so new bugs are to be expected.

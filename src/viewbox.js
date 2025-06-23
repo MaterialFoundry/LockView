@@ -107,7 +107,12 @@ export class Viewbox {
      * @param {*} user 
      */
     remove(user) {
-        if (this.viewboxes[user.id]) this.viewboxes[user.id].visible = false;
+        const viewbox = this.viewboxes[user.id];
+        if (viewbox) {
+            viewbox.visible = false;
+            canvas.stage.removeChild(viewbox);
+            delete this.viewboxes[user.id];
+        }
     }
 
     /**

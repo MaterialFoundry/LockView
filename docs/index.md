@@ -15,7 +15,7 @@ Make sure you start [here](#getting-started).
 
 ## Introduction
 
-Lock View is a module that provides the GM or a designated player with options to control how Foundry is displayed and controlled. The main features include:
+Lock View is a [Foundry VTT](https://foundryvtt.com/) module that provides the GM or a designated player with options to control how Foundry is displayed and controlled. The main features include:
 
 * <b>Autoscaling</b>: Autoscaling the scene so it fills the display or scaled so the grid corresponds with physical dimensions.
 * <b>Locks</b>: Pan & zoom locks to prevent users from panning or zooming, or force their view to stay within a specified bounding box.

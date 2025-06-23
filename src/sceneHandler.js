@@ -42,17 +42,17 @@ export class SceneHandler {
     }
 
     async onSceneLoad(scene, source) {
-
         //Set locks
         const locks = scene.getFlag(moduleName, 'locks');
         lockView.locks.update(locks);
         this.setUiElements(scene, source);
-        if (!Helpers.getUserSetting('enable')) return;
-        this.setSidebar(scene);
-        await this.forceInitialView(scene);
-        this.setAutoscale(scene);
-        if (locks.boundingBox) {
-            Hooks.once('ready', ()=> canvas.pan(scene._viewPosition));
+        if (Helpers.getUserSetting('enable')) {
+            this.setSidebar(scene);
+            await this.forceInitialView(scene);
+            this.setAutoscale(scene);
+            if (locks.boundingBox) {
+                Hooks.once('ready', ()=> canvas.pan(scene._viewPosition));
+            }
         }
         
         lockView.socket.requestViewbox();
