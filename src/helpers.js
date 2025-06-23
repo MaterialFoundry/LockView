@@ -69,7 +69,7 @@ export class Helpers {
     static getUserSetting(key, userId=game.userId) {
         const userSettings = game.settings.get(moduleName, 'userSettings');
         const userSetting = userSettings.find(s => s.id === userId);
-        if (userSetting && userSetting[key]) return userSetting[key];
+        if (userSetting && userSetting[key] !== undefined) return userSetting[key];
         const defaultUserSettings = game.user.isGM ? {enable: false, viewbox: false, static: false, control: true} : game.settings.get(moduleName, 'defaultUserSettings');
         return defaultUserSettings[key];
     }

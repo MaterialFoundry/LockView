@@ -1,5 +1,10 @@
 # Changelog
 
+### v2.0.1 - 23-06-2025
+
+Fixes:
+* Fixed issue where user settings would not correctly return their value under certain circumstances. If, for example, 'Enable' was set to false, it would return the default 'Enable' setting instead of false.
+
 ### v2.0.0 - 18-06-2025
 The module has been completely rewritten, so new bugs are to be expected.
 Compatible with Foundry v13, use older versions for Foundry v12 (or earlier).
