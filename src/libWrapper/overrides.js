@@ -54,6 +54,7 @@ function addLockOverrides() {
             Only scale is set this way, position is handled by the Viewbox class.
         */
         if (lockView.viewbox.editEnabled && game.settings.get('LockView', 'mouserViewboxControl')) {
+            wrapped();
             if (args[0].scale && lockView.viewbox.getActiveViewbox()) {
                 lockView.socket.setView({
                     type: 'relative',
@@ -66,6 +67,17 @@ function addLockOverrides() {
 
         /* If zooming and panning is not prevented, handle the default pan. */
         return wrapped(...args);
+    }, "MIXED");
+
+
+    libWrapper.register(moduleName, "foundry.canvas.Canvas.prototype.initializeCanvasPosition", function (wrapped) {
+        /* For users with 'Enable' */
+        if (lockView.locks.applyLocks) {
+            lockView.locks.applyLocks = false;
+            wrapped();
+            lockView.locks.applyLocks = true;
+        }
+        else return wrapped();
     }, "MIXED");
 
     libWrapper.register(moduleName, "foundry.canvas.layers.ControlsLayer.prototype.handlePing", function (wrapped, ...args) {
@@ -115,13 +127,15 @@ function addSceneConfigOverrides() {
         const formData = new foundry.applications.ux.FormDataExtended(args[1]);
         const submitData = foundry.utils.expandObject(formData.object);
 
-        await this.document.update({
-            flags: {
-                LockView: submitData.lockview
-            }
-        });
+        if (this.document?._id !== null) {
+            await this.document.update({
+                flags: {
+                    LockView: submitData.lockview
+                }
+            });
 
-        lockView.sceneHandler.onSceneUpdate(game.scenes.get(this.document._id), 'sceneConfig', true);
+            lockView.sceneHandler.onSceneUpdate(game.scenes.get(this.document._id), 'sceneConfig', true);
+        }
         
         return wrapped(...args);
     }, "WRAPPER");
@@ -305,50 +319,39 @@ function addBoundingBoxOverrides() {
         const formData = new foundry.applications.ux.FormDataExtended(args[1]);
         const submitData = foundry.utils.expandObject(formData.object);
 
-        await this.document.update({
-            flags: {
-                LockView: submitData.lockview
-            }
-        });
+        if (this.document?._id !== null) {
+            await this.document.update({
+                flags: {
+                    LockView: submitData.lockview
+                }
+            });
 
-        if (submitData.lockview.boundingBox) canvas.pan(canvas.scene._viewPosition);
+            if (submitData.lockview.boundingBox) canvas.pan(canvas.scene._viewPosition);
+        }
         
         return wrapped(...args);
     }, "WRAPPER");
 }
 
 export function boundingBoxHandler(coords) {
-    let drawings = canvas.scene.drawings.filter(d => d.flags?.LockView?.boundingBox === 'always');
-    drawings.push(...canvas.scene.drawings.filter(d => d.flags?.LockView?.boundingBox === 'owned'));
-
-    const dimensions = canvas.scene.dimensions;
-    drawings.push({
-        x: dimensions.sceneX,
-        y: dimensions.sceneY,
-        shape: {
-            width: dimensions.sceneWidth,
-            height: dimensions.sceneHeight
-        }
-    })
+    let drawings = canvas.scene.drawings.filter(d => d.flags?.LockView?.boundingBox === 'always' || d.flags?.LockView?.boundingBox === 'owned');
 
     const currentPosition = structuredClone(canvas.scene._viewPosition);
     const target = foundry.utils.mergeObject(currentPosition, coords)
+    const sidebarWidth = canvas.scene.getFlag(moduleName, 'sidebar')?.exclude ? Helpers.getSidebarWidth() : 0;
+    const scaledSidebarWidth = sidebarWidth/target.scale;
     const windowHeight = window.innerHeight;
-    let windowWidth = window.innerWidth;
-    if (canvas.scene.getFlag(moduleName, 'sidebar')?.exclude) {
-        windowWidth -= Helpers.getSidebarWidth();
-        target.x -= 0.5*Helpers.getSidebarWidth()/target.scale
-    }
+    const windowWidth = window.innerWidth;
     const width = windowWidth/target.scale;
     const height = windowHeight/target.scale;
 
     const targetCorners = {
-        topLeft: { x: target.x - width/2 , y: target.y - height/2 },
-        topRight: { x: target.x + width/2 , y: target.y - height/2 },
-        bottomLeft: { x: target.x - width/2 , y: target.y + height/2 },
-        bottomRight: { x: target.x + width/2 , y: target.y + height/2 }
+        topLeft: { x: target.x - width/2, y: target.y - height/2 },
+        topRight: { x: target.x + width/2 - scaledSidebarWidth, y: target.y - height/2 },
+        bottomLeft: { x: target.x - width/2, y: target.y + height/2 },
+        bottomRight: { x: target.x + width/2 - scaledSidebarWidth, y: target.y + height/2 }
     }
-
+    
     const containsPoint = (drawing, point) => {
         if (point.x < drawing.x) return false;
         if (point.x > drawing.x + drawing.shape.width) return false;
@@ -357,9 +360,12 @@ export function boundingBoxHandler(coords) {
         return true;
     }
 
+    let applicableDrawings = [];
+
     //Check all drawings
     for (let drawing of drawings) {
         const mode = drawing.flags?.LockView?.boundingBox || 'always';
+        //console.log("DRawing", drawing, mode)
 
         let isInside = true;
         //Check if all points of the view are within the drawing
@@ -371,39 +377,67 @@ export function boundingBoxHandler(coords) {
         }
 
         //If within drawing, continue
-        if (isInside) continue;
+        if (isInside) {
+            applicableDrawings.push({ mode, drawing, isInside: true });
+            continue;
+        }
 
         //Check if an owned token is within the drawing
+        let tokens = [];
         if (mode === 'owned') {
             let tokenInDrawing = false;
             for (let token of canvas.tokens.ownedTokens) {
                 const point = {x: token.document.x, y: token.document.y}
                 if (containsPoint(drawing, point)) {
                     tokenInDrawing = true;
-                    break;
+                    tokens.push(token);
                 }
             }
             if (!tokenInDrawing) continue;
         }
 
-        //Else, check if the view is wider than the drawing. If so, set the scale and center on drawing
-        const drawingWidthScale = windowWidth/drawing.shape.width;
-        const drawingHeightScale = windowHeight/drawing.shape.height;
+        applicableDrawings.push({ mode, drawing, isInside: false, tokens });
+    }
+
+    let boundingBox;
+
+    if (applicableDrawings.length === 0) {
+        const dimensions = canvas.scene.dimensions;
+        boundingBox = {
+            x: dimensions.sceneX,
+            y: dimensions.sceneY,
+            shape: {
+                width: dimensions.sceneWidth,
+                height: dimensions.sceneHeight
+            }
+        }
+    }
+
+    const ownedDrawings = applicableDrawings.filter(d => d.mode === "owned");
+    const alwaysDrawings = applicableDrawings.filter(d => d.mode === "always");
+    if (ownedDrawings.length === 1) boundingBox = ownedDrawings[0].drawing;
+    else if (ownedDrawings.length > 1) boundingBox = getCombinedDrawingSize(ownedDrawings);
+    else if (alwaysDrawings.length === 1) boundingBox = alwaysDrawings[0].drawing;
+    else if (alwaysDrawings.length > 1) boundingBox = getCombinedDrawingSize(alwaysDrawings);
+
+    if (boundingBox) {
+        //Check if the view is wider than the drawing. If so, set the scale and center on drawing
+        const drawingWidthScale = windowWidth/boundingBox.shape.width;
+        const drawingHeightScale = windowHeight/boundingBox.shape.height;
         const drawingScale = Math.max(drawingWidthScale, drawingHeightScale);
         if (drawingScale > target.scale) {
             return {
-                x: drawing.x + drawing.shape.width/2,
-                y: drawing.y + drawing.shape.height/2,
+                x: boundingBox.x + boundingBox.shape.width/2,
+                y: boundingBox.y + boundingBox.shape.height/2,
                 scale: drawingScale
             }
         }
 
-        if (targetCorners.topLeft.x < drawing.x) coords.x = drawing.x + width/2;
-        else if (targetCorners.topRight.x > drawing.x + drawing.shape.width) coords.x = drawing.x + drawing.shape.width - width/2;
-        if (targetCorners.topLeft.y < drawing.y) coords.y = drawing.y + height/2;
-        else if (targetCorners.bottomLeft.y > drawing.y + drawing.shape.height) coords.y = drawing.y + drawing.shape.height - height/2;
-
-        return coords;
+        //Check if view is within bounding box
+        if (targetCorners.topLeft.x < boundingBox.x) coords.x = boundingBox.x + width/2;
+        else if (targetCorners.topRight.x > boundingBox.x + boundingBox.shape.width) coords.x = boundingBox.x + boundingBox.shape.width - width/2 + scaledSidebarWidth;
+        if (targetCorners.topLeft.y < boundingBox.y) coords.y = boundingBox.y + height/2;
+        else if (targetCorners.bottomLeft.y > boundingBox.y + boundingBox.shape.height) coords.y = boundingBox.y + boundingBox.shape.height - height/2;
     }
 
     return coords;
@@ -413,3 +447,30 @@ Hooks.on('refreshToken', () => {
     if (lockView.locks.boundingBox)
         canvas.pan(canvas.scene._viewPosition);
 })
+
+function getCombinedDrawingSize(drawings) {
+    let top = 9999999;
+    let bottom = 0;
+    let left = 9999999;
+    let right = 0;
+    drawings.forEach(d => {
+        const {x, y} = d.drawing;
+        const {width, height} = d.drawing.shape;
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y+height);
+        left = Math.min(left, x);
+        right = Math.max(right, x+width);
+        
+    })
+
+    const width = right - left;
+    const height = bottom - top;
+    return {
+        x: left,
+        y: top,
+        shape: {
+            width,
+            height
+        }
+    }
+}

@@ -1,5 +1,5 @@
 <div class="imgContainer"><img src="../../img/SceneConfig.png"></div>
-A new Lock View tab has been added to the scene configuration. Here you can configure what Lock View does on the scene.
+A new Lock View tab has been added to the scene configuration. Here you can configure what Lock View does on the scene. These settings are applied to Enable users, as configured in the [User Configurator](../moduleSettings/userConfigurator.md).
 
 The various settings are divided into sections:
 
@@ -9,7 +9,7 @@ The various settings are divided into sections:
 * <b>[Hide UI Elements](./hideElements.md)</b>: Select when to hide UI elements and which elements to hide.
 * <b>[Force Initial View](./initialView.md)</b>: Force the view to the Initial View Position.
 
-Each section can be expanded and collpased by pressing the section label, or you can expand or collapse them all by pressing the buttons at the top.
+Each section can be expanded and collapsed by pressing the section label, or you can expand or collapse them all by pressing the buttons at the top.
 
 The Scene Configurator button at the bottom will open the [Scene Configurator](../moduleSettings/sceneConfigurator.md) where you can configure the scene settings for all scenes, and the default settings that are applied to new scenes.
 

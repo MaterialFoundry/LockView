@@ -31,7 +31,7 @@ export class Socket {
 
             //console.log('Socket rec', messageType, sender, target, data)
             if (messageType === 'requestFlagSet') this.onRequestFlagSet(data);
-            else if (messageType === 'updateLocks' && canvas.scene._id === data.scene) lockView.locks.update(data.locks, {fromSocket:true});
+            else if (messageType === 'updateLocks' && canvas?.scene?._id === data.scene) lockView.locks.update(data.locks, {fromSocket:true});
             else if (messageType === 'updateViewbox') lockView.viewbox.update(sender, data);
             else if (messageType === 'requestViewbox') lockView.viewbox.emit();
             else if (messageType === 'setView') this.onSetView(data);

@@ -1,4 +1,9 @@
-Work in progress, refer to the [old documentation](https://github.com/MaterialFoundry/LockView/wiki/Settings#configure-initial-view-position).
+<div class="imgContainer"><img src="../../img/SceneConfig-ForceInitial.png"></div>
+The initial view position is the view that players will see when a scene is loaded. This initial view position can be configured in the Basics tab of the scene config. The default Foundry behavior is that the view will center on owned tokens on the scene. Only if the player has no owned tokens, will the initial view position be applied.
+
+Lock View allows you to always force the view to the initial view position, even if a player owns tokens on the scene.
+
+Press the :fontawesome-solid-crop-simple: button to open the [Initial View Configurator](#initial-view-configurator)
 
 ??? info "Understanding the Initial View Position"
     The initial view position might not be exactly what you expect, in the sense that it does not describe how much of a scene is visible when a scene is loaded.
@@ -56,3 +61,17 @@ Work in progress, refer to the [old documentation](https://github.com/MaterialFo
     With the 'Bounding Box' lock, you can force the view of users to stay within a specified area. If the initial view position would cause the view to be outside of that area, the view will be changed so it fits inside of the area.
 
 ## Initial View Configurator
+<div class="imgContainer"><img src="../../img/SceneConfig-InitialViewConfig.png"></div>
+The Initial View Configurator is a tool that allows you to easily configure the initial view position of the scene.
+
+When this configurator is opened, a red Initial View rectangle will be displayed that corresponds to the initial view position. You can move the view position by dragging the :fontawesome-solid-arrows-up-down-left-right: icon, and resize it by dragging the :fontawesome-solid-arrows-to-dot: icon.
+
+| Setting   | Description   |
+|---|---|
+| Current Initial View Position | Displays the currently configured initial view position.  |
+| New Initial View Position     | Displays the new initial view position that will be applied if Save Changes is pressed.<br>You can manually enter values. |
+| Size in Grid Spaces           | Displays the size of the new initial view position in terms of grid spaces.<br>You can manually enter values. |
+| Set to Physical Grid Size     | Scales the initial view position to correspond with the physical grid size configured in the [module settings](../moduleSettings/moduleSettings.md).  |
+| Set to Player View            | Select a (currently connected) player, the initial view position will be set to their current view.   |
+| Snap to Grid                  | Select a corner, that corner will be snapped to the nearest grid intersection.    |
+| Save Changes                  | Save the new initial view position.   |

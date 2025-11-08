@@ -10,7 +10,7 @@ Lock View is a [Foundry VTT](https://foundryvtt.com/) module that provides the G
 * <b>Panning & Zooming User Views</b>: Move a user's view to a specific point, or offset it by a specific amount of grid spaces.
 * <b>Cloning View</b>: Apply your current view to users.
 
-## [documentation](https://materialfoundry.github.io/LockView/)
+### [Documentation](https://materialfoundry.github.io/LockView/)
 
 ## Module Compatibility
 When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work. Lock View uses [libWrapper](https://foundryvtt.com/packages/lib-wrapper), through which incompatibilities might be prevented/fixed.

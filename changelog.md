@@ -1,5 +1,17 @@
 # Changelog
 
+### v2.0.2 - 07-11-2025
+
+Fixes:
+* Using Exclude Sidebar with Bounding Box enabled could result in erratic panning behavior when trying to pan past the allowed bounds, this is fixed.
+* Expanding or collapsing the sidebar will now automatically update the view if required by a bounding box.
+* Default Scene Configuration could not be saved when Lock View was enabled, this is now fixed.
+* Fixed issue where the Initial View Configurator would only allow rounded values for, for example, the scale.
+* When loading a scene with Pan & Zoom locks enabled, the viewposition would not be updated to the last viewposition on that scene. Instead, it would keep the same viewposition as the previous scene.
+* Fixed issue where, if the GM just loaded on a scene and tried to edit a player's viewbox before zooming/panning themselves, that player's view would not be updated or it would zoom in/out incorrectly.
+* Blacken Sidebar now has the correct description in the scene config.
+* Hide UI Elements "Scene Navigation" setting now also hides the expanded inactive scenes.
+
 ### v2.0.1 - 24-06-2025
 
 Fixes:

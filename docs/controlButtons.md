@@ -9,7 +9,7 @@ You can access the Lock View control buttons by pressing the Lock View (:fontawe
 |------|------|----------|
 | :fontawesome-solid-minimize: | Set View | Opens the [Set View dialog](#set-view-dialog) to set the view of users. |
 | :fontawesome-solid-clone: | Clone View | [Clones](#clone-view) your view to users. |
-| :fontawesome-solid-rotate-left: | Reset View | Resets the view of Enabled users as if the scene was loaded. |
+| :fontawesome-solid-rotate-left: | Reset View | Resets the view of Enabled users as if the scene was loaded.<br>(e.g. back to the [Initial View](./sceneConfig/initialView.md) or resetting [autoscaling](./sceneConfig/autoscale.md)) |
 | :fontawesome-solid-arrows-up-down-left-right: | Pan Lock | Toggles [Pan Lock](./sceneConfig/locks.md) on or off. |
 | :fontawesome-solid-magnifying-glass-plus: | Zoom Lock | Toggles [Zoom Lock](./sceneConfig/locks.md) on or off. |
 | :fontawesome-solid-box: | Bounding Box | Toggles [Bounding Box](./sceneConfig/locks.md) on or off. |

@@ -85,7 +85,7 @@ export class Viewbox {
      * Update the viewbox, this happens when a user with 'Viewbox' enabled calls emit().
      */
     update(senderId, data) {
-        if (data.scene !== canvas.scene.id && this.viewboxes[senderId]) {
+        if (data.scene !== canvas?.scene?.id && this.viewboxes[senderId]) {
             this.viewboxes[senderId].visible = false;
             return;
         }
@@ -182,7 +182,7 @@ export class ViewboxDrawing extends foundry.canvas.layers.CanvasLayer {
 
         this.container.setTransform(data.position.x - data.width/2, data.position.y - data.height/2);
 
-        canvas.stage.addChild(this);
+        canvas?.stage?.addChild(this);
     }
 
     async draw() {

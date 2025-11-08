@@ -2,7 +2,7 @@
     "id": "LockView",
     "title": "Lock View",
     "description": "Lock View is a module that helps GMs take control of what players can view. It can lock the view of players by enabling the GM to block zooming and panning. It can give control over the player's view, allowing the GM to zoom and pan it. It can autoscale the view to, for example, fit the canvas or scale it to a physical grid size.",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "authors": [
         {
             "name": "Material Foundry",

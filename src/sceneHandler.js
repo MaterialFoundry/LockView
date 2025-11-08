@@ -32,7 +32,8 @@ export class SceneHandler {
                 if (lockView.locks.pan && lockView.locks.zoom) {
                     this.setAutoscale();
                 }
-                this.setUiElements(canvas.scene, collapsed ? 'sidebarCollapse' : 'off')
+                this.setUiElements(canvas.scene, collapsed ? 'sidebarCollapse' : 'off');
+                canvas.pan(canvas.scene._viewPosition);
             }
             
             lockView.viewbox.emit();
@@ -66,7 +67,7 @@ export class SceneHandler {
 
         const currentLocks = lockView.locks.applyLocks;
         if (currentLocks) lockView.locks.applyLocks = false;
-        await canvas.pan( canvas.scene.initial );
+        await canvas.pan( scene.initial );
         if (currentLocks) lockView.locks.applyLocks = true;
     }
 
@@ -110,9 +111,9 @@ export class SceneHandler {
 
     onSceneUpdate(scene, source, emitUpdate=false) {
         //Send socket to other players
-        if (emitUpdate) lockView.socket.sceneUpdated({scene: scene._id})
+        if (emitUpdate) lockView.socket.sceneUpdated({scene: scene?._id})
         
-        if (scene._id !== canvas.scene._id) return;
+        if (!scene || !canvas?.scene || scene._id !== canvas.scene._id) return;
         this.onSceneLoad(scene, source);
         ui.controls._configureRenderOptions({reset:true});
         ui.controls.render();
@@ -137,14 +138,14 @@ export class SceneHandler {
         if (uiFlags.hideOn === 'always' || (uiFlags.hideOn === 'sceneLoad' && source === 'canvasReady') || (uiFlags.hideOn === 'sidebar' && source === 'sidebarCollapse')) {
             for (let [elmntId, hide] of Object.entries(uiFlags)) 
                 if (document.getElementById(elmntId)) {
-                    if (elmntId === 'camera-views') document.getElementById(elmntId).style.display = (hide && !this.forceUi) ? 'none' : '';
+                    if (elmntId === 'camera-views' || elmntId === "scene-navigation") document.getElementById(elmntId).style.display = (hide && !this.forceUi) ? 'none' : '';
                     else document.getElementById(elmntId).style.visibility = (hide && !this.forceUi) ? 'hidden' : '';
                 }
         }
         else if (uiFlags.hideOn === 'off' || source === 'off') {
             for (let [elmntId, hide] of Object.entries(uiFlags)) 
                 if (document.getElementById(elmntId)) {
-                    if (elmntId === 'camera-views') document.getElementById(elmntId).style.display = '';
+                    if (elmntId === 'camera-views' || elmntId === "scene-navigation") document.getElementById(elmntId).style.display = '';
                     else document.getElementById(elmntId).style.visibility = '';
                 }
         }
@@ -213,7 +214,7 @@ export class SceneHandler {
                         datafield: new foundry.data.fields.BooleanField({label: localize('Sidebar.ExcludeSidebar'), hint: localize('Sidebar.ExcludeSidebar_Hint'), initial: flags.sidebar.exclude}, {name: 'lockview.sidebar.exclude'})
                     },{
                         id: 'blacken',
-                        datafield: new foundry.data.fields.BooleanField({label: localize('Sidebar.BlackenSidebar'), hint: localize('Sidebar.ExcludeSidebar_Hint'), initial: flags.sidebar.blacken}, {name: 'lockview.sidebar.blacken'})
+                        datafield: new foundry.data.fields.BooleanField({label: localize('Sidebar.BlackenSidebar'), hint: localize('Sidebar.BlackenSidebar_Hint'), initial: flags.sidebar.blacken}, {name: 'lockview.sidebar.blacken'})
                     }
                 ]
             },{

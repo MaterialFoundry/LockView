@@ -1,9 +1,5 @@
 # Lock View Documentation
 
-!!! warning "Work In Progress"
-    This documentation is still a work in progress. It is currently mostly done, but there are some sections missing. For the missing sections please refer to the [old documentation](https://github.com/MaterialFoundry/LockView/wiki) which is (mostly) still relevant.
-<br clear="left">
-
 !!! warning "Lock View v2 only"
     This documentation is for Lock View v2.0.0+. Refer to the [old documentation](https://github.com/MaterialFoundry/LockView/wiki) for older versions of Lock View.
 <br clear="left">

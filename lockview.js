@@ -87,3 +87,19 @@ Hooks.once('ready', async()=>{
   }
   */
 });
+
+/*
+Hooks.once('MaterialDeck_Ready', () => {
+  const moduleData = game.modules.get(moduleName);
+  game.materialDeck.registerSystem({
+      moduleId: moduleName,
+      moduleName: moduleData.title,
+      version: moduleData.version,
+      manifest: moduleData.manifest,
+      documentation: documentationUrl, 
+      actions: [
+      
+      ]
+  });
+});
+*/
