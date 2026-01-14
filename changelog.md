@@ -1,5 +1,10 @@
 # Changelog
 
+### v2.0.3 - xx-xx-2026
+
+Fixes:
+* Fixed issue on the Forge where a stylesheet could not be edited to blacken the sidebar.
+
 ### v2.0.2 - 07-11-2025
 
 Fixes:

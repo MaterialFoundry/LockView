@@ -5,7 +5,7 @@ export class StylesHandler {
 
     constructor() {
         this.styleSheet = new CSSStyleSheet();
-        document.adoptedStyleSheets = [this.styleSheet];
+        document.adoptedStyleSheets = [this.styleSheet, ...document.adoptedStyleSheets];
     }
 
     setBlackenSidebar(en) {
@@ -23,7 +23,7 @@ export class StylesHandler {
     }
 
     set() {
-        this.styleSheet.replace(`
+        this.styleSheet.replaceSync(`
             ${this.blackenSidebar}
             ${this.uiElements}
         `)
