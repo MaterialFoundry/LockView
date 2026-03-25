@@ -177,8 +177,9 @@ function addSceneConfigOverrides() {
         });
         
         //Configure expandable sections
-        for (let elmnt of this.element.querySelectorAll('.lockview-expandable')) {
-            const expandElements = this.element.querySelectorAll(`div[name="${elmnt.dataset.expand}"]`)
+        const lockViewTab = this.element.querySelector('.tab[data-tab="lockView"]');
+        for (let elmnt of lockViewTab.querySelectorAll('.lockview-expandable')) {
+            const expandElements = lockViewTab.querySelectorAll(`div[name="${elmnt.dataset.expand}"]`)
             elmnt.addEventListener('click', (event) => {
                 for (let expandElmnt of expandElements) 
                     expandElmnt.classList.toggle('lockview-collapsed')
@@ -191,26 +192,26 @@ function addSceneConfigOverrides() {
         }
 
         //Handle 'expand all' button
-        this.element.querySelector('button[name="lockview-expandAll"]').addEventListener('click', () => {
-            const expandElements = this.element.querySelectorAll(`.lockview-expandable`);
+        lockViewTab.querySelector('button[name="lockview-expandAll"]').addEventListener('click', () => {
+            const expandElements = lockViewTab.querySelectorAll(`.lockview-expandable`);
             for (let elmnt of expandElements) {
                 const icon = elmnt.firstElementChild;
                 if (icon.classList.contains('fa-caret-right')) {
                     icon.classList.replace('fa-caret-right', 'fa-caret-down');
-                    for (let expandElmnt of this.element.querySelectorAll(`div[name="${elmnt.dataset.expand}"]`)) 
+                    for (let expandElmnt of lockViewTab.querySelectorAll(`div[name="${elmnt.dataset.expand}"]`))
                         expandElmnt.classList.toggle('lockview-collapsed')
                 }
             }
         })
 
         //Handle 'collapse all' button
-        this.element.querySelector('button[name="lockview-collapseAll"]').addEventListener('click', () => {
-            const expandElements = this.element.querySelectorAll(`.lockview-expandable`);
+        lockViewTab.querySelector('button[name="lockview-collapseAll"]').addEventListener('click', () => {
+            const expandElements = lockViewTab.querySelectorAll(`.lockview-expandable`);
             for (let elmnt of expandElements) {
                 const icon = elmnt.firstElementChild;
                 if (icon.classList.contains('fa-caret-down')) {
                     icon.classList.replace('fa-caret-down', 'fa-caret-right');
-                    for (let expandElmnt of this.element.querySelectorAll(`div[name="${elmnt.dataset.expand}"]`)) 
+                    for (let expandElmnt of lockViewTab.querySelectorAll(`div[name="${elmnt.dataset.expand}"]`))
                         expandElmnt.classList.toggle('lockview-collapsed')
                 }
             }
