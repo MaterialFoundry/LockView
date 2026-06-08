@@ -68,9 +68,22 @@ export class migrationHandler {
                     exclude: flags.excludeSidebar || defaultConfig.sidebar.exclude,
                     blacken: flags.blackenSidebar || defaultConfig.sidebar.blacken
                 },
+                avDock: {
+                    sceneLoad: defaultConfig.avDock?.sceneLoad || "noChange",
+                    exclude: defaultConfig.avDock?.exclude || false,
+                    blacken: defaultConfig.avDock?.blacken || false
+                },
                 autoscale: autoScaleFlag || defaultConfig.autoscale,
                 forceInitialView: flags.forceInit || defaultConfig.forceInitialView
             }
+        }
+        if (!flags.avDock) {
+            flags.avDock = {
+                sceneLoad: defaultConfig.avDock?.sceneLoad || "noChange",
+                exclude: defaultConfig.avDock?.exclude || false,
+                blacken: defaultConfig.avDock?.blacken || false
+            };
+            return flags;
         }
         return false;
     }

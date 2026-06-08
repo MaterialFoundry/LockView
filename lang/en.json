@@ -16,6 +16,8 @@
             "CycleViewboxes_Hint": "Cycle between viewboxes when Edit Viewbox is enabled.",
             "MouseViewboxControl": "Mouse Viewbox Editing",
             "MouseViewboxControl_Hint": "Enable editing of viewboxes by dragging with the right mouse button and using the mousewheel. If enabled, you will not be able to pan or zoom when the Edit Viewbox control is enabled.",
+            "EditViewbox": "Toggle Viewbox Editing",
+            "EditViewbox_Hint": "Toggle the \"Edit Viewbox\" setting on or off",
             "PingPan": {
                 "Label": "Pan Canvas to Ping Behavior",
                 "Hint": "Configure what happens when a Control user uses Pan Canvas to Ping while (zoom and/or pan) locks are applied.",
@@ -173,7 +175,7 @@
                 "Players": "Players Box",
                 "Sidebar": "Sidebar",
                 "ChatNotifications": "Chat Notifications",
-                "CameraViews": "Camara Feeds"
+                "CameraViews": "AV Dock"
             },
             "ForceInitialView": {
                 "Label": "Force Initial View",
@@ -193,6 +195,17 @@
                 "NoChange": "No Change",
                 "Collapse": "Collapse",
                 "Expand": "Expand"
+            },
+            "AVDock": {
+                "Label": "Audio/Video Dock",
+                "Label_Abbr": "AV Dock",
+                "Hint": "Configure the audio/video dock.",
+                "ExcludeDock": "Exclude Dock",
+                "ExcludeDock_Hint": "Exclude the dock when determining a player's view with the viewbox, and when 'Autoscale' is configured.",
+                "BlackenDock": "Blacken Dock",
+                "BlackenDock_Hint": "Remove the transparancy from the dock, preventing users from seeing what's behind it.",
+                "OnSceneLoad": "On Scene Load",
+                "OnSceneLoad_Hint": "Configure what should happen with the dock when the scene is loaded. Collapse it, expand it, or leave it as is."
             },
             "ExpandToSeeMore": "Expand to see more.",
             "CollapseExpandAll": "Collapse or Expand All",
@@ -217,6 +230,11 @@
             "Hint_B": "Apply to the selected users.",
             "Pan": "Pan",
             "Zoom": "Zoom",
+            "Disabled": "Disabled",
+            "HorizontalView": "Horizontal View",
+            "VerticalView": "Vertical View",
+            "AutomaticInner": "Automatic (Inner)",
+            "AutomaticOuter": "Automatic (Outer)",
             "ButtonTitle": "Clone View Configurator",
             "ButtonHint": "Configure what happens when the view is cloned.",
             "DialogContent": "Cloning the view will override the pan and zoom lock, are you sure you want to continue?",

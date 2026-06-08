@@ -28,6 +28,11 @@
         <div class="columnCB">&nbsp;</div>
         <div class="vl-top"></div>
 
+        <div class="columnSelect columnSidebarSceneLoad">&nbsp;</div>
+        <div class="columnCB" style="margin-left:-75px; margin-right:75px">{{localize "LOCKVIEW.SceneConfig.AVDock.Label_Abbr"}}</div>
+        <div class="columnCB">&nbsp;</div>
+        <div class="vl-top"></div>
+
         <div class="columnSelect columnHideOn">&nbsp;</div>
         <label class="columnCB" style="margin-left:-35px; margin-right:35px">{{localize "LOCKVIEW.SceneConfig.UI.Label"}}</label>
         <div class="columnCB">&nbsp;</div>
@@ -61,6 +66,11 @@
         <div class="columnSelect columnSidebarSceneLoad"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Sidebar.OnSceneLoad"}}</label></div>
         <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Sidebar.ExcludeSidebar"}}</label></div>
         <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.Sidebar.BlackenSidebar"}}</label></div>
+        <div class="vl-bottom"></div>
+
+        <div class="columnSelect columnSidebarSceneLoad"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.AVDock.OnSceneLoad"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.AVDock.ExcludeDock"}}</label></div>
+        <div class="columnCB"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.AVDock.BlackenDock"}}</label></div>
         <div class="vl-bottom"></div>
 
         <div class="columnSelect columnHideOn"><label class="table-header-inner">{{localize "LOCKVIEW.SceneConfig.UI.HideOn"}}</label></div>
@@ -107,6 +117,15 @@
             </label>
             <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="sidebar.exclude" {{#if s.settings.sidebar.exclude.initial}} checked {{/if}}></label>
             <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="sidebar.blacken" {{#if s.settings.sidebar.blacken.initial}} checked {{/if}}></label>
+            <div class="vl-li"></div>
+
+            <label class="columnSelect columnSidebarSceneLoad">
+                <select  data-scene="{{s.id}}" data-action="avDock.sceneLoad">
+                    {{selectOptions s.settings.avDock.sceneLoad.options selected=s.settings.avDock.sceneLoad.value}}
+                </select>
+            </label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="avDock.exclude" {{#if s.settings.avDock.exclude.initial}} checked {{/if}}></label>
+            <label class="columnCB"><input type="checkbox" data-scene="{{s.id}}" data-action="avDock.blacken" {{#if s.settings.avDock.blacken.initial}} checked {{/if}}></label>
             <div class="vl-li"></div>
 
             <label class="columnSelect columnHideOn">

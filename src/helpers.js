@@ -70,11 +70,19 @@ export class Helpers {
         const userSettings = game.settings.get(moduleName, 'userSettings');
         const userSetting = userSettings.find(s => s.id === userId);
         if (userSetting && userSetting[key] !== undefined) return userSetting[key];
-        const defaultUserSettings = game.user.isGM ? {enable: false, viewbox: false, static: false, control: true} : game.settings.get(moduleName, 'defaultUserSettings');
+        const user = game.users.get(userId);
+        const defaultUserSettings = user.isGM ? {enable: false, viewbox: false, static: false, control: true} : game.settings.get(moduleName, 'defaultUserSettings');
         return defaultUserSettings[key];
     }
 
     static getSidebarWidth() {
-        return ui.sidebar.expanded ? document.getElementById('sidebar-content').scrollWidth : 0;
+        const elmnt =  document.getElementById("sidebar-content");
+        return ui.sidebar.expanded && elmnt.offsetTop < 10 ? elmnt.scrollWidth : 0;
+    }
+
+    static getAVDockDimensions() {
+        const elmnt =  document.getElementById("camera-views");
+        if (!elmnt) return {width: 0, height: 0};
+        return {width: elmnt.offsetWidth, height: elmnt.offsetHeight};
     }
 }

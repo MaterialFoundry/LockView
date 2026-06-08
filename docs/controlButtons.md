@@ -14,7 +14,7 @@ You can access the Lock View control buttons by pressing the Lock View (:fontawe
 | :fontawesome-solid-magnifying-glass-plus: | Zoom Lock | Toggles [Zoom Lock](./sceneConfig/locks.md) on or off. |
 | :fontawesome-solid-box: | Bounding Box | Toggles [Bounding Box](./sceneConfig/locks.md) on or off. |
 | :fontawesome-solid-square: | Viewbox | Toggles [viewbox](./viewbox.md) display on or off. |
-| :fontawesome-solid-vector-square: | Edit Viewbox | Toggles [viewbox editing](./viewbox.md#edit-viewbox) on or off. |
+| :material-vector-square: | Edit Viewbox | Toggles [viewbox editing](./viewbox.md#edit-viewbox) on or off. |
 
 ??? info "Hiding Control Buttons"
     If you do not want to use (some of) the control buttons you can hide them with the [Control Buttons Configurator](./moduleSettings/moduleSettings.md) in the module settings.

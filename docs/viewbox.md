@@ -12,7 +12,8 @@ Each viewbox will show the name of the corresponding user, and its color corresp
 
 ## Edit Viewbox
 <div class="imgContainer"><img src="../img/EditViewbox.png"></div>
-By enabling the Edit Viewbox [control button](./controlButtons.md), a Control user can edit the view of a player by editing its viewbox.
+By enabling the Edit Viewbox, a Control user can edit the view of a player by editing its viewbox.<br>
+You can enable it through the [control button](./controlButtons.md), or [hotkey](./moduleSettings/hotkeys.md).
 
 You can edit the viewbox (and thus set a user's view) in 2 ways:
 
@@ -23,10 +24,7 @@ You can edit the viewbox (and thus set a user's view) in 2 ways:
     Right-Mouse Drag: Move the viewbox to move the user's view.<br>
     Mousewheel: Resize the viewbox to zoom the user's view in or out.
 
-Viewbox editing will automatically be disabled when:
-
-* The viewbox control button is disabled.
-* Another (non-Lock View) control is selected.
+Viewbox editing will automatically be disabled when another (non-Lock View) control is selected.
 
 ??? info "Multiple Viewboxes"
     When multiple viewboxes are displayed, you can select which one to edit using the tab key. The active, editable, viewbox will have a thicker line.<br>

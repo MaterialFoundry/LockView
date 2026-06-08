@@ -1,3 +1,4 @@
+
 .LockView-SceneConfig-list {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
@@ -225,4 +226,19 @@
 
 #lockView-controlButtonsConfig .form-fields {
     flex: 1;
+}
+
+/**
+ * Scene Config tab button styling
+ */
+.sheet-tabs {
+    display: flex;
+    overflow-x: auto;
+    min-height: 36px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.sheet-tabs a {
+    white-space: nowrap;
 }

@@ -143,6 +143,8 @@ export function initializeControlButtons() {
             Object.entries(visibleControlButtons).forEach(([id, value]) => {
                 if (!value) toolElements.querySelector(`button[data-tool="${id}"]`).parentElement.style.display = 'none';
             })
+
+            ui.controls.controls.lockView.tools.editViewbox.active = lockView.viewbox.editEnabled;
         }
 
         document.querySelector('button[data-tool="cloneView"]')?.addEventListener('contextmenu', (ev) => {

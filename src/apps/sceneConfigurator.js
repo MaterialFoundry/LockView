@@ -7,7 +7,7 @@ export class SceneConfigurator extends HandlebarsApplicationMixin(ApplicationV2)
         id: "lockView-sceneConfigurator",
         tag: "form",
         position: {
-            width: 1000
+            width: 1200
         },
         window: {
             contentClasses: ["standard-form"],

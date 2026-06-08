@@ -4,7 +4,14 @@
     </p>
 
     {{formGroup pan}}
-    {{formGroup zoom}}
+    <div class="form-group">
+        <label>{{localize "LOCKVIEW.CloneView.Zoom"}}</label>
+        <div class="form-fields">
+            <select name="zoom">
+                {{selectOptions zoomOptions selected=zoom}}
+            </select>
+        </div>
+    </div>
 
     <hr>
 

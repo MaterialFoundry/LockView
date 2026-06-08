@@ -1,13 +1,12 @@
 # Lock View Documentation
 
-!!! warning "Lock View v2 only"
-    This documentation is for Lock View v2.0.0+. Refer to the [old documentation](https://github.com/MaterialFoundry/LockView/wiki) for older versions of Lock View.
+!!! warning "New Users: Please Read"
+    When first starting out with Lock View, it can be a bit confusing and daunting. While effort has been put into making everything as easy to understand as possible, due to the amount of things the module can do, some confusion might still arise.<br>
+    Please read (at least) this page very carefully.
 <br clear="left">
 
 Welcome to the Lock View documentation.<br>
-Click the links above to navigate the documentation.<br>
-Make sure you start [here](#getting-started).
-
+Click the links above to navigate the documentation.
 
 ## Introduction
 
@@ -21,10 +20,6 @@ Lock View is a [Foundry VTT](https://foundryvtt.com/) module that provides the G
 * <b>Cloning View</b>: Apply your current view to users.
 
 ## Getting Started
-!!! warning "New Users: Please Read"
-    When first starting out with Lock View, it can be a bit confusing and daunting. While effort has been put into making everything as easy to understand as possible, due to the amount of things the module can do, some confusion might still arise.<br>
-    Please read (at least) this page very carefully.
-<br clear="left">
 
 ### Core Concepts
 

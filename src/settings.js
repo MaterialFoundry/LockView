@@ -163,8 +163,20 @@ export function registerSettings() {
         type: Boolean
     });
 
+    //Show Clone View warning dialog
+    game.settings.register(moduleName, "cloneViewConfig", {
+        scope: "user",
+        config: false,
+        default: {
+            pan: true,
+            zoom: "autoInner",
+            showDialog: true
+        },
+        type: Object
+    });
+
     //Register keybinding to show or hide the UI elements
-    game.keybindings.register("LockView", "showHideUI", {
+    game.keybindings.register(moduleName, "showHideUI", {
         name: "LOCKVIEW.Settings.ShowHideUI",
         hint: "LOCKVIEW.Settings.ShowHideUI_Hint",
         editable: [
@@ -174,8 +186,27 @@ export function registerSettings() {
         precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
     });
 
+    //Register keybinding to enable/disable "Edit Viewbox"
+    game.keybindings.register(moduleName, "editViewbox", {
+        name: "LOCKVIEW.Settings.EditViewbox",
+        hint: "LOCKVIEW.Settings.EditViewbox_Hint",
+        editable: [
+            {key: "KeyI", modifiers: [foundry.helpers.interaction.KeyboardManager.MODIFIER_KEYS.ALT]}
+        ],
+        onDown: () => { 
+            const newVal = !lockView.viewbox.editEnabled;
+            lockView.viewbox.enableEdit(newVal); 
+            if (ui.controls.control.name === "lockView") {
+                ui.controls.controls.lockView.tools.editViewbox.active = newVal;
+                ui.controls.render(); 
+            }
+            
+        },
+        precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL
+    });
+
     //Register keybinding to cycle through the active viewbox
-    game.keybindings.register("LockView", "cycleViewboxes", {
+    game.keybindings.register(moduleName, "cycleViewboxes", {
         name: "LOCKVIEW.Settings.CycleViewboxes",
         hint: "LOCKVIEW.Settings.CycleViewboxes_Hint",
         editable: [
@@ -186,7 +217,7 @@ export function registerSettings() {
     });
 
     //Register keybinding to clone the view
-    game.keybindings.register("LockView", "cloneView", {
+    game.keybindings.register(moduleName, "cloneView", {
         name: "LOCKVIEW.Settings.CloneView",
         hint: "LOCKVIEW.Settings.CloneView_Hint",
         editable: [

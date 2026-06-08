@@ -14,6 +14,7 @@ import { StylesHandler } from "./src/stylesHandler.js";
 import { SetViewDialog } from "./src/apps/setViewDialog.js";
 import { CloneView } from "./src/apps/cloneView.js";
 import { ControlButtonsConfig } from "./src/apps/controlButtonsConfig.js";
+import { CompatibilityHandler } from "./src/compatibilityHandler.js";
 
 export const moduleName = "LockView";
 export const documentationUrl = "https://materialfoundry.github.io/LockView/";
@@ -88,18 +89,14 @@ Hooks.once('ready', async()=>{
   */
 });
 
-/*
-Hooks.once('MaterialDeck_Ready', () => {
-  const moduleData = game.modules.get(moduleName);
-  game.materialDeck.registerSystem({
-      moduleId: moduleName,
-      moduleName: moduleData.title,
-      version: moduleData.version,
-      manifest: moduleData.manifest,
-      documentation: documentationUrl, 
-      actions: [
-      
-      ]
-  });
-});
-*/
+/**
+ * 1. Scene defaults compatibility => remove Lock View tab.
+ * 2. Makes applicationV2 tabs scrollable.
+ */
+Hooks.on('renderApplicationV2', (app, form) => {
+  if (app.id.includes("DefaultSceneConfig")) {
+    const lockViewElements = form.querySelectorAll("[data-tab='lockView']");
+    lockViewElements.forEach(elmnt => elmnt.style.display = "none");
+  }
+  CompatibilityHandler.makeAppTabsScrollable(form);
+})

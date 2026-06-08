@@ -8,7 +8,7 @@ With the Hide UI Elements settings you can configure specific Foundry elements t
 | Macro Hotbar      | Hide the macro hotbar.            |
 | Scene Navigation  | Hide the scene navigation.        |
 | Players Box       | Hide the players box.             |
-| Camera Feeds      | Hide the camera feeds.            |
+| AV Dock           | Hide the audio/video dock.        |
 | Sidebar           | Hide the sidebar.                 |
 
 Hiding and showing the UI elements can be toggled with a configurable hotkey. By default this is `Alt + U`.

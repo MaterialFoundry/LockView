@@ -1,4 +1,5 @@
 import { moduleName } from "../../lockview.js";
+import { CompatibilityHandler } from "../compatibilityHandler.js";
 import { Helpers } from "../helpers.js";
 import { libWrapper } from "./shim.js";
 
@@ -17,7 +18,7 @@ export function registerLibWrapperFunctions() {
 function addLockOverrides() {
     libWrapper.register(moduleName, "foundry.canvas.Canvas.prototype.pan", function (wrapped, ...args) {
         const locks = lockView.locks;
-       
+
         /* For users with 'Enable' */
         if (locks.applyLocks) {
 
@@ -112,7 +113,7 @@ function addSceneConfigOverrides() {
     /**
      * Add Lock View options to scene config
      */
-    let sceneConfig = Object.values(CONFIG.Scene.sheetClasses.base)[0].cls;
+    let sceneConfig = Object.values(CONFIG.Scene.sheetClasses.base).find(sheet => sheet.default).cls;
     sceneConfig.PARTS.lockView = { template: 'modules/LockView/templates/sceneConfig.hbs', scrollable: [""]};
     sceneConfig.PARTS = Helpers.moveObjectElement('footer', 'lockView', sceneConfig.PARTS);
     sceneConfig.TABS.sheet.tabs.push({
@@ -120,6 +121,9 @@ function addSceneConfigOverrides() {
         icon: 'fas fa-tv',
         label: 'Lock View'
     })
+
+    //Add action for Lock View help buttin in scene config
+    sceneConfig.DEFAULT_OPTIONS.actions.lockViewHelp = () => window.open(Helpers.getDocumentationUrl('sceneConfig/sceneConfig'))
 
     /**
      * Overrides submit handling of the scene configuration to handle Lock View settings
@@ -145,16 +149,19 @@ function addSceneConfigOverrides() {
      * Add Lock View settings to scene configuration
      */
     libWrapper.register(moduleName, "foundry.applications.sheets.SceneConfig.prototype._preparePartContext", async function (wrapped, ...args) {
+
         if (args[0] === 'lockView') {
             let context = args[1];
+
             let flags = context.document.flags.LockView;
             if (!flags) {
                 flags = game.settings.get(moduleName, 'defaultSceneConfig');
-                await context.document.update({
-                    flags: {
-                        LockView: flags
-                    }
-                })
+                if (context.document._id)
+                    await context.document.update({
+                        flags: {
+                            LockView: flags
+                        }
+                    })
             }
             let sceneConfig = lockView.sceneHandler.getSceneConfig(flags)
 
@@ -176,6 +183,8 @@ function addSceneConfigOverrides() {
         this.element.querySelector('button[name="openInitialViewConfig"]')?.addEventListener('click', () => {
             lockView.apps.initialViewConfig.setScene(context.document).render(true);
         });
+
+        //CompatibilityHandler.makeAppTabsScrollable(this.element);
         
         //Configure expandable sections
         for (let elmnt of this.element.querySelectorAll('.lockview-expandable')) {
@@ -223,19 +232,8 @@ function addSceneConfigOverrides() {
         })
 
         //Add 'Lock View Help' button to header
-        const headerElmnt = document.createElement('li');
-        this.element.querySelector(".controls-dropdown").appendChild(headerElmnt);
-        headerElmnt.setAttribute('class', 'header-control');
-
-        headerElmnt.innerHTML = `
-        <button class="control" type="button">
-            <i class="fas fa-tv"></i>
-            <span class="control-label">${Helpers.localize("LockViewHelp", "SceneConfig")}</span>
-        </button>
-        `;
-
-        headerElmnt.addEventListener('click', () => window.open(Helpers.getDocumentationUrl('sceneConfig/sceneConfig')))
-
+        CompatibilityHandler.sceneConfigHelpButton(this.element);
+        
         return wrapped(...args);
     }, "WRAPPER");
 }
@@ -287,8 +285,13 @@ function addBoundingBoxOverrides() {
      */
     libWrapper.register(moduleName, "foundry.applications.sheets.DrawingConfig.prototype._onRender", function (...args) {
         const context = args[0];
-        if (context.document?.shape.type !== 'r')
-            this.element.querySelector('a[data-tab="lockView"]').style.display = 'none';
+        const lockViewTab = this.element.querySelector('a[data-tab="lockView"]');
+        if (lockViewTab) {
+            if (context.document?.shape.type === 'r') {}
+                //CompatibilityHandler.makeAppTabsScrollable(this.element);
+            else
+                lockViewTab.style.display = 'none';
+        }
     }, "LISTENER");
 
     /**

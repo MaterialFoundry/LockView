@@ -16,7 +16,7 @@ Lock View is a [Foundry VTT](https://foundryvtt.com/) module that provides the G
 When 'Zoom Lock' or 'Pan Lock' are enabled, this module disables all zooming and/or panning functionality, regardless of who or what is requesting that zoom or pan. This means that, for example, modules that try to pan or zoom won't work. Lock View uses [libWrapper](https://foundryvtt.com/packages/lib-wrapper), through which incompatibilities might be prevented/fixed.
 
 ## Foundry Compatibility
-This module has been tested to work with Foundry V13.<br>
+This module has been tested to work with Foundry v13 and v14.<br>
 Lock View versions are available for older Foundry versions, see [here](https://foundryvtt.com/packages/LockView).
 
 ## Feedback

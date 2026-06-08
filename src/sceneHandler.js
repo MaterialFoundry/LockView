@@ -1,4 +1,5 @@
 import { moduleName } from "../lockview.js";
+import { CompatibilityHandler } from "./compatibilityHandler.js";
 import { Helpers } from "./helpers.js";
 
 function localize(str, category="SceneConfig") {
@@ -26,18 +27,29 @@ export class SceneHandler {
             lockView.migrationHandler.migrateScene(scene);
         })
 
-        /* Reconfigure the view and send an updated view to 'Control' users when the sidebar is collapsed or expanded */
-        Hooks.on('collapseSidebar', (app, collapsed) => {
+        /* Reconfigure the view and send an updated view to 'Control' users when the sidebar or av dock is collapsed or expanded */
+        const onCollapse = async (collapsed) => {
+            if (!canvas.scene) return;
             if (Helpers.getUserSetting('enable')) {
                 if (lockView.locks.pan && lockView.locks.zoom) {
-                    this.setAutoscale();
+                    await this.setAutoscale();
                 }
                 this.setUiElements(canvas.scene, collapsed ? 'sidebarCollapse' : 'off');
                 canvas.pan(canvas.scene._viewPosition);
             }
             
             lockView.viewbox.emit();
+        }
+
+        Hooks.on('collapseSidebar', (app, collapsed) => {
+            onCollapse(collapsed);
         })
+
+        Hooks.on('renderCameraViews', () => {
+            onCollapse(ui.sidebar.expanded);
+        })
+
+        CompatibilityHandler.sceneConstructor();
 
         this.calculatePhysicalGridsize();
     }
@@ -49,6 +61,7 @@ export class SceneHandler {
         this.setUiElements(scene, source);
         if (Helpers.getUserSetting('enable')) {
             this.setSidebar(scene);
+            await this.setAVDock(scene);
             await this.forceInitialView(scene);
             this.setAutoscale(scene);
             if (locks.boundingBox) {
@@ -72,8 +85,9 @@ export class SceneHandler {
     }
 
     getAutoscale(mode, scene = canvas.scene) {
-        //canvas.dimensions.scale.min = 0.05;
         let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+
         let pos = {
             x: canvas.dimensions.sceneX + scene.width/2,
             y: canvas.dimensions.sceneY + scene.height/2
@@ -82,11 +96,31 @@ export class SceneHandler {
             windowWidth -= Helpers.getSidebarWidth();
             pos.x += 0.5*Helpers.getSidebarWidth()/canvas.scene._viewPosition.scale
         }
+        if (canvas.scene.getFlag(moduleName, 'avDock')?.exclude) {
+            const dims = Helpers.getAVDockDimensions();
+            const position = game.webrtc.settings.get("client", "dockPosition");
+            if (position === "left") {
+                windowWidth -= dims.width;
+                pos.x -= 0.5*dims.width/canvas.scene._viewPosition.scale;
+            }
+            else if (position === "right") {
+                windowWidth -= dims.width;
+                pos.x += 0.5*dims.width/canvas.scene._viewPosition.scale;
+            }
+            else if (position === "top") {
+                windowHeight -= dims.height;
+                pos.y -= 0.5*dims.height/canvas.scene._viewPosition.scale;
+            }
+            else if (position === "bottom") {
+                windowHeight -= dims.height;
+                pos.y += 0.5*dims.height/canvas.scene._viewPosition.scale;
+            }
+        }
 
         if (mode === 'horizontal') pos.scale = windowWidth/scene.width;
-        else if (mode === 'vertical') pos.scale = window.innerHeight/scene.height;
-        else if (mode === 'autoInside') pos.scale = Math.max(window.innerWidth/scene.width, window.innerHeight/scene.height);
-        else if (mode === 'autoOutside') pos.scale = Math.min(window.innerWidth/scene.width, window.innerHeight/scene.height);
+        else if (mode === 'vertical') pos.scale = windowHeight/scene.height;
+        else if (mode === 'autoInside') pos.scale = Math.max(windowWidth/scene.width, windowHeight/scene.height);
+        else if (mode === 'autoOutside') pos.scale = Math.min(windowWidth/scene.width, windowHeight/scene.height);
         else if (mode === 'physical') pos = {scale: this.physicalGridSize/scene.grid.size};
 
         return pos;
@@ -98,7 +132,20 @@ export class SceneHandler {
 
         const currentLocks = lockView.locks.applyLocks;
         if (currentLocks) lockView.locks.applyLocks = false;
-        await canvas.pan( this.getAutoscale(autoscale, scene) );
+        const newPos = this.getAutoscale(autoscale, scene);
+        let minScale, maxScale;
+        if (newPos.scale < canvas.dimensions.scale.min) {
+            minScale = canvas.dimensions.scale.min;
+            canvas.dimensions.scale.min = newPos.scale
+        }
+        if (newPos.scale > canvas.dimensions.scale.max) {
+            maxScale = canvas.dimensions.scale.max;
+            canvas.dimensions.scale.max = newPos.scale
+        }
+        await canvas.pan( newPos );
+        if (minScale) canvas.dimensions.scale.min = minScale;
+        if (maxScale) canvas.dimensions.scale.max = maxScale;
+
         if (currentLocks) lockView.locks.applyLocks = true;
     }
 
@@ -120,8 +167,9 @@ export class SceneHandler {
     }
 
     setUiElements(scene, source) {
+        if (!scene) return;
         const uiFlags = scene.getFlag(moduleName, 'ui');
-        //console.log("UIFlags", uiFlags)
+
         if (!Helpers.getUserSetting('enable')) {
             for (let [elmntId, hide] of Object.entries(uiFlags)) 
                 if (document.getElementById(elmntId)) {
@@ -129,12 +177,15 @@ export class SceneHandler {
                     else document.getElementById(elmntId).style.visibility = '';
                 }
             lockView.styles.setBlackenSidebar(false);
+            lockView.styles.setBlackenAVDock(false);
             return;
         }
 
         const blackenSidebar = scene.getFlag(moduleName, 'sidebar').blacken;
         lockView.styles.setBlackenSidebar(blackenSidebar);
-        
+
+        const blackenAVDock = scene.getFlag(moduleName, 'avDock').blacken;
+        lockView.styles.setBlackenAVDock(blackenAVDock);
 
         if (uiFlags.hideOn === 'always' || (uiFlags.hideOn === 'sceneLoad' && source === 'canvasReady') || (uiFlags.hideOn === 'sidebar' && source === 'sidebarCollapse')) {
             for (let [elmntId, hide] of Object.entries(uiFlags)) 
@@ -158,6 +209,23 @@ export class SceneHandler {
         if (sidebarFlags.sceneLoad !== 'noChange') {
             if (sidebarFlags.sceneLoad === 'expand') ui.sidebar.expand();
             else if (sidebarFlags.sceneLoad === 'collapse') ui.sidebar.collapse();
+        }
+    }
+
+    async setAVDock(scene) {
+        const avDockFlags = scene.getFlag(moduleName, 'avDock');
+
+        if (avDockFlags.sceneLoad !== 'noChange') {
+            const current = game.webrtc.settings.get("client", "hideDock");
+            let update;
+
+            if (avDockFlags.sceneLoad === 'expand') update = false;
+            else if (avDockFlags.sceneLoad === 'collapse') update = true;
+
+            if (update !== current) {
+                await game.webrtc.settings.set("client", "hideDock", update);
+                ui.webrtc.render() 
+            }
         }
     }
 
@@ -216,6 +284,27 @@ export class SceneHandler {
                     },{
                         id: 'blacken',
                         datafield: new foundry.data.fields.BooleanField({label: localize('Sidebar.BlackenSidebar'), hint: localize('Sidebar.BlackenSidebar_Hint'), initial: flags.sidebar.blacken}, {name: 'lockview.sidebar.blacken'})
+                    }
+                ]
+            },{
+                id: 'avDock',
+                type: 'wrapper',
+                settings: [
+                    {
+                        id: 'sceneLoad',
+                        type: 'select',
+                        options: [
+                            { value: 'noChange', label: localize('Sidebar.NoChange') },
+                            { value: 'collapse', label: localize('Sidebar.Collapse') },
+                            { value: 'expand', label: localize('Sidebar.Expand') }
+                        ],
+                        value: flags.avDock.sceneLoad
+                    },{
+                        id: 'exclude',
+                        datafield: new foundry.data.fields.BooleanField({label: localize('AVDock.ExcludeDock'), hint: localize('AVDock.ExcludeDock_Hint'), initial: flags.avDock.exclude}, {name: 'lockview.avDock.exclude'})
+                    },{
+                        id: 'blacken',
+                        datafield: new foundry.data.fields.BooleanField({label: localize('AVDock.BlackenDock'), hint: localize('AVDock.BlackenDock_Hint'), initial: flags.avDock.blacken}, {name: 'lockview.avDock.blacken'})
                     }
                 ]
             },{

@@ -1,3 +1,4 @@
+import { moduleName } from "../../lockview.js";
 import { Helpers } from "../helpers.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api
 
@@ -35,6 +36,19 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
           }
     }
 
+    config = {};
+
+    pan = true;
+    zoom = true;
+    users = {};
+    showDialog;
+
+    constructor() {
+        super();
+        //this.showDialog = game.settings.get(moduleName, "cloneViewDialog");
+        this.config = game.settings.get(moduleName, "cloneViewConfig");
+    }
+
     get title() {
         return "Lock View: " + localize("Title");
     }
@@ -43,12 +57,7 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
         window.open(Helpers.getDocumentationUrl('moduleSettings/cloneViewConfigurator/'))
     }
 
-    pan = true;
-    zoom = true;
-    users = {};
-    showDialog = true;
-
-    async apply(pan = this.pan, zoom = this.zoom, users) {
+    async apply(pan = this.config.pan, zoom = this.config.zoom, users) {
         if (!Helpers.getUserSetting('control')) 
             return ui.notifications.warn("Lock View: " + Helpers.localize("NoPermission", "Notifications"));
         if (!users) {
@@ -56,6 +65,7 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
             for (let user of game.users) {
                 if (user._id === game.userId) continue;
                 if (user.viewedScene !== canvas.scene.id) continue;
+                
                 if (this.users[user._id] !== undefined)
                     users[user._id] = this.users[user._id];
                 else {
@@ -64,7 +74,7 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
             }
         }
 
-        if (this.showDialog && (pan && lockView.locks.pan || zoom && lockView.locks.zoom)) {
+        if (this.config.showDialog && (pan && lockView.locks.pan || zoom && lockView.locks.zoom)) {
             const fields = foundry.applications.fields;
             const cb = fields.createCheckboxInput({
                 name: 'doNotShowAgain',
@@ -76,7 +86,7 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
                 label: localize("DoNotShowAgain")
             })
 
-            let showDialog = true;
+            let showDialog = this.config.showDialog;
             const dialog = await foundry.applications.api.DialogV2.confirm({
                 window: { title: localize("Title") },
                 content: `<p>${localize("DialogContent")}</p>${formGroup.outerHTML}`,
@@ -85,7 +95,10 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             })
 
-            this.showDialog = showDialog;
+            this.config.showDialog = showDialog;
+            this.config.zoom = zoom;
+            this.config.pan = pan;
+            this._saveConfig();
             if (!dialog) return;
         }
         
@@ -100,8 +113,12 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
                 x: canvas.scene._viewPosition.x,
                 y: canvas.scene._viewPosition.y
             },
-            zoom: zoom ? 'cloneView' : undefined,
-            scale: canvas.scene._viewPosition.scale
+            zoom: zoom === "default" ? 'cloneView' : zoom === "disabled" ? undefined : zoom,
+            scale: canvas.scene._viewPosition.scale,
+            view: {
+                width: window.innerWidth,
+                height: window.innerHeight
+            }
         }, u)
     }
 
@@ -123,17 +140,35 @@ export class CloneView extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         return {
-            pan: new foundry.data.fields.BooleanField({label: localize('Pan'), initial: this.pan}, {name: 'pan'}),
-            zoom: new foundry.data.fields.BooleanField({label: localize('Zoom'), initial: this.zoom}, {name: 'zoom'}),
+            pan: new foundry.data.fields.BooleanField({label: localize('Pan'), initial: this.config.pan}, {name: 'pan'}),
+            zoom: this.config.zoom,
+            zoomOptions: [
+                { value: "disabled",    label: localize("Disabled") },
+                { value: "default",     label: localize("Zoom") },
+                { value: "visibleH",    label: localize("HorizontalView") },
+                { value: "visibleV",    label: localize("VerticalView") },
+                { value: "autoInner",   label: localize("AutomaticInner") },
+                { value: "autoOuter",   label: localize("AutomaticOuter") },
+            ],
             users
         }
     }
 
     _onRender(context, options) {
-        this.element.querySelector('input[name="pan"]').addEventListener('change', (ev) => this.pan = ev.target.checked);
-        this.element.querySelector('input[name="zoom"]').addEventListener('change', (ev) => this.zoom = ev.target.checked);
+        this.element.querySelector('input[name="pan"]').addEventListener('change', (ev) => {
+            this.config.pan = ev.target.checked;
+            this._saveConfig();
+        });
+        this.element.querySelector('select[name="zoom"]').addEventListener('change', (ev) => {
+            this.config.zoom = ev.target.value;
+            this._saveConfig();
+        });
         Object.entries(this.users).forEach(([id, val]) => {
             this.element.querySelector(`input[name="users.${id}"]`).addEventListener('change', (ev) => this.users[id] = ev.target.checked);
         })
+    }
+
+    async _saveConfig(config = this.config) {
+        game.settings.set(moduleName, "cloneViewConfig", config)
     }
 }

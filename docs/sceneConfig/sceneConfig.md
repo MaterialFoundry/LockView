@@ -5,7 +5,7 @@ The various settings are divided into sections:
 
 * <b>[Locks](./locks.md)</b>: Configure locks for the scene.
 * <b>[Autoscale](./autoscale.md)</b>: Automatically scale the view when the scene is loaded.
-* <b>[Sidebar](./sidebar.md)</b>: Configure the sidebar.
+* <b>[Sidebar/Audio/Video Dock](./sidebar.md)</b>: Configure the sidebar or audio/video dock.
 * <b>[Hide UI Elements](./hideElements.md)</b>: Select when to hide UI elements and which elements to hide.
 * <b>[Force Initial View](./initialView.md)</b>: Force the view to the Initial View Position.
 

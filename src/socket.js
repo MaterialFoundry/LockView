@@ -177,6 +177,17 @@ export class Socket {
         else if (data.pan !== 'noChange') position = lockView.sceneHandler.getAutoscale(data.pan);
 
         if (data.zoom === 'set' || data.zoom === 'cloneView') position.scale = data.scale;
+        else if (data.zoom === 'visibleH') position.scale = data.scale * window.innerWidth/data.view.width;
+        else if (data.zoom === 'visibleV') position.scale = data.scale * window.innerHeight/data.view.height;
+        else if (data.zoom === 'autoInner') {
+            const newScale = Math.max(window.innerWidth/data.view.width, window.innerHeight/data.view.height);
+            position.scale = data.scale * newScale;
+        }
+        else if (data.zoom === 'autoOuter') {
+            const newScale = Math.min(window.innerWidth/data.view.width, window.innerHeight/data.view.height);
+            position.scale = data.scale * newScale;
+        }
+        
         else if (data.zoom === 'initialView') position.scale = canvas.scene.initial.scale;
         else if (data.zoom === 'physical') position.scale = lockView.sceneHandler.getAutoscale('physical').scale;
 

@@ -81,6 +81,31 @@
     </fieldset>
 
     <fieldset>
+        <legend class="lockview-expandable" data-expand="lockview-AVDock"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.AVDock.Label"}}</legend>
+        <div class="lockview-collapsed" name="lockview-AVDock">
+            <p class="hint">{{localize "LOCKVIEW.SceneConfig.AVDock.Hint"}}</p><br>
+
+            <div class="form-group">
+                <label>{{localize "LOCKVIEW.SceneConfig.AVDock.OnSceneLoad"}}</label>
+                <div class="form-fields">
+                    <select name="lockview.avDock.sceneLoad">
+                        {{selectOptions avDock.sceneLoad.options selected=avDock.sceneLoad.value}}
+                    </select>
+                </div>
+                <p class="hint">{{localize "LOCKVIEW.SceneConfig.AVDock.OnSceneLoad_Hint"}}</p>
+            </div>
+            {{formGroup avDock.exclude}}
+            {{formGroup avDock.blacken}}
+        </div>
+        <div name="lockview-AVDock">
+            <p class="hint">
+                {{localize "LOCKVIEW.SceneConfig.AVDock.Hint"}}<br>
+                <i>{{localize "LOCKVIEW.SceneConfig.ExpandToSeeMore"}}</i>
+            </p>
+        </div>
+    </fieldset>
+
+    <fieldset>
         <legend class="lockview-expandable" data-expand="lockview-ui"><i class="fa-solid fa-caret-right"></i>{{localize "LOCKVIEW.SceneConfig.UI.Label"}}</legend>
         <div class="lockview-collapsed" name="lockview-ui">
             <p class="hint">{{localize "LOCKVIEW.SceneConfig.UI.Hint"}}</p><br>
