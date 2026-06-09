@@ -1,0 +1,2364 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://materialfoundry.github.io/LockView/changelog/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../controlButtons/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../img/icon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Changelog - Lock View Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../style.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#additions" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Lock View Documentation" class="md-header__button md-logo" aria-label="Lock View Documentation" data-md-component="logo">
+      
+  <img src="../img/MaterialFoundry.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Lock View Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href=".." class="md-tabs__link">
+          
+  
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../controlButtons/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Control Buttons
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../viewbox/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Viewbox
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../sceneConfig/sceneConfig/" class="md-tabs__link">
+          
+  
+  
+  Scene Config
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../moduleSettings/moduleSettings/" class="md-tabs__link">
+          
+  
+  
+  Module Settings
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../exampleConfigurations/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Example Configurations
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Lock View Documentation" class="md-nav__button md-logo" aria-label="Lock View Documentation" data-md-component="logo">
+      
+  <img src="../img/MaterialFoundry.png" alt="logo">
+
+    </a>
+    Lock View Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Home
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#additions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#removals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removals:
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_23" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_24" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_25" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_28" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_29" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#other_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Other
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_30" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_31" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixes_32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additions_18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additions
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controlButtons/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Buttons
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../viewbox/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Viewbox
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scene Config
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Scene Config
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sceneConfig/sceneConfig/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scene Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sceneConfig/locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Locks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sceneConfig/autoscale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autoscale
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sceneConfig/sidebar/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sidebar/AV Dock
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sceneConfig/hideElements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hide UI Elements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sceneConfig/initialView/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Force Initial View
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Module Settings
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Module Settings
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moduleSettings/moduleSettings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Module Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moduleSettings/userConfigurator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Configurator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moduleSettings/sceneConfigurator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scene Configurator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moduleSettings/cloneViewConfigurator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clone View Configurator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moduleSettings/controlButtonsConfigurator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Buttons Configurator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../moduleSettings/hotkeys/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hotkeys
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exampleConfigurations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example Configurations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Changelog</h1>
+
+<details class="changelog">
+<summary>v2.1.0 - 08-06-2026</summary>
+<p>Compatible with Foundry v13 and v14.</p>
+<h3 id="additions">Additions</h3>
+<ul>
+<li>Added similar scene option as the sidebar options for the audio/video dock (auto collapse/expand, blacken background, excluding for autofit).</li>
+<li>Clone View: Expanded the zoom cloning options: You can clone the actual zoom/scale value (which results in different view depending on display resolution) or clone the current view horizontally, vertically, or automatically (inner/outer view).</li>
+<li>Clone View: The configuration is now saved between refreshes.</li>
+<li>Added hotkey to enable/disable viewbox editing (Alt + I by default, can be configured in the settings).</li>
+<li>If (multiple) modules add tabs to the Scene Config, the tab navigation can get messed up if the tab buttons are too wide. The tab navigation will now be scrollable to prevent this, and autoscroll to the selected tab button (this is applied globally, not just for Lock View).</li>
+</ul>
+<h3 id="fixes">Fixes</h3>
+<ul>
+<li>Fixed issue on the Forge where a stylesheet could not be edited to blacken the sidebar.</li>
+<li>Lock View would break on systems that register their own Scene Config sheet. This should now be fixed.</li>
+<li>Autoscaling with the sidebar excluded would not work correctly, especially for the automatic inside/outside fit, this is fixed.</li>
+<li>Fixed compatibility issue with Daggerheart, where the Lock View scene config would not be rendered.</li>
+<li>Fixed incompatibility with "Scene Defaults".</li>
+<li>Clone View warning dialog: if "Do Not Show Again" is ticked, this setting no longer resets on a refresh.</li>
+<li>Parsing user settings could result in the wrong value due to a mistake in checking is a user is a GM.</li>
+</ul>
+<h3 id="other">Other</h3>
+<ul>
+<li>Hide UI Elements =&gt; Camera Feed has been renamed to AV Dock</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v2.0.2 - 07-11-2025</summary>
+<h3 id="fixes_1">Fixes</h3>
+<ul>
+<li>Using Exclude Sidebar with Bounding Box enabled could result in erratic panning behavior when trying to pan past the allowed bounds, this is fixed.</li>
+<li>Expanding or collapsing the sidebar will now automatically update the view if required by a bounding box.</li>
+<li>Default Scene Configuration could not be saved when Lock View was enabled, this is now fixed.</li>
+<li>Fixed issue where the Initial View Configurator would only allow rounded values for, for example, the scale.</li>
+<li>When loading a scene with Pan &amp; Zoom locks enabled, the viewposition would not be updated to the last viewposition on that scene. Instead, it would keep the same viewposition as the previous scene.</li>
+<li>Fixed issue where, if the GM just loaded on a scene and tried to edit a player's viewbox before zooming/panning themselves, that player's view would not be updated or it would zoom in/out incorrectly.</li>
+<li>Blacken Sidebar now has the correct description in the scene config.</li>
+<li>Hide UI Elements "Scene Navigation" setting now also hides the expanded inactive scenes.</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v2.0.1 - 24-06-2025</summary>
+<h3 id="fixes_2">Fixes</h3>
+<ul>
+<li>Fixed issue where user settings would not correctly return their value under certain circumstances. If, for example, 'Enable' was set to false, it would return the default 'Enable' setting instead of false. This could cause settings being enabled for users for which they should've been disabled.</li>
+<li>Fixed viewbox showing on wrong scene.</li>
+<li>Fixed viewbox not correctly being removed when a user logs off.</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v2.0.0 - 18-06-2025</summary>
+<p>The module has been completely rewritten, so new bugs are to be expected.
+Compatible with Foundry v13, use older versions for Foundry v12 (or earlier).</p>
+<h3 id="additions_1">Additions</h3>
+<ul>
+<li>LibWrapper is now used to help prevent module incompatibilities</li>
+<li>User Config: Added 'Static' option to create users that don't change scenes when they're normally activated. The GM can control which scene is viewed by these users by right-clicking a scene in the scene navigation</li>
+<li>Set View dialog: Options are stored and recalled when re-opened</li>
+<li>Set View dialog: Added user selection</li>
+<li>Scene Config: Expanded options for when to hide UI elements</li>
+<li>Scene Config: Added option to hide the camera feed</li>
+<li>Module Settings: Added 'Right-Drag Viewbox Editing' option to enable or disable dragging the viewbox with the right mouse button</li>
+<li>Module Settings: Added 'Force GM-Set Settings' for the 'Physical Grid Size' which allows the GM to override all user configured grid size settings</li>
+<li>Module Settings: Added 'Pan Canvas to Ping Behavior' to allow panning through pings even when locks are applied</li>
+<li>Added 'Clone View' functionality, which will clone the current view to selected players. This can be done using the 'Set View' control button, the new 'Clone View' control button, or a configurable hotkey (C + Alt, by default). You can configure if this should clone the pan and/or the zoom, and which users this should apply to ('Enabled' users, by default) through the module settings or by right-clicking the 'Clone View' control button</li>
+<li>Control buttons:Added 'Reset View' control button that resets the view of users as if the scene was reloaded</li>
+<li>Module Settings: Added 'Control Button Configurator', which can be used to configure which (if any) Lock View control buttons are displayed</li>
+</ul>
+<h3 id="removals">Removals:</h3>
+<ul>
+<li>Removed 'Rotation' option from scene config because it was too buggy</li>
+</ul>
+<h3 id="other_1">Other</h3>
+<ul>
+<li>Switched all applications over to ApplicationV2</li>
+<li>Reoganized scene flags. Old scene flags are no longer used, existing flags should automatically migrate</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.9 - 11-10-2023</summary>
+<h3 id="fixes_3">Fixes</h3>
+<ul>
+<li>Default scene config is now properly applied on new scenes</li>
+<li>Physical Gridsize can now be applied to all scenes when accessed through the 'Set View' control button</li>
+<li>When editing what UI elements to hide, other changes to scene settings are no longer reset</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.8 - 14-09-2023</summary>
+<h3 id="fixes_4">Fixes</h3>
+<ul>
+<li>Default user settings are no longer applied to GM users</li>
+<li>Removed debug message that would occasionally spam the console</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.7 - 14-06-2023</summary>
+<h3 id="fixes_5">Fixes</h3>
+<ul>
+<li>Forgot to add the css folder to the release, preventing the module from functioning.</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.6 - 14-06-2023</summary>
+<h3 id="additions_2">Additions</h3>
+<ul>
+<li>Added a scene configurator to allow easy configuration of the Lock View settings, including copying settings from one scene to another and configuring the default configuration for new scenes. Accessible through a button in the scene configuration and the module settings</li>
+<li>Added default user settings which are applied to new or unconfigured users. By default this enables 'Enable' and 'Viewbox'</li>
+<li>Canvas can now be rotated from the Lock View menu in the Scene Configuration and using the 'Set View' dialog (thanks to Dylancyclone)</li>
+</ul>
+<h3 id="fixes_6">Fixes</h3>
+<ul>
+<li>Fixed 'hide control button' not hiding the control button in all cases</li>
+<li>Fixed error that would pop up when 'hide control button' was enabled and the scene configuration was closed</li>
+<li>Hiding UI elements now only sets the element to invisible, preventing other elements from shifting around</li>
+</ul>
+<h3 id="other_2">Other</h3>
+<ul>
+<li>Made compatible with Foundry V11, dropped compatibility with V9</li>
+<li>Changed 'Collapse Sidebar on Scene Load' to 'Sidebar on Scene Load' and made it a selection between 'No Change', 'Collapse' and 'Expand'</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.4 - 14-09-2022</summary>
+<h3 id="fixes_7">Fixes</h3>
+<ul>
+<li>Fixed error related to canvas.blur, which prevented the canvas from loading in certain situations</li>
+<li>Fixed errors and warnings when boundingbox was active while panlock was not, and a controlled token moved outside the view (which should cause the canvas to pan automatically)</li>
+<li>Fixed compatibility warnings when editing drawings (for bounding box purposes)</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.3 - 31-08-2022</summary>
+<h3 id="additions_3">Additions</h3>
+<ul>
+<li>Added the option for players to control the module through control buttons. This can be enabled in the user configuration with the 'control' setting</li>
+<li>When using the 'Edit Viewbox' functionality, zooming and panning will only be affected when you hover your mouse over the user's viewbox (it used to affect all users)</li>
+<li>Added the UI (un)hide hotkey to the core keybinding menu. Defaults to Alt + U</li>
+</ul>
+<h3 id="other_3">Other</h3>
+<ul>
+<li>Improved the documentation and naming of things (mainly related to the user config). Please not that the old 'control' setting is renamed to 'enable'</li>
+<li>Made compatible with Foundry v10, dropped compatibility with Foundry v8</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.2 - 22-03-2022</summary>
+<h3 id="fixes_8">Fixes</h3>
+<ul>
+<li>Previous update broke the User Configuration if a user had not been configured before</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.1 - 22-03-2022</summary>
+<h3 id="fixes_9">Fixes</h3>
+<ul>
+<li>Fixed issue where zoom and pan lock would sometimes not be applied on scene load</li>
+<li>Fixed issue where switching from a scene with UI elements hidden to a scene with 'Hide UI Elements on Sidebar Collapse' disabled would not always show all UI elements</li>
+<li>Fixed issue where in the User Configuration, if an override was enabled, it also showed the setting as enabled for individual users</li>
+</ul>
+<h3 id="additions_4">Additions</h3>
+<ul>
+<li>Added 'Hide Control Button' setting in the module settings</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.5.0 - 30-12-2021</summary>
+<h3 id="fixes_10">Fixes</h3>
+<ul>
+<li>View no longer resets to the 'Autoscale' setting after interacting with the sidebar</li>
+<li>Fixed console error when the Stream View module was enabled</li>
+</ul>
+<h3 id="additions_5">Additions</h3>
+<ul>
+<li>User Configuration now has a user role specific override. To, for example, enable control for all Trusted Players</li>
+</ul>
+<h3 id="other_4">Other</h3>
+<ul>
+<li>Made compatible with Foundry v9</li>
+<li>Dropped compatibility with Foundry v0.7</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.14 - 01-09-2021</summary>
+<h3 id="fixes_11">Fixes</h3>
+<ul>
+<li>In the last update, 'Hide UI Elements on Sidebar Collapse' accedentally allowed the GM to hide the sidebar (this could lock the GM out of controlling the software), this has been fixed</li>
+<li>Added the 'Ctrl+u' hotkey that can be used to hide/unhide the UI elements that have been configured in the scene config</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.13 - 30-08-2021</summary>
+<h3 id="fixes_12">Fixes</h3>
+<ul>
+<li>If 'Hide UI Elements was enabled', control buttons would not always hide if a scene was changed</li>
+<li>UI elements will now only be unhidden if they have been previously hidden by Lock View, allowing other modules to hide/unhide UI elements without Lock View interfering</li>
+<li>Lock View would cause the view to 'bounce' when combined with 'Always Centered'. This has been fixed.</li>
+<li>When configuring the initial view, dragging the box around could place tokens or templates, depending on what tool was selected, this has been fixed by automatically selecting the Lock View control</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.12 - 22-06-2021</summary>
+<h3 id="fixes_13">Fixes</h3>
+<ul>
+<li>A change in the previous update made the module incompatible with Foundry 0.7, this has been fixed.</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.11 - 21-06-2021</summary>
+<h3 id="fixes_14">Fixes</h3>
+<ul>
+<li>If 'Control' was enabled for the GM, and the sidebar was set to autohide, the GM would be locked out of all controls, essentially bricking the world until Lock View was disabled. To fix this, the sidebar can never be hidden for the GM</li>
+<li>Canvas layers were registered incorrectly, leading to module incompatibilities. This has been fixed thanks to SWW13 on Github</li>
+</ul>
+<h3 id="other_5">Other</h3>
+<ul>
+<li>Confirmed compatibility with Foundry 0.8.7</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.10 - 31-05-2021</summary>
+<h3 id="fixes_15">Fixes</h3>
+<ul>
+<li>Removed some console errors about the canvas not being initialized</li>
+<li>The previous update didn't properly stop all unintended resets to the initial view</li>
+</ul>
+<h3 id="additions_6">Additions</h3>
+<ul>
+<li>In the scene config, you can now set what UI elements to hide by pressing the button next to the 'Hide UI Elements on Sidebar Collapse' button</li>
+</ul>
+<h3 id="other_6">Other</h3>
+<ul>
+<li>Confirmed compatibility with Foundry 0.8.6</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.9 - 14-05-2021</summary>
+<h3 id="fixes_16">Fixes</h3>
+<ul>
+<li>Autoscaling using Physical Gridsize was broken</li>
+<li>'Set Initial View' configuration wouldn't work if no initial view position was configured previously</li>
+<li>In the scene config, fixed the hint for 'Force Initial View'. It didn't state that it also works if autoscale is set to 'Physical Gridsize', and added description of the button</li>
+<li>If 'Hide UI on Sidebar Collapse' was on, scene navigation would still be displayed after the GM switched a Lock View function on or off</li>
+<li>Various actions, such as starting combat, would reset the view to the initial view position, if 'Force Initial View' was enabled</li>
+<li>Changes to the scene configuration would not automatically update the control button states</li>
+</ul>
+<h3 id="additions_7">Additions</h3>
+<ul>
+<li>In the 'Set Initial View' configuration, added the option to set the view to the current view of a connected player</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.8 - 05-05-2021</summary>
+<h3 id="fixes_17">Fixes</h3>
+<ul>
+<li>Fixed issue with module settings, where 'Screen Width' and 'Gridsize' wouldn't update immediately</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.7 - 05-05-2021</summary>
+<h3 id="fixes_18">Fixes</h3>
+<ul>
+<li>Increased the Z-index of the viewbox, so it's rendered on top of tiles, drawings, templates, etc</li>
+</ul>
+<h3 id="other_7">Other</h3>
+<ul>
+<li>Added support for Foundry 0.8.2</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.6 - 15-04-2021</summary>
+<h3 id="fixes_19">Fixes</h3>
+<ul>
+<li>Sidebar collapse option didn't work for players</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.5 - 14-04-2021</summary>
+<h3 id="fixes_20">Fixes</h3>
+<ul>
+<li>Fixed issue where, if 'Collapse Sidebar on Scene Load' was enabled, it would also collapse the sidebar whenever a control button was pressed</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.4 - 12-04-2021</summary>
+<h3 id="fixes_21">Fixes</h3>
+<ul>
+<li>Fixed issue where User Configuration would not be saved if no players were configured.</li>
+<li>Fixed issue with Pathfinder 2e, where the zoom and pan lock would only be applied on the first loaded scene</li>
+<li>Fixed "Cannot read property 'filter' of null" error on first load</li>
+</ul>
+<h3 id="additions_8">Additions</h3>
+<ul>
+<li>Added option to scene configuration to collapse the sidebar when a scene is loaded</li>
+<li>Added option to scene configuration to hide the UI when the sidebar is collapsed</li>
+</ul>
+<h3 id="other_8">Other</h3>
+<ul>
+<li>Removed popups to notify users of previous breaking setting changes, since I'm assuming all users have updated their settings already</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.3 - 28-02-2021</summary>
+<h3 id="additions_9">Additions</h3>
+<ul>
+<li>Added 'Automatic Fit (outside) autoscale option (makes sure the whole canvas can always be seen, instead of zooming in, like the 'Automatic Fit (inside) option does)</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.2 - 25-02-2021</summary>
+<h3 id="additions_10">Additions</h3>
+<ul>
+<li>Added hooks and hook listeners for external module integrations</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.1 - 01-02-2021</summary>
+<h3 id="fixes_22">Fixes</h3>
+<ul>
+<li>Fixed issue where dragging the viewbox would lock the GM's cursor in place</li>
+<li>Autoscale now resets when sidebar is opened/collapsed and pan lock and zoom lock are enabled</li>
+<li>Added a button to the scene configuration (next to 'Force Initial View') that opens a dialog to allow precise initial view position configuration</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.4.0 - 06-01-2021</summary>
+<h3 id="additions_11">Additions</h3>
+<ul>
+<li>Added a way to change the view of individual players by adding a move and scale icon on the top-left and bottom-right corners of the viewbox if the 'Edit Viewbox' control button is selected</li>
+<li>Added the name of the player above each viewbox</li>
+<li>Module settings for new non-GM players are automatically enabled</li>
+</ul>
+<h3 id="fixes_23">Fixes</h3>
+<ul>
+<li>Much of the code has been rewritten for improved stability and performance, and a lot of bugs have been fixed</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.3.2 - 27-12-2020</summary>
+<h3 id="fixes_24">Fixes</h3>
+<ul>
+<li>Enabling zoom and pan lock for the GM caused issues</li>
+<li>Fixed issues where scene config settings would not properly load</li>
+<li>Autoscale would not load in scene load</li>
+<li>Scene would not properly load to Initial View Position, even with module off for the user </li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.3.1 - 25-12-2020</summary>
+<h3 id="additions_12">Additions</h3>
+<ul>
+<li>Option to exclude the sidebar area from the boundary box and autoscaling</li>
+<li>Option to blacken the background of the sidebar when sidebar area is excluded</li>
+<li>User config button in the module settings that replaces the 'Enable' and 'Force Enable' settings</li>
+<li>Help button in the module settings</li>
+</ul>
+<h3 id="other_9">Other</h3>
+<ul>
+<li>(Temporary) removed the hotkey lock override, since it no longer works</li>
+<li>Moved LockView settings in the Scene Config to its own section</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.3.0 - 20-12-2020</summary>
+<h3 id="fixes_25">Fixes</h3>
+<ul>
+<li>Disabling pan lock would not enable canvasPan on token move</li>
+<li>Viewbox is now being updated more reliably</li>
+<li>Fixed some problems with the viewbox when changing scenes</li>
+<li>Disabling the viewbox now also disables 'viewbox edit'</li>
+</ul>
+<h3 id="additions_13">Additions</h3>
+<ul>
+<li>Limit players' zoom and pan to stay within a drawn rectangle or the canvas</li>
+<li>Confirmed 0.7.9 support</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.2.0 - 08-12-2020</summary>
+<h3 id="fixes_26">Fixes</h3>
+<ul>
+<li>Fixed issue where module settings would not be saved</li>
+</ul>
+<h3 id="additions_14">Additions</h3>
+<ul>
+<li>Added automatic fit option that automatically selects horizontal or vertical fit so no non-image background will ever be seen</li>
+<li>Confirmed 0.7.8 support</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.1.0 - 10-11-2020</summary>
+<h3 id="fixes_27">Fixes</h3>
+<ul>
+<li>0.7.6 support</li>
+<li>Manifest url fix</li>
+</ul>
+<p><b>Note:</b> Updating from any previous version requires a manual uninstall of the module</p>
+</details>
+<details class="changelog">
+<summary>v1.0.5 - 27-10-2020</summary>
+<h3 id="fixes_28">Fixes</h3>
+<ul>
+<li>PIXI memory leak</li>
+<li>Slight code clean-up</li>
+</ul>
+<h3 id="other_10">Other</h3>
+<ul>
+<li>Confirmed core 0.7.5 support</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.0.4 - 08-10-2020</summary>
+<h3 id="fixes_29">Fixes</h3>
+<ul>
+<li>PIXI memory leak (not fully fixed)</li>
+<li>Viewbox would sometimes not show</li>
+</ul>
+<h3 id="additions_15">Additions</h3>
+<ul>
+<li>Localization support</li>
+<li>Fit to screen option</li>
+<li>Force intial view option</li>
+</ul>
+<h3 id="other_11">Other</h3>
+<ul>
+<li>Confirmed core 0.7.3 support</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.0.3 - 15-09-2020</summary>
+<h3 id="fixes_30">Fixes</h3>
+<ul>
+<li>Multiple viewboxes can now be displayed at the same time</li>
+<li>Zoom and Pan Lock control buttons were broken</li>
+</ul>
+<h3 id="additions_16">Additions</h3>
+<ul>
+<li>Changed 'Reset View' control button to 'Set View', expanded it with more options</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.0.2 - 14-09-2020</summary>
+<h3 id="fixes_31">Fixes</h3>
+<ul>
+<li>Cleaned up code a bit</li>
+<li>Zoom and Pan lock now work when moving a token to the edge of the screen, and when teleporting (at least with dynamicFX)</li>
+</ul>
+<h3 id="changes">Changes</h3>
+<ul>
+<li>Changed behavior of zoom and pan lock control buttons</li>
+</ul>
+<h3 id="additions_17">Additions</h3>
+<ul>
+<li>Added 'edit viewbox' control button, which allows the GM to pan and zoom the client's screen</li>
+<li>Confirmation dialog box on 'Reset TV view' button</li>
+<li>Add warning when viewbox is switched on when no enabled clients are connected</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.0.1 - 12-09-2020</summary>
+<h3 id="fixes_32">Fixes</h3>
+<ul>
+<li>Refresh no longer needed after changing scene configuration</li>
+</ul>
+<h3 id="additions_18">Additions</h3>
+<ul>
+<li>Lock override keybinding</li>
+<li>Reset TV view button</li>
+<li>Pan lock override button</li>
+<li>Zoom lock override button</li>
+<li>Viewbox enable button</li>
+<li>Force enable tickbox</li>
+</ul>
+</details>
+<details class="changelog">
+<summary>v1.0.0 - 09-09-2020</summary>
+<p>Initial release</p>
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://discord.gg/3hd4G6TkmA" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M492.5 69.8c-.2-.3-.4-.6-.8-.7-38.1-17.5-78.4-30-119.7-37.1-.4-.1-.8 0-1.1.1s-.6.4-.8.8c-5.5 9.9-10.5 20.2-14.9 30.6-44.6-6.8-89.9-6.8-134.4 0-4.5-10.5-9.5-20.7-15.1-30.6-.2-.3-.5-.6-.8-.8s-.7-.2-1.1-.2C162.5 39 122.2 51.5 84.1 69c-.3.1-.6.4-.8.7C7.1 183.5-13.8 294.6-3.6 404.2c0 .3.1.5.2.8s.3.4.5.6c44.4 32.9 94 58 146.8 74.2.4.1.8.1 1.1 0s.7-.4.9-.7c11.3-15.4 21.4-31.8 30-48.8.1-.2.2-.5.2-.8s0-.5-.1-.8-.2-.5-.4-.6-.4-.3-.7-.4c-15.8-6.1-31.2-13.4-45.9-21.9-.3-.2-.5-.4-.7-.6s-.3-.6-.3-.9 0-.6.2-.9.3-.5.6-.7c3.1-2.3 6.2-4.7 9.1-7.1.3-.2.6-.4.9-.4s.7 0 1 .1c96.2 43.9 200.4 43.9 295.5 0 .3-.1.7-.2 1-.2s.7.2.9.4c2.9 2.4 6 4.9 9.1 7.2.2.2.4.4.6.7s.2.6.2.9-.1.6-.3.9-.4.5-.6.6c-14.7 8.6-30 15.9-45.9 21.8-.2.1-.5.2-.7.4s-.3.4-.4.7-.1.5-.1.8.1.5.2.8c8.8 17 18.8 33.3 30 48.8.2.3.6.6.9.7s.8.1 1.1 0c52.9-16.2 102.6-41.3 147.1-74.2.2-.2.4-.4.5-.6s.2-.5.2-.8c12.3-126.8-20.5-236.9-86.9-334.5zm-302 267.7c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.4 59.2-52.8 59.2m195.4 0c-29 0-52.8-26.6-52.8-59.2s23.4-59.2 52.8-59.2c29.7 0 53.3 26.8 52.8 59.2 0 32.7-23.2 59.2-52.8 59.2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.patreon.com/materialfoundry" target="_blank" rel="noopener" title="www.patreon.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M490 153.8c-.1-65.4-51-119-110.7-138.3-74.2-24-172-20.5-242.9 12.9C50.6 68.9 23.6 157.7 22.6 246.2 21.8 319 29 510.6 137.2 512c80.3 1 92.3-102.5 129.5-152.3 26.4-35.5 60.5-45.5 102.4-55.9 72-17.8 121.1-74.7 121-150z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tracking", "navigation.tabs", "toc.integrate", "navigation.top"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
