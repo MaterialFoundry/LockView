@@ -229,9 +229,10 @@
 }
 
 /**
- * Scene Config tab button styling
+ * Scene Config and Drawing Config tab button styling
  */
-.sheet-tabs {
+.scene-config .sheet-tabs,
+.drawing-config .sheet-tabs {
     display: flex;
     overflow-x: auto;
     min-height: 36px;
@@ -239,6 +240,7 @@
     padding-right: 1rem;
 }
 
-.sheet-tabs a {
+.scene-config .sheet-tabs a,
+.drawing-config .sheet-tabs a {
     white-space: nowrap;
 }

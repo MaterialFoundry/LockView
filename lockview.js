@@ -98,5 +98,6 @@ Hooks.on('renderApplicationV2', (app, form) => {
     const lockViewElements = form.querySelectorAll("[data-tab='lockView']");
     lockViewElements.forEach(elmnt => elmnt.style.display = "none");
   }
-  CompatibilityHandler.makeAppTabsScrollable(form);
+  else if (app.id.includes("SceneConfig") || app.id.includes("DrawingConfig"))
+    CompatibilityHandler.makeAppTabsScrollable(form);
 })

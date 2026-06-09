@@ -1,5 +1,10 @@
 # Changelog
 
+# v2.1.1_pre1 - 09-06-2026
+
+### Fixes
+* Fixed UI issue with RuneQuest character sheets.
+
 # v2.1.0 - 08-06-2026
 
 This version is compatible with Foundry v13 and v14.
