@@ -205,11 +205,38 @@ export class SceneHandler {
 
     setSidebar(scene) {
         const sidebarFlags = scene.getFlag(moduleName, 'sidebar');
-        
-        if (sidebarFlags.sceneLoad !== 'noChange') {
-            if (sidebarFlags.sceneLoad === 'expand') ui.sidebar.expand();
-            else if (sidebarFlags.sceneLoad === 'collapse') ui.sidebar.collapse();
+        const sidebar = ui.sidebar;
+        if (!sidebarFlags || !sidebar || sidebarFlags.sceneLoad === 'noChange') return;
+
+        const expand = sidebarFlags.sceneLoad === 'expand';
+        if (sidebarFlags.sceneLoad !== 'expand' && sidebarFlags.sceneLoad !== 'collapse') return;
+        if (expand === sidebar.expanded) return;
+
+        // Carolingian UI injects Toggle Chat Box on collapseSidebar. Foundry always
+        // fires that hook from expand()/collapse(), even when the visual state already
+        // matches, which duplicates the button during canvasReady.
+        if (game.modules.get('crlngn-ui')?.active) {
+            this.setSidebarExpanded(sidebar, expand);
+            this.setUiElements(scene, expand ? 'off' : 'sidebarCollapse');
+            if (canvas.scene) canvas.pan(canvas.scene._viewPosition);
+            return;
         }
+
+        if (expand) sidebar.expand();
+        else sidebar.collapse();
+    }
+
+    setSidebarExpanded(sidebar, expanded) {
+        const expander = sidebar.element?.querySelector('.tabs [data-action="toggleState"]');
+        const content = document.getElementById('sidebar-content');
+        if (expander) {
+            expander.classList.remove('fa-caret-left', 'fa-caret-right');
+            expander.classList.add(`fa-caret-${expanded ? 'right' : 'left'}`);
+            expander.dataset.tooltip = expanded ? 'APPLICATION.ACTIONS.Collapse' : 'APPLICATION.ACTIONS.Expand';
+            expander.ariaLabel = game.i18n.localize(expander.dataset.tooltip);
+        }
+        content?.classList.toggle('expanded', expanded);
+        ui.chat?._toggleNotifications?.();
     }
 
     async setAVDock(scene) {
