@@ -4,6 +4,7 @@
 
 ### Fixes
 * Fixed UI issue with RuneQuest character sheets.
+* Fixed incompatibility with Carolingian UI: applying the scene-load sidebar expand/collapse no longer fires Foundry's collapseSidebar hook when the sidebar is already in that state, and skips the hook when Carolingian is active so Toggle Chat Box is not duplicated.
 
 # v2.1.0 - 08-06-2026
 
